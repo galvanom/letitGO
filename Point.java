@@ -1,11 +1,16 @@
 class Point{
-	int x, y;
+	int i, j;
 	Point(){
 
 	}
-	Point(int x, int y){
-		this.x = x;
-		this.y = y;
+	Point(int i, int j){
+		this.i = i;
+		this.j = j;
+	}
+	boolean isEqualsTo(Point other){
+		if (this.i == other.i && this.j == other.j)
+			return true;
+		return false;
 	}
 
 

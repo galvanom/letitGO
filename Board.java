@@ -1,3 +1,5 @@
+import java.util.*;
+import java.io.*;
 
 public class Board{
 	int[][] board, ko_board;
@@ -64,15 +66,42 @@ public class Board{
 		System.out.println();
 		}
 	}
-	boolean setPoint(int x, int y, int stone){
-		board[x + 1][y + 1] = stone;
+	void loadFromFile(String filename){
+		
+
+		int i,j;
+		try {
+			File file = new File(filename);
+			Scanner sc = new Scanner(file);
+			for (i = 0; sc.hasNextLine(); i++){
+				for (j = 0; j < this.size-2; j++)
+					board[i+1][j+1] = sc.nextInt();
+			}
+		}
+		catch (FileNotFoundException e) {
+        	e.printStackTrace();
+        }
+
+    
+
+	}
+	boolean setPoint(int i, int j, int stone){
+		board[i + 1][j + 1] = stone;
 		return true;
 	}
-	int getPoint(int x, int y){
-		return board[x + 1][y + 1];
+	boolean setPoint(Point p, int stone){
+		board[p.i + 1][p.j + 1] = stone;
+		return true;
+	}
+	int getPoint(int i, int j){
+		return board[i + 1][j + 1];
+	}
+	int getPoint(Point p){
+		return board[p.i + 1][p.j + 1];
 	}
 
 	int getSize(){
 		return size - 2;
 	}
+
 }
