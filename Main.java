@@ -114,7 +114,7 @@ public class Main{
 		int dame_number;
 		Point point, up, down, left, right;
 		Point p = new Point(2,3);
-		PriorityQueue<Point> queue = new PriorityQueue<Point>();
+		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
 		queue.add(p);
 		dame_number = 0;
@@ -127,12 +127,12 @@ public class Main{
 			up = new Point(point.i-1, point.j);
 			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
 				queue.add(up);
-				//System.out.println(queue.element().i);
+				System.out.printf("%d %d\n",up.i, up.j);
 			}
 			right = new Point(point.i, point.j+1);
 			if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
 				queue.add(right);
-				System.out.println(queue.element().i);
+				System.out.printf("%d %d\n",right.i, right.j);
 			}
 
 
@@ -140,7 +140,7 @@ public class Main{
 		}
 
 	}
-	static boolean isPointVisited(ArrayList<Point> visited, PriorityQueue<Point> queue, Point p){
+	static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
 		Iterator<Point> it_v = visited.iterator();
 		Iterator<Point> it_q = queue.iterator();
 		while(it_v.hasNext()){
