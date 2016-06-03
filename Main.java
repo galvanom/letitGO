@@ -127,16 +127,22 @@ public class Main{
 			up = new Point(point.i-1, point.j);
 			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
 				queue.add(up);
+				//System.out.println(queue.element().i);
 			}
+			right = new Point(point.i, point.j+1);
+			if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
+				queue.add(right);
+				System.out.println(queue.element().i);
+			}
+
+
 
 		}
 
 	}
-	static boolean isPointVisited(ArrayList visited, PriorityQueue queue, Point p){
-		Iterator it_v = visited.iterator();
-		Iterator it_q = queue.iterator();
-
-		//System.out.println(it_v.next().getClass().toString());
+	static boolean isPointVisited(ArrayList<Point> visited, PriorityQueue<Point> queue, Point p){
+		Iterator<Point> it_v = visited.iterator();
+		Iterator<Point> it_q = queue.iterator();
 		while(it_v.hasNext()){
 			if (p.isEqualsTo(it_v.next()))
 				return true;
