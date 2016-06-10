@@ -113,9 +113,10 @@ public class Main{
 		int i,j;
 		int dame_number;
 		Point point, up, down, left, right;
-		Point p = new Point(2,3);
+		Point p = new Point(4,2);
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
+		ArrayList<Point> to_delete = new ArrayList<Point>();
 		queue.add(p);
 		dame_number = 0;
 
@@ -135,9 +136,22 @@ public class Main{
 				System.out.printf("%d %d\n",right.i, right.j);
 			}
 
-
+			down = new Point(point.i+1, point.j);
+			if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
+				queue.add(down);
+				System.out.printf("%d %d\n",down.i, down.j);
+			}
+			left = new Point(point.i, point.j-1);
+			if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
+				queue.add(left);
+				System.out.printf("%d %d\n",left.i, left.j);
+			}
 
 		}
+		if (dame_number == 0)
+			to_delete.addAll(visited);
+		
+		System.out.printf("Dames:%d", dame_number);
 
 	}
 	static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
