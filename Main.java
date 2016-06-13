@@ -9,7 +9,11 @@ public class Main{
 
 		board.loadFromFile("board9x9.dat");
 		board.printBoard();
-		couldMoveGetDame(new Point(1,1), board);
+		if (couldMoveGetDame(new Point(4,2), board))
+			System.out.println("\nLegal move");
+		else
+			System.out.println("\nIllegal move");
+
 		//playOut(board, Board.FRIENDLY);
 
 		//<isFriendlySingleEyePoint() test>
@@ -99,24 +103,55 @@ public class Main{
 
 	static boolean couldMoveGetDame(Point p, Board board){
 		Board new_board = new Board(board);
+		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points = new ArrayList<Point>();
+		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
+										new Point(p.i+1, p.j),	//down	
+										new Point(p.i, p.j+1),	//right
+										new Point(p.i, p.j-1)	//left 
+									};
 
 		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Always friendly?
-		removeDeadStones(new_board);
-		if (getDameNumber(p, new_board) == 0)
+		new_board.printBoard();
+		for (Point next: surroundedStones){
+			System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+			if (board.getPoint(next) == Board.ENEMY) //TODO: Always enemy?
+				points = isGroupDead(board, next);
+			if (points != null){
+				points_to_delete.addAll(points);
+
+			}
+		}
+		
+		if (points_to_delete.size() == 0){
+			//System.out.println("Yahooooo");
+			if (isGroupDead(board, p) != null) //suicide move
+				return false;
+			else
+				return true;
+		}
+		
+		
+		
+
+		
+
+
+		
+		/*if (getDameNumber(p, new_board) == 0)
 			return false;
 		/*if (board.isKO(new_board))
 			return false;*/
 
 		return true;
 	}
-	static void removeDeadStones(Board board){
+	
+	static  ArrayList<Point> isGroupDead (Board board, Point p){
 		int i,j;
 		int dame_number;
-		Point point, up, down, left, right;
-		Point p = new Point(4,2);
+		Point point,up, down, left, right;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
-		ArrayList<Point> to_delete = new ArrayList<Point>();
+		
 		queue.add(p);
 		dame_number = 0;
 
@@ -148,10 +183,15 @@ public class Main{
 			}
 
 		}
-		if (dame_number == 0)
-			to_delete.addAll(visited);
+		//System.out.printf("\nDames:%d", dame_number);
+
+		if (dame_number == 0){
+			System.out.println("Group is dead");
+			return visited;
+		}
 		
-		System.out.printf("Dames:%d", dame_number);
+		return null;
+		
 
 	}
 	static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
