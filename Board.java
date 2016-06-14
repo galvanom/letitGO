@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 
 public class Board{
-	int[][] board, ko_board;
+	int[][] board, boardState;
 	int size;
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
@@ -44,8 +44,14 @@ public class Board{
 
 	}
 	void printBoard(){
-		int i, j;
+		int i, j, k;
+		System.out.print("  ");
+		for (k = 0; k < size-2; k++){
+			System.out.printf("%d ", k);
+		}
+		System.out.println();
 		for (i = 0; i < size; i++){
+
 			for (j = 0; j < size; j++){
 				switch (board[i][j]) {
 					case EMPTY:
@@ -63,8 +69,12 @@ public class Board{
 				}
 				System.out.print(" ");
 			}
+		if ( i != 0 && i != size-1){
+			System.out.print(i-1);
+			}	
 		System.out.println();
 		}
+		System.out.println(board.hashCode());
 	}
 	void loadFromFile(String filename){
 		
@@ -86,10 +96,12 @@ public class Board{
 
 	}
 	boolean setPoint(int i, int j, int stone){
+		saveBoardState();				//for KO
 		board[i + 1][j + 1] = stone;
 		return true;
 	}
 	boolean setPoint(Point p, int stone){
+		saveBoardState();				//for KO
 		board[p.i + 1][p.j + 1] = stone;
 		return true;
 	}
@@ -102,6 +114,24 @@ public class Board{
 
 	int getSize(){
 		return size - 2;
+	}
+	void saveBoardState(){
+		boardState = new int[this.size][this.size];
+		for (i = 0; i < this.size; i++)
+			for (j = 0; j < this.size; j++)
+				boardState[i][j] = board[i][j];
+	}
+	boolean matchBoardState(){
+		if (boardState == null)
+			return false;
+		for (i = 0; i < this.size; i++)
+			for (j = 0; j < this.size; j++)
+				if (boardState[i][j] != board[i][j])
+					return false;
+		return true;
+	}
+	boolean isKO(){
+		return matchBoardState();
 	}
 
 }

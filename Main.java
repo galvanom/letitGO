@@ -9,7 +9,7 @@ public class Main{
 
 		board.loadFromFile("board9x9.dat");
 		board.printBoard();
-		if (couldMoveGetDame(new Point(4,2), board))
+		if (couldMoveGetDame(new Point(3,4), board))
 			System.out.println("\nLegal move");
 		else
 			System.out.println("\nIllegal move");
@@ -102,8 +102,12 @@ public class Main{
 
 
 	static boolean couldMoveGetDame(Point p, Board board){
+
+
 		Board new_board = new Board(board);
-		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points = new ArrayList<Point>();
+
+		
+		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
 										new Point(p.i+1, p.j),	//down	
 										new Point(p.i, p.j+1),	//right
@@ -112,10 +116,23 @@ public class Main{
 
 		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Always friendly?
 		new_board.printBoard();
+
+
+		if (getDameNumber(p, new_board) == 0)
+			return false;
+		if (new_board.isKO())
+			return false;
+
+
+
 		for (Point next: surroundedStones){
-			System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
-			if (board.getPoint(next) == Board.ENEMY) //TODO: Always enemy?
-				points = isGroupDead(board, next);
+			points = null;
+			
+			if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
+				System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+				points = isGroupDead(new_board, next);
+				
+			}
 			if (points != null){
 				points_to_delete.addAll(points);
 
@@ -123,24 +140,15 @@ public class Main{
 		}
 		
 		if (points_to_delete.size() == 0){
-			//System.out.println("Yahooooo");
-			if (isGroupDead(board, p) != null) //suicide move
+			if (isGroupDead(new_board, p) != null) //suicide move
 				return false;
-			else
-				return true;
+			//else
+			//	return true;
 		}
 		
-		
-		
-
-		
+			
 
 
-		
-		/*if (getDameNumber(p, new_board) == 0)
-			return false;
-		/*if (board.isKO(new_board))
-			return false;*/
 
 		return true;
 	}
