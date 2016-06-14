@@ -89,15 +89,15 @@ public class Main{
 	static boolean isFriendlySingleEyePoint(Point p, Board board){
 		boolean is_friendly = true;
 		if (board.getPoint(p.i+1, p.j) == Board.ENEMY)
-			is_friendly = false;
+			return false;
 		if (board.getPoint(p.i-1, p.j) == Board.ENEMY)
-			is_friendly = false;
+			return false;
 		if (board.getPoint(p.i, p.j+1) == Board.ENEMY)
-			is_friendly = false;;
+			return false;;
 		if (board.getPoint(p.i, p.j-1) == Board.ENEMY)
-			is_friendly = false;
+			return false;
 
-		return is_friendly;
+		return true;
 	}
 
 
@@ -118,7 +118,7 @@ public class Main{
 		new_board.printBoard();
 
 
-		if (getDameNumber(p, new_board) == 0)
+		if (getDameNumber(p, new_board) == 0) // ????? What is this?
 			return false;
 		if (new_board.isKO())
 			return false;
