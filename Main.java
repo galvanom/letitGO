@@ -9,7 +9,7 @@ public class Main{
 
 		board.loadFromFile("board9x9.dat");
 		board.printBoard();
-		if (couldMoveGetDame(new Point(3,4), board))
+		if (checkRules(new Point(4,2), board))
 			System.out.println("\nLegal move");
 		else
 			System.out.println("\nIllegal move");
@@ -101,9 +101,9 @@ public class Main{
 	}
 
 
-	static boolean couldMoveGetDame(Point p, Board board){
+	static boolean checkRules(Point p, Board board){
 
-
+		//Create new board copy to change existing board state without changes in main board
 		Board new_board = new Board(board);
 
 		
@@ -117,42 +117,44 @@ public class Main{
 		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Always friendly?
 		new_board.printBoard();
 
-
-		if (getDameNumber(p, new_board) == 0) // ????? What is this?
+		if (getDameNumber(p, board) != 0) 
+			return true;
+		if (isFriendlySingleEyePoint(p, board))
 			return false;
 		if (new_board.isKO())
 			return false;
 
 
 
-		for (Point next: surroundedStones){
-			points = null;
-			
-			if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
-				System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
-				points = isGroupDead(new_board, next);
+		
+		 //posible suicide move
+		if (isGroupDead(new_board, p) != null){
+
+			//check could we kill neigbour enemy groups with this move
+			for (Point next: surroundedStones){
+				points = null;
 				
-			}
-			if (points != null){
-				points_to_delete.addAll(points);
+				if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
+					System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+					points = isGroupDead(new_board, next);
+					
+				}
+				if (points != null){
+					points_to_delete.addAll(points);
 
+				}
 			}
-		}
-		
-		if (points_to_delete.size() == 0){
-			if (isGroupDead(new_board, p) != null) //suicide move
+			if (points_to_delete.size() == 0){
 				return false;
-			//else
-			//	return true;
+			}
+
 		}
 		
-			
-
-
+		
 
 		return true;
 	}
-	
+	//TODO: WTF ??? Function dont need to return an arraylist! Must return boolean! 
 	static  ArrayList<Point> isGroupDead (Board board, Point p){
 		int i,j;
 		int dame_number;

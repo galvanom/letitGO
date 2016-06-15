@@ -74,7 +74,7 @@ public class Board{
 			}	
 		System.out.println();
 		}
-		System.out.println(board.hashCode());
+		
 	}
 	void loadFromFile(String filename){
 		
@@ -116,12 +116,14 @@ public class Board{
 		return size - 2;
 	}
 	void saveBoardState(){
+		int i,j;
 		boardState = new int[this.size][this.size];
 		for (i = 0; i < this.size; i++)
 			for (j = 0; j < this.size; j++)
 				boardState[i][j] = board[i][j];
 	}
 	boolean matchBoardState(){
+		int i,j;
 		if (boardState == null)
 			return false;
 		for (i = 0; i < this.size; i++)
