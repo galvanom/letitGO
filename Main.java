@@ -1,5 +1,11 @@
 import java.util.*;
 import java.io.*;
+/*
+TODO
+Change FRIENDLY and ENEMY constants to variable
+Name stone and color as stone_type for readability
+Start random playout
+*/
 
 public class Main{
 	public static void main(String[] args){
@@ -13,25 +19,10 @@ public class Main{
 			System.out.println("\nLegal move");
 		else
 			System.out.println("\nIllegal move");
+		removeDeadStones(board);
+		board.printBoard();
 
-		//playOut(board, Board.FRIENDLY);
 
-		//<isFriendlySingleEyePoint() test>
-		/*
-		board.setPoint(0,1, Board.FRIENDLY);
-		board.setPoint(2,1, Board.FRIENDLY);
-		board.setPoint(1,0, Board.FRIENDLY);
-		board.setPoint(1,2, Board.FRIENDLY);
-		p = new Point(1,1);
-		if (getDameNumber(p, board) == 0){
-			boolean is_friendly = isFriendlySingleEyePoint(p, board);
-			if (is_friendly)
-				System.out.printf("The single eye point is FRIENDLY\n");
-			else
-				System.out.printf("The single eye point is ENEMY\n");
-		}
-		*/
-		//</isFriendlySingleEyePoint() test>
 
 	}
 	
@@ -48,12 +39,9 @@ public class Main{
 			p = free_points.get(random_point);
 			board.setPoint(p.i, p.j, stone);
 			
-			if (stone == Board.FRIENDLY)
-				stone = Board.ENEMY;
-			else
-				if (stone == Board.ENEMY)
-					stone = Board.FRIENDLY;
-
+			
+			stone = board.getOppositeSide(stone)
+			
 			free_points = getFreePoints(board);
 
 		}
@@ -88,7 +76,7 @@ public class Main{
 	}
 	static boolean isFriendlySingleEyePoint(Point p, Board board){
 		boolean is_friendly = true;
-		if (board.getPoint(p.i+1, p.j) == Board.ENEMY)
+		if (board.getPoint(p.i+1, p.j) == Board.ENEMY) //TODO: Not always enemy!
 			return false;
 		if (board.getPoint(p.i-1, p.j) == Board.ENEMY)
 			return false;
@@ -105,7 +93,6 @@ public class Main{
 
 		//Create new board copy to change existing board state without changes in main board
 		Board new_board = new Board(board);
-
 		
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
@@ -114,7 +101,7 @@ public class Main{
 										new Point(p.i, p.j-1)	//left 
 									};
 
-		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Always friendly?
+		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Not always friendly!!! 
 		new_board.printBoard();
 
 		if (getDameNumber(p, board) != 0) 
@@ -124,37 +111,45 @@ public class Main{
 		if (new_board.isKO())
 			return false;
 
-
-
 		
 		 //posible suicide move
-		if (isGroupDead(new_board, p) != null){
+		if (isGroupDead(new_board, p) == null){
+			return true;
+		}
 
-			//check could we kill neigbour enemy groups with this move
-			for (Point next: surroundedStones){
-				points = null;
+		//check could we kill neigbour enemy groups with this move
+		for (Point next: surroundedStones){
+			
+			if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
+				System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+				if (isGroupDead(new_board, next) != null)
+					return true;
 				
-				if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
-					System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
-					points = isGroupDead(new_board, next);
-					
-				}
-				if (points != null){
-					points_to_delete.addAll(points);
-
-				}
-			}
-			if (points_to_delete.size() == 0){
-				return false;
 			}
 
 		}
-		
-		
 
-		return true;
+		return false;
 	}
-	//TODO: WTF ??? Function dont need to return an arraylist! Must return boolean! 
+	static void removeDeadStones(Board board){
+		int i,j;
+		Point point;
+		ArrayList<Point> deleteThisStones;
+		for(i = 0; i < board.getSize(); i++){
+			for(j = 0; j < board.getSize(); j++){
+				point = new Point(i,j);
+				if (board.getPoint(point) == Board.FRIENDLY || board.getPoint(point) == Board.ENEMY){
+					deleteThisStones = isGroupDead(board, point);
+					if (deleteThisStones != null){
+						for (Point stone: deleteThisStones){
+							board.setPoint(stone, Board.EMPTY);
+						}
+					}
+				}
+			
+			}
+		}
+	}
 	static  ArrayList<Point> isGroupDead (Board board, Point p){
 		int i,j;
 		int dame_number;
@@ -173,30 +168,30 @@ public class Main{
 			up = new Point(point.i-1, point.j);
 			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
 				queue.add(up);
-				System.out.printf("%d %d\n",up.i, up.j);
+				//System.out.printf("%d %d\n",up.i, up.j);
 			}
 			right = new Point(point.i, point.j+1);
 			if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
 				queue.add(right);
-				System.out.printf("%d %d\n",right.i, right.j);
+				//System.out.printf("%d %d\n",right.i, right.j);
 			}
 
 			down = new Point(point.i+1, point.j);
 			if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
 				queue.add(down);
-				System.out.printf("%d %d\n",down.i, down.j);
+				//System.out.printf("%d %d\n",down.i, down.j);
 			}
 			left = new Point(point.i, point.j-1);
 			if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
 				queue.add(left);
-				System.out.printf("%d %d\n",left.i, left.j);
+				//System.out.printf("%d %d\n",left.i, left.j);
 			}
 
 		}
 		//System.out.printf("\nDames:%d", dame_number);
 
 		if (dame_number == 0){
-			System.out.println("Group is dead");
+			//System.out.println("Group is dead");
 			return visited;
 		}
 		
