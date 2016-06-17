@@ -1,11 +1,5 @@
 import java.util.*;
 import java.io.*;
-/*
-TODO
-Change FRIENDLY and ENEMY constants to variable
-Name stone and color as stone_type for readability
-Start random playout
-*/
 
 public class Main{
 	public static void main(String[] args){
@@ -13,41 +7,49 @@ public class Main{
 		Board board = new Board(9);
 		Point p;
 
-		board.loadFromFile("board9x9.dat");
+		playOut(board, Board.FRIENDLY);
 		board.printBoard();
-		if (checkRules(new Point(4,2), board))
+		/*board.loadFromFile("board9x9.dat");
+		board.printBoard();
+		if (checkRules(new Point(4,2), Board.ENEMY, board))
 			System.out.println("\nLegal move");
 		else
 			System.out.println("\nIllegal move");
 		removeDeadStones(board);
-		board.printBoard();
-
-
-
+		board.printBoard();*/
 	}
 	
 	static void playOut(Board board, int first_stone){
 		ArrayList<Point> free_points;
 		Random random = new Random();
 		int random_point;
-		int stone = first_stone;
+		int stoneType = first_stone;
+		int passTimes = 0;
+		int maxMoves = 200;
 		Point p;
+		;
 
-		free_points = getFreePoints(board);
-		while (!free_points.isEmpty()){
+		for (int movesCount = 0; movesCount < maxMoves && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
+			free_points = getFreePoints(board, stoneType);
+			
+			if (free_points.size() == 0){
+				passTimes++;
+				continue;
+			}
+			passTimes = 0;
+
 			random_point = random.nextInt(free_points.size());
 			p = free_points.get(random_point);
-			board.setPoint(p.i, p.j, stone);
-			
-			
-			stone = board.getOppositeSide(stone)
-			
-			free_points = getFreePoints(board);
+			board.setPoint(p, stoneType);
+			removeDeadStones(board);
 
 		}
+			
+			
+	
 		
 	}
-	static ArrayList<Point> getFreePoints(Board board){
+	static ArrayList<Point> getFreePoints(Board board, int stoneType){
 		int i,j;
 		ArrayList<Point> points = new ArrayList<Point>();
 		Point p;
@@ -55,12 +57,14 @@ public class Main{
 		for (i = 0; i < board.getSize(); i++)
 			for (j = 0; j < board.getSize(); j++){
 				p = new Point(i,j);
-				if (board.getPoint(i,j) == Board.EMPTY){
-					points.add(p);
+				if (board.getPoint(p) == Board.EMPTY){
+					if (checkRules(p, stoneType, board))
+						points.add(p);
 				}
 			}
 		return points;
 	}
+
 	static int getDameNumber(Point p, Board board){
 		int dame_count = 0;
 		if (board.getPoint(p.i+1, p.j) == Board.EMPTY)
@@ -74,24 +78,25 @@ public class Main{
 
 		return dame_count;
 	}
-	static boolean isFriendlySingleEyePoint(Point p, Board board){
+	//TODO: Maybe write it within checkRules() ??
+	static boolean isFriendlySingleEyePoint(Point p, int stoneType, Board board){ 
 		boolean is_friendly = true;
-		if (board.getPoint(p.i+1, p.j) == Board.ENEMY) //TODO: Not always enemy!
+		if (board.getPoint(p.i+1, p.j) == Board.getOppositeSide(stoneType)) 
 			return false;
-		if (board.getPoint(p.i-1, p.j) == Board.ENEMY)
+		if (board.getPoint(p.i-1, p.j) == Board.getOppositeSide(stoneType))
 			return false;
-		if (board.getPoint(p.i, p.j+1) == Board.ENEMY)
+		if (board.getPoint(p.i, p.j+1) == Board.getOppositeSide(stoneType))
 			return false;;
-		if (board.getPoint(p.i, p.j-1) == Board.ENEMY)
+		if (board.getPoint(p.i, p.j-1) == Board.getOppositeSide(stoneType))
 			return false;
 
 		return true;
 	}
 
 
-	static boolean checkRules(Point p, Board board){
+	static boolean checkRules(Point p, int stoneType, Board board){
 
-		//Create new board copy to change existing board state without changes in main board
+		//Create new board copy to change existing board state without changes in the main board
 		Board new_board = new Board(board);
 		
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
@@ -101,12 +106,12 @@ public class Main{
 										new Point(p.i, p.j-1)	//left 
 									};
 
-		new_board.setPoint(p.i, p.j, Board.FRIENDLY); //TODO: Not always friendly!!! 
-		new_board.printBoard();
+		new_board.setPoint(p.i, p.j, stoneType);
+		//new_board.printBoard();
 
 		if (getDameNumber(p, board) != 0) 
 			return true;
-		if (isFriendlySingleEyePoint(p, board))
+		if (isFriendlySingleEyePoint(p, stoneType, board))
 			return false;
 		if (new_board.isKO())
 			return false;
@@ -120,8 +125,8 @@ public class Main{
 		//check could we kill neigbour enemy groups with this move
 		for (Point next: surroundedStones){
 			
-			if (board.getPoint(next) == Board.ENEMY){ //TODO: Always enemy?
-				System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){ //TODO: Always enemy?
+				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 				if (isGroupDead(new_board, next) != null)
 					return true;
 				
@@ -141,9 +146,12 @@ public class Main{
 				if (board.getPoint(point) == Board.FRIENDLY || board.getPoint(point) == Board.ENEMY){
 					deleteThisStones = isGroupDead(board, point);
 					if (deleteThisStones != null){
+						System.out.println("Deleted stones: ");
 						for (Point stone: deleteThisStones){
 							board.setPoint(stone, Board.EMPTY);
+							System.out.printf("[%d,%d] ",stone.i, stone.j);
 						}
+						System.out.println();
 					}
 				}
 			

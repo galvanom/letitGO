@@ -4,6 +4,7 @@ import java.io.*;
 public class Board{
 	int[][] board, boardState;
 	int size;
+	//Point types
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
 	public static final int FRIENDLY= 2;
@@ -95,14 +96,14 @@ public class Board{
     
 
 	}
-	boolean setPoint(int i, int j, int stone){
+	boolean setPoint(int i, int j, int pointType){
 		saveBoardState();				//for KO
-		board[i + 1][j + 1] = stone;
+		board[i + 1][j + 1] = pointType;
 		return true;
 	}
-	boolean setPoint(Point p, int stone){
+	boolean setPoint(Point p, int pointType){
 		saveBoardState();				//for KO
-		board[p.i + 1][p.j + 1] = stone;
+		board[p.i + 1][p.j + 1] = pointType;
 		return true;
 	}
 	int getPoint(int i, int j){
@@ -135,11 +136,11 @@ public class Board{
 	boolean isKO(){
 		return matchBoardState();
 	}
-	int getOppositeSide(int stone){
+	static int getOppositeSide(int stone){
 		if (stone == FRIENDLY)
 			return ENEMY;
-		if (stone == ENEMY)
-			return return FRIENDLY;
+			
+		return FRIENDLY;
 	}
 
 }
