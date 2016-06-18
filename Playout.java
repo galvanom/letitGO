@@ -23,8 +23,9 @@ public class Playout{
 
 			random_point = random.nextInt(free_points.size());
 			p = free_points.get(random_point);
+			board.saveBoardState(); //for KO
 			board.setPoint(p, stoneType);
-			removeDeadStones(board);
+			removeDeadStones(board, Board.getOppositeSide(stoneType));
 
 		}
 		
@@ -86,17 +87,31 @@ public class Playout{
 										new Point(p.i, p.j-1)	//left 
 									};
 
-		new_board.setPoint(p.i, p.j, stoneType);
+		
 		//new_board.printBoard();
 
 		if (getDameNumber(p, board) != 0) 
 			return true;
 		if (isFriendlySingleEyePoint(p, stoneType, board))
 			return false;
-		if (new_board.isKO())
+		//KO check
+		new_board.saveBoardState();
+		new_board.setPoint(p, stoneType);
+		System.out.printf("[%d,%d]", p.i,p.j);
+		new_board.printBoard();
+		removeDeadStones(new_board, Board.getOppositeSide(stoneType));
+		if (board.matchBoardState(new_board)){ //KO
+			System.out.println("KO");
 			return false;
+		}
+		else{
+			System.out.println("NewBoard:");
+			new_board.printBoard();
+			new_board.loadBoardState();
+		}
 
-		
+		new_board.setPoint(p, stoneType);
+
 		 //posible suicide move
 		if (isGroupDead(new_board, p) == null){
 			return true;
@@ -116,14 +131,15 @@ public class Playout{
 
 		return false;
 	}
-	void removeDeadStones(Board board){
+	//TODO: Take a stoneType to function, to remove right type stones 
+	void removeDeadStones(Board board, int stoneType){
 		int i,j;
 		Point point;
 		ArrayList<Point> deleteThisStones;
 		for(i = 0; i < board.getSize(); i++){
 			for(j = 0; j < board.getSize(); j++){
 				point = new Point(i,j);
-				if (board.getPoint(point) == Board.FRIENDLY || board.getPoint(point) == Board.ENEMY){
+				if (board.getPoint(point) == stoneType){
 					deleteThisStones = isGroupDead(board, point);
 					if (deleteThisStones != null){
 						System.out.println("Deleted stones: ");

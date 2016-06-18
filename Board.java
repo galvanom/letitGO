@@ -92,17 +92,16 @@ public class Board{
 		catch (FileNotFoundException e) {
         	e.printStackTrace();
         }
-
-    
+ 
 
 	}
 	boolean setPoint(int i, int j, int pointType){
-		saveBoardState();				//for KO
+		//saveBoardState();				//for KO
 		board[i + 1][j + 1] = pointType;
 		return true;
 	}
 	boolean setPoint(Point p, int pointType){
-		saveBoardState();				//for KO
+		//saveBoardState();				//for KO
 		board[p.i + 1][p.j + 1] = pointType;
 		return true;
 	}
@@ -123,19 +122,28 @@ public class Board{
 			for (j = 0; j < this.size; j++)
 				boardState[i][j] = board[i][j];
 	}
-	boolean matchBoardState(){
+	void loadBoardState(){
+		int i,j;
+		if (boardState == null)
+			return;
+		for (i = 0; i < this.size; i++)
+			for (j = 0; j < this.size; j++)
+				board[i][j] = boardState[i][j];
+
+	}
+	boolean matchBoardState(Board otherBoard){
 		int i,j;
 		if (boardState == null)
 			return false;
-		for (i = 0; i < this.size; i++)
-			for (j = 0; j < this.size; j++)
-				if (boardState[i][j] != board[i][j])
+		for (i = 0; i < otherBoard.getSize(); i++)
+			for (j = 0; j < otherBoard.getSize(); j++)
+				if (boardState[i+1][j+1] != otherBoard.getPoint(i,j))
 					return false;
 		return true;
 	}
-	boolean isKO(){
+	/*boolean isKO(){
 		return matchBoardState();
-	}
+	}*/
 	static int getOppositeSide(int stone){
 		if (stone == FRIENDLY)
 			return ENEMY;
