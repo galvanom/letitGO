@@ -9,10 +9,10 @@ public class Playout{
 		int random_point;
 		int stoneType = first_stone;
 		int passTimes = 0;
-		int maxMoves = 200;
+		int MAX_MOVES = 200;
 		Point p;
 
-		for (int movesCount = 0; movesCount < maxMoves && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
+		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 			free_points = getFreePoints(board, stoneType);
 			
 			if (free_points.size() == 0){
@@ -98,15 +98,15 @@ public class Playout{
 		new_board.saveBoardState();
 		new_board.setPoint(p, stoneType);
 		System.out.printf("[%d,%d]", p.i,p.j);
-		new_board.printBoard();
+		//new_board.printBoard();
 		removeDeadStones(new_board, Board.getOppositeSide(stoneType));
 		if (board.matchBoardState(new_board)){ //KO
 			System.out.println("KO");
 			return false;
 		}
 		else{
-			System.out.println("NewBoard:");
-			new_board.printBoard();
+			//System.out.println("NewBoard:");
+			//new_board.printBoard();
 			new_board.loadBoardState();
 		}
 
@@ -142,7 +142,7 @@ public class Playout{
 				if (board.getPoint(point) == stoneType){
 					deleteThisStones = isGroupDead(board, point);
 					if (deleteThisStones != null){
-						System.out.println("Deleted stones: ");
+						System.out.println("\nDeleted stones: ");
 						for (Point stone: deleteThisStones){
 							board.setPoint(stone, Board.EMPTY);
 							System.out.printf("[%d,%d] ",stone.i, stone.j);
@@ -216,5 +216,39 @@ public class Playout{
 		}
 
 		return false;
+	}
+	void getTerritory(Board board){
+		int i,j, friendScore = 0, enemyScore = 0;
+		int surroundedStones[] = new int[4];
+		Point p;
+		boolean isFriendly;
+
+
+		for (i = 0; i < board.getSize(); i++){
+			for (j = 0; j < board.getSize(); j++){
+				p = new Point(i,j);
+				if (board.getPoint(p) == Board.EMPTY){
+					surroundedStones[0] = board.getPoint(i-1,j);
+					surroundedStones[1] = board.getPoint(i+1,j);
+					surroundedStones[2] = board.getPoint(i,j-1);
+					surroundedStones[3] = board.getPoint(i,j+1);
+
+					isFriendly = true;
+					for (int pointType: surroundedStones){
+						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){
+							isFriendly = false;
+							break;
+						}
+					}
+
+					if (isFriendly)
+						friendScore++;
+					else
+						enemyScore++;
+
+
+				}
+			}
+		}
 	}
 }

@@ -46,7 +46,7 @@ public class Board{
 	}
 	void printBoard(){
 		int i, j, k;
-		System.out.print("  ");
+		System.out.print("\n  ");
 		for (k = 0; k < size-2; k++){
 			System.out.printf("%d ", k);
 		}

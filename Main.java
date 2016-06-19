@@ -7,9 +7,9 @@ public class Main{
 		Board board = new Board(9);
 		Point p;
 		Playout playout = new Playout();
-		//playout.playRandomGame(board, Board.FRIENDLY);
+		playout.playRandomGame(board, Board.ENEMY);
 		
-		board.loadFromFile("board9x9.dat");
+		/*board.loadFromFile("board9x9.dat");
 		//playout.removeDeadStones(board);
 		board.printBoard();
 		board.saveBoardState();
@@ -28,7 +28,7 @@ public class Main{
 		else
 			System.out.println("\nIllegal move");
 		board.setPoint(new Point(4,2), Board.ENEMY);
-		
+		*/
 		board.printBoard();
 	}
 	
