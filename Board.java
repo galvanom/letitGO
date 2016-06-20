@@ -4,6 +4,8 @@ import java.io.*;
 public class Board{
 	int[][] board, boardState;
 	int size;
+	Point koPoint = null;
+	int koPointLifeTime = 0;
 	//Point types
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
@@ -77,31 +79,55 @@ public class Board{
 		}
 		
 	}
+	//TODO: Gavnokod!!!
 	void loadFromFile(String filename){
-		
-
 		int i,j;
-		try {
-			File file = new File(filename);
-			Scanner sc = new Scanner(file);
-			for (i = 0; sc.hasNextLine(); i++){
-				for (j = 0; j < this.size-2; j++)
-					board[i+1][j+1] = sc.nextInt();
+		char point;
+		int c;
+		try{
+			InputStream in = new FileInputStream(new File(filename));
+			for (i = 0, j = 0, c = in.read(); c != -1 && i < this.size -2; c = in.read()){ 
+				if ((char)c == ' ')
+					continue;
+
+				switch ((char)c){
+					case '.':
+						board[i+1][j+1] = Board.EMPTY;
+						j++;
+						break;
+					case 'X':
+						board[i+1][j+1] = Board.ENEMY;
+						j++;
+						break;
+					case 'O':
+						board[i+1][j+1] = Board.FRIENDLY;
+						j++;
+						break;
+					default:
+					break;
+				}
+				if (j == this.size - 2){
+					i++; j = 0;
+				}
 			}
 		}
-		catch (FileNotFoundException e) {
-        	e.printStackTrace();
-        }
- 
+
+		catch(IOException e){
+			System.out.println("File read error");
+		}
 
 	}
 	boolean setPoint(int i, int j, int pointType){
-		//saveBoardState();				//for KO
+		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY) //for KO
+			koPointLifeTime++;
+
 		board[i + 1][j + 1] = pointType;
 		return true;
 	}
 	boolean setPoint(Point p, int pointType){
-		//saveBoardState();				//for KO
+		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY) //for KO
+			koPointLifeTime++;
+
 		board[p.i + 1][p.j + 1] = pointType;
 		return true;
 	}
@@ -149,6 +175,18 @@ public class Board{
 			return ENEMY;
 			
 		return FRIENDLY;
+	}
+	void setKO(Point point){
+		koPoint = point;
+		koPointLifeTime = 0;
+	}
+	boolean isKO(Point point){
+		if (koPointLifeTime == 0 && koPoint != null){
+			if (koPoint.i == point.i && koPoint.j == point.j){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

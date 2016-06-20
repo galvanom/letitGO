@@ -28,6 +28,7 @@ public class Playout{
 			removeDeadStones(board, Board.getOppositeSide(stoneType));
 
 		}
+		getScore(board);
 		
 	}
 	ArrayList<Point> getFreePoints(Board board, int stoneType){
@@ -94,14 +95,20 @@ public class Playout{
 			return true;
 		if (isFriendlySingleEyePoint(p, stoneType, board))
 			return false;
+		if (board.isKO(p)){
+			System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
+			return false;
+		}
+
+		/*
 		//KO check
 		new_board.saveBoardState();
 		new_board.setPoint(p, stoneType);
-		System.out.printf("[%d,%d]", p.i,p.j);
+		//System.out.printf("[%d,%d]", p.i,p.j);
 		//new_board.printBoard();
 		removeDeadStones(new_board, Board.getOppositeSide(stoneType));
 		if (board.matchBoardState(new_board)){ //KO
-			System.out.println("KO");
+			//System.out.println("KO");
 			return false;
 		}
 		else{
@@ -109,7 +116,7 @@ public class Playout{
 			//new_board.printBoard();
 			new_board.loadBoardState();
 		}
-
+		*/
 		new_board.setPoint(p, stoneType);
 
 		 //posible suicide move
@@ -133,8 +140,8 @@ public class Playout{
 	}
 	//TODO: Take a stoneType to function, to remove right type stones 
 	void removeDeadStones(Board board, int stoneType){
-		int i,j;
-		Point point;
+		int i,j, delStonesNumber = 0;
+		Point point, lastPoint = null;
 		ArrayList<Point> deleteThisStones;
 		for(i = 0; i < board.getSize(); i++){
 			for(j = 0; j < board.getSize(); j++){
@@ -142,16 +149,23 @@ public class Playout{
 				if (board.getPoint(point) == stoneType){
 					deleteThisStones = isGroupDead(board, point);
 					if (deleteThisStones != null){
-						System.out.println("\nDeleted stones: ");
+						//System.out.println("\nDeleted stones: ");
+						delStonesNumber += deleteThisStones.size();
+						lastPoint = point; //possible ko point
+							    
+
 						for (Point stone: deleteThisStones){
 							board.setPoint(stone, Board.EMPTY);
-							System.out.printf("[%d,%d] ",stone.i, stone.j);
+							//System.out.printf("[%d,%d] ",stone.i, stone.j);
 						}
-						System.out.println();
+						//System.out.println();
 					}
 				}
 			
 			}
+		}
+		if (delStonesNumber == 1 && lastPoint != null){
+			board.setKO(lastPoint);
 		}
 	}
 	ArrayList<Point> isGroupDead (Board board, Point p){
@@ -217,7 +231,7 @@ public class Playout{
 
 		return false;
 	}
-	void getTerritory(Board board){
+	void getScore(Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		int surroundedStones[] = new int[4];
 		Point p;
@@ -250,5 +264,6 @@ public class Playout{
 				}
 			}
 		}
+		System.out.printf("\nFriend score: %d Enemy score: %d", friendScore, enemyScore);
 	}
 }

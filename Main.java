@@ -7,12 +7,12 @@ public class Main{
 		Board board = new Board(9);
 		Point p;
 		Playout playout = new Playout();
-		playout.playRandomGame(board, Board.ENEMY);
+		//playout.playRandomGame(board, Board.ENEMY);
 		
-		/*board.loadFromFile("board9x9.dat");
+		board.loadFromFile("board9x9_1.dat");
 		//playout.removeDeadStones(board);
 		board.printBoard();
-		board.saveBoardState();
+		/*board.saveBoardState();
 		
 		if (playout.checkRules(new Point(4,3), Board.FRIENDLY, board))
 			System.out.println("\nLegal move");
