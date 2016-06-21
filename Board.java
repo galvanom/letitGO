@@ -167,9 +167,6 @@ public class Board{
 					return false;
 		return true;
 	}
-	/*boolean isKO(){
-		return matchBoardState();
-	}*/
 	static int getOppositeSide(int stone){
 		if (stone == FRIENDLY)
 			return ENEMY;
@@ -188,5 +185,6 @@ public class Board{
 		}
 		return false;
 	}
+
 
 }

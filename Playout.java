@@ -2,7 +2,6 @@ import java.util.*;
 import java.io.*;
 
 public class Playout{
-
 	void playRandomGame(Board board, int first_stone){
 		ArrayList<Point> free_points;
 		Random random = new Random();
@@ -23,13 +22,16 @@ public class Playout{
 
 			random_point = random.nextInt(free_points.size());
 			p = free_points.get(random_point);
-			board.saveBoardState(); //for KO
-			board.setPoint(p, stoneType);
-			removeDeadStones(board, Board.getOppositeSide(stoneType));
+			//board.saveBoardState(); //for KO
+			makeMove(board, p, stoneType);
 
 		}
 		getScore(board);
 		
+	}
+	void makeMove(Board board, Point p, int stoneType){
+		board.setPoint(p, stoneType);
+		removeDeadStones(board, Board.getOppositeSide(stoneType));
 	}
 	ArrayList<Point> getFreePoints(Board board, int stoneType){
 		int i,j;
@@ -96,7 +98,7 @@ public class Playout{
 		if (isFriendlySingleEyePoint(p, stoneType, board))
 			return false;
 		if (board.isKO(p)){
-			System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
+			//System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
 			return false;
 		}
 
@@ -138,7 +140,7 @@ public class Playout{
 
 		return false;
 	}
-	//TODO: Take a stoneType to function, to remove right type stones 
+
 	void removeDeadStones(Board board, int stoneType){
 		int i,j, delStonesNumber = 0;
 		Point point, lastPoint = null;
