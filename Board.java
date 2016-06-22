@@ -129,7 +129,7 @@ public class Board{
 			koPointLifeTime++;
 
 		board[p.i + 1][p.j + 1] = pointType;
-		return true;
+		return true; //TODO: Boolean ?
 	}
 	int getPoint(int i, int j){
 		return board[i + 1][j + 1];

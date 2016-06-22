@@ -9,8 +9,13 @@ public class Main{
 		Point p;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
+		
+		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
-		/*for (int i = 0; i < 10000; i++){
+		mc.playOneSequence();
+
+		/*
+		for (int i = 0; i < 100; i++){
 			board = new Board(9);
 			System.out.printf("\n%d\n",i);
 			playout.playRandomGame(board, Board.getOppositeSide(stoneType));
