@@ -27,11 +27,13 @@ public class Montecarlo{
 
 			allPossibleMoves = this.playout.getFreePoints(board, Board.getOppositeSide(stoneType));
 		}
-		void addChild(Point p){
+		Node addChild(Point p){
+			Node child;
 			if (children == null)
 				children = new ArrayList<Node>();
-
-			children.add(new Node(this, board, p, Board.getOppositeSide(stoneType)));
+			child = new Node(this, board, p, Board.getOppositeSide(stoneType))
+			children.add(child);
+			return child;
 		}
 		ArrayList<Node> getChildren(){
 			return children;
@@ -47,6 +49,9 @@ public class Montecarlo{
 		}
 		int getWins(){
 			return wins;
+		}
+		Point getPoint(){
+			return point;
 		}
 	}
 	Node root;
@@ -105,5 +110,23 @@ public class Montecarlo{
 		}
 		return currentNode;
 		
+	}
+	//TODO: Add if moves == null
+	Node Expand(Node papa){
+		papasChildren = papa.getChildren();
+
+		for (Point move: papa.allPossibleMoves){
+			for (Node child: papasChildren){
+				if (papasChildren == null){
+					return papa.addChild(move);
+				}
+				if (move.i == child.getPoint.i && move.j == child.getPoint.j){
+					continue;
+				}
+
+				return papa.addChild(move);
+
+			}	
+		}
 	}
 }
