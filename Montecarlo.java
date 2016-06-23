@@ -71,12 +71,17 @@ public class Montecarlo{
 		Node currentNode = node;
 
 		for (children = currentNode.getChildren(); children != null; currentNode = bestNode){
+			
 			bestNode = null;
 			bestValue = -1;
 			t = 0;
-			//if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
-			//	return null; ///!!!!
-
+			if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
+				break; ///!!!!
+			/*if (children == null)
+				System.out.printf("children == null");
+			else
+				System.out.printf("children != null");
+				*/
 			
 			for (Node child: children){
 				t += child.getGames()      +1;
@@ -95,8 +100,10 @@ public class Montecarlo{
 					bestNode = child;
 				}
 			}
+			children = currentNode.getChildren();
 			
 		}
+		return currentNode;
 		
 	}
 }
