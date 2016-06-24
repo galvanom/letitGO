@@ -2,7 +2,8 @@ import java.util.*;
 import java.io.*;
 
 public class Playout{
-	void playRandomGame(Board board, int first_stone){
+	//TODO: return winner
+	int playRandomGame(Board board, int first_stone){
 		ArrayList<Point> free_points;
 		Random random = new Random();
 		int random_point;
@@ -26,7 +27,9 @@ public class Playout{
 			makeMove(board, p, stoneType);
 
 		}
-		getScore(board);
+
+		int[] score = getScore(board);
+		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 		
 	}
 	void makeMove(Board board, Point p, int stoneType){
@@ -233,7 +236,7 @@ public class Playout{
 
 		return false;
 	}
-	void getScore(Board board){
+	int[] getScore(Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		int surroundedStones[] = new int[4];
 		Point p;
@@ -267,5 +270,9 @@ public class Playout{
 			}
 		}
 		System.out.printf("\nFriend score: %d Enemy score: %d", friendScore, enemyScore);
+		
+		int[] score = {friendScore, enemyScore};
+		return score;
+		
 	}
 }

@@ -6,7 +6,7 @@ public class Montecarlo{
 	private class Node{
 		Node parent;
 		ArrayList<Node> children = null;
-		Board board;
+		Board board; 
 		int stoneType;
 		Point point;
 		Playout playout;
@@ -31,7 +31,7 @@ public class Montecarlo{
 			Node child;
 			if (children == null)
 				children = new ArrayList<Node>();
-			child = new Node(this, board, p, Board.getOppositeSide(stoneType))
+			child = new Node(this, board, p, Board.getOppositeSide(stoneType));
 			children.add(child);
 			return child;
 		}
@@ -53,6 +53,21 @@ public class Montecarlo{
 		Point getPoint(){
 			return point;
 		}
+		int getStoneType(){  //TODO: Don't need this function
+			return stoneType;
+		}
+		Board getBoard(){ //TODO: Don't need this function
+			return board;
+		}
+		Node getParent(){
+			return parent;
+		}
+		int StartPlayout(){
+			if (playout == null){
+				playout = new Playout();
+			}
+			return playout.playRandomGame(board, Board.getOppositeSide(stoneType)); 
+		}
 	}
 	Node root;
 	Montecarlo(Board board, int whoseTurn){
@@ -63,8 +78,11 @@ public class Montecarlo{
 		root.addChild(new Point(2,2));
 		root.getChildren().get(0).addChild(new Point(3,3));
 		Node node = SelectNode(root);
-		if (node != null)
-			System.out.print(node.getGames());
+		//if (node != null)
+		//	System.out.print(node.getGames());
+		node = Expand(node);
+		int winner = Simulation(node);
+		BackPropagation(node, winner);
 
 	}
 	Node SelectNode(Node node){
@@ -111,22 +129,31 @@ public class Montecarlo{
 		return currentNode;
 		
 	}
-	//TODO: Add if moves == null
+	
 	Node Expand(Node papa){
-		papasChildren = papa.getChildren();
+		ArrayList<Node> papasChildren = papa.getChildren();
 
 		for (Point move: papa.allPossibleMoves){
 			for (Node child: papasChildren){
-				if (papasChildren == null){
+				if (papasChildren == null && (move.i != child.getPoint().i || move.j != child.getPoint().j)){
 					return papa.addChild(move);
 				}
-				if (move.i == child.getPoint.i && move.j == child.getPoint.j){
-					continue;
-				}
-
-				return papa.addChild(move);
-
 			}	
 		}
+		return null;
 	}
+	int Simulation(Node node){
+		return node.StartPlayout();
+	}
+	void BackPropagation(Node startNode, int winner){
+		Node currentNode = startNode;
+		do{
+			if (currentNode.getStoneType() == winner)
+				currentNode.incWins();
+			currentNode.incGames();
+			currentNode = currentNode.getParent();
+		} while(currentNode != null);
+		
+	}
+
 }
