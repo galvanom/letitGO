@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-
+//TODO: Change functions capital letters
 public class Montecarlo{
 	private class Node{
 		Node parent;
@@ -26,6 +26,9 @@ public class Montecarlo{
 				this.playout.makeMove(this.board, point, stoneType);
 
 			allPossibleMoves = this.playout.getFreePoints(board, Board.getOppositeSide(stoneType));
+			if (allPossibleMoves.size() == 0){
+				System.out.printf("\nallPossibleMoves == 0 %d,%d\n", point.i, point.j);
+			}
 		}
 		Node addChild(Point p){
 			Node child;
@@ -74,19 +77,19 @@ public class Montecarlo{
 		root = new Node(null, board, null, whoseTurn);
 	}
 	void playOneSequence(){
-		root.addChild(new Point(1,1));
-		root.addChild(new Point(2,2));
-		root.getChildren().get(0).addChild(new Point(3,3));
+		//root.addChild(new Point(1,1));
+		//root.addChild(new Point(2,2));
+		//root.getChildren().get(0).addChild(new Point(3,3));
 		Node node = SelectNode(root);
 
 		node = Expand(node);
 		if (node == null)
-			System.out.print("Node == null\n");
+			System.out.printf("node == null\n");
 		int winner = Simulation(node);
 		BackPropagation(node, winner);
 
 	}
-	Node SelectNode(Node node){
+	private Node SelectNode(Node node){
 		int i, n, w, t; 
 		double value, bestValue = -1, c = 0.44;
 		Node bestNode = null;
@@ -108,13 +111,13 @@ public class Montecarlo{
 				*/
 			
 			for (Node child: children){
-				t += child.getGames()      +1;
+				t += child.getGames();//     +1;
 			}
 			
 
 			for (Node child: children){
-				n = child.getGames()      +1;
-				w = child.getWins()      +1;
+				n = child.getGames();//      +1;
+				w = child.getWins();//    +1;
 				//if (n==0)
 				//	n = 1;
 				value = w/n + c * Math.sqrt(Math.log(t)/n);
@@ -131,22 +134,25 @@ public class Montecarlo{
 		
 	}
 	
-	Node Expand(Node papa){
+	private Node Expand(Node papa){
 		ArrayList<Node> papasChildren = papa.getChildren();
-
 		for (Point move: papa.allPossibleMoves){
+			if (papasChildren == null){
+				return papa.addChild(move);
+			}
 			for (Node child: papasChildren){
-				if (papasChildren == null || (move.i != child.getPoint().i || move.j != child.getPoint().j)){
+				 if (move.i != child.getPoint().i || move.j != child.getPoint().j){
 					return papa.addChild(move);
 				}
 			}	
 		}
+		System.out.printf("allPossibleMovesoves size: %d\n", papa.allPossibleMoves.size());
 		return null;
 	}
-	int Simulation(Node node){
+	private int Simulation(Node node){
 		return node.StartPlayout();
 	}
-	void BackPropagation(Node startNode, int winner){
+	private void BackPropagation(Node startNode, int winner){
 		Node currentNode = startNode;
 		do{
 			if (currentNode.getStoneType() == winner)
@@ -155,6 +161,38 @@ public class Montecarlo{
 			currentNode = currentNode.getParent();
 		} while(currentNode != null);
 		
+	}
+	//non recursive DFS
+	void printTree(){
+		Node node;
+		ArrayList<Node> nodeChildren;
+		Stack<Node> stack = new Stack<Node>();
+		Stack<String> tabs_stack = new Stack<String>();		//TODO: fix this variable
+		String tab = "+";
+		
+		stack.push(root);
+		tabs_stack.add(tab);
+		System.out.printf("\nMonteCarlo search tree:\n");
+		while(!stack.empty()){
+			node = stack.pop();
+			tab = tabs_stack.pop();
+			nodeChildren = node.getChildren();
+			
+			if (nodeChildren != null){
+				for (Node child: nodeChildren){
+					tabs_stack.add(tab+"+");
+					stack.add(child);
+				}
+			}
+			if (node.getParent() != null){
+				System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
+					node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
+				  	node.getPoint().i, node.getPoint().j,
+				  	node.getGames(), node.getWins());
+			}
+
+		}
+
 	}
 
 }
