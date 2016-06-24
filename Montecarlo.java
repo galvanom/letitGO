@@ -78,9 +78,10 @@ public class Montecarlo{
 		root.addChild(new Point(2,2));
 		root.getChildren().get(0).addChild(new Point(3,3));
 		Node node = SelectNode(root);
-		//if (node != null)
-		//	System.out.print(node.getGames());
+
 		node = Expand(node);
+		if (node == null)
+			System.out.print("Node == null\n");
 		int winner = Simulation(node);
 		BackPropagation(node, winner);
 
@@ -135,7 +136,7 @@ public class Montecarlo{
 
 		for (Point move: papa.allPossibleMoves){
 			for (Node child: papasChildren){
-				if (papasChildren == null && (move.i != child.getPoint().i || move.j != child.getPoint().j)){
+				if (papasChildren == null || (move.i != child.getPoint().i || move.j != child.getPoint().j)){
 					return papa.addChild(move);
 				}
 			}	
