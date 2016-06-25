@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Playout{
 	//TODO: return winner
-	int playRandomGame(Board board, int first_stone){
+	int playRandomGame(final Board board, int first_stone){
 		ArrayList<Point> free_points;
 		Random random = new Random();
 		int random_point;
@@ -11,9 +11,10 @@ public class Playout{
 		int passTimes = 0;
 		int MAX_MOVES = 200;
 		Point p;
+		Board playBoard = new Board(board);
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
-			free_points = getFreePoints(board, stoneType);
+			free_points = getFreePoints(playBoard, stoneType);
 			
 			if (free_points.size() == 0){
 				passTimes++;
@@ -23,12 +24,12 @@ public class Playout{
 
 			random_point = random.nextInt(free_points.size());
 			p = free_points.get(random_point);
-			//board.saveBoardState(); //for KO
-			makeMove(board, p, stoneType);
+			//playBoard.saveBoardState(); //for KO
+			makeMove(playBoard, p, stoneType);
 
 		}
 
-		int[] score = getScore(board);
+		int[] score = getScore(playBoard);
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 		
 	}
@@ -45,10 +46,12 @@ public class Playout{
 			for (j = 0; j < board.getSize(); j++){
 				p = new Point(i,j);
 				if (board.getPoint(p) == Board.EMPTY){
+					//System.out.printf ("b");
 					if (checkRules(p, stoneType, board))
 						points.add(p);
 				}
 			}
+
 		return points;
 	}
 

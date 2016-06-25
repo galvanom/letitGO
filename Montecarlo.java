@@ -25,8 +25,9 @@ public class Montecarlo{
 			if (parent != null && point != null) 		//root node
 				this.playout.makeMove(this.board, point, stoneType);
 
-			allPossibleMoves = this.playout.getFreePoints(board, Board.getOppositeSide(stoneType));
+			allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
 			if (allPossibleMoves.size() == 0){
+				//board.printBoard();
 				System.out.printf("\nallPossibleMoves == 0 %d,%d\n", point.i, point.j);
 			}
 		}
@@ -93,7 +94,7 @@ public class Montecarlo{
 		int i, n, w, t; 
 		double value, bestValue = -1, c = 0.44;
 		Node bestNode = null;
-		int MAX_NODES = 5;
+		int MAX_NODES = 10;
 		ArrayList<Node> children;
 		Node currentNode = node;
 
@@ -146,7 +147,7 @@ public class Montecarlo{
 				}
 			}	
 		}
-		System.out.printf("allPossibleMovesoves size: %d\n", papa.allPossibleMoves.size());
+		System.out.printf("allPossibleMoves size: %d\n", papa.allPossibleMoves.size());
 		return null;
 	}
 	private int Simulation(Node node){
@@ -175,6 +176,7 @@ public class Montecarlo{
 		System.out.printf("\nMonteCarlo search tree:\n");
 		while(!stack.empty()){
 			node = stack.pop();
+			//node.getBoard().printBoard();
 			tab = tabs_stack.pop();
 			nodeChildren = node.getChildren();
 			
