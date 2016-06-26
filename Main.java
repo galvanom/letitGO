@@ -9,16 +9,25 @@ public class Main{
 		Point p;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
-		
+		board.loadFromFile("board9x9_1.dat");	
 		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
-		for (int i = 0; i < 40; i++){
+		for (int i = 0; i < 10; i++){
 			
 			mc.playOneSequence();
 
 		}
 		
-		mc.printTree();
+		//mc.printTree();
+		
+		p = mc.getWinner();
+		if (p != null){
+			System.out.printf("\nBest move is [%d, %d]\n", p.i, p.j);
+			board.printBoard();
+		}
+		else {
+			System.out.printf("\nCan't get best move, function returned null.\n");
+		}
 
 		/*
 		for (int i = 0; i < 100; i++){

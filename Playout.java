@@ -272,7 +272,7 @@ public class Playout{
 				}
 			}
 		}
-		System.out.printf("\nFriend score: %d Enemy score: %d", friendScore, enemyScore);
+		//System.out.printf("\nFriend score: %d Enemy score: %d", friendScore, enemyScore);
 
 		int[] score = {friendScore, enemyScore};
 		return score;

@@ -83,8 +83,8 @@ public class Montecarlo{
 		Node node = selectNode(root);
 
 		node = expand(node);
-		if (node == null)
-			System.out.printf("node == null\n");
+		//if (node == null)
+		//	System.out.printf("node == null\n");
 		int winner = simulation(node);
 		backPropagation(node, winner);
 
@@ -175,6 +175,30 @@ public class Montecarlo{
 			currentNode.incGames();
 			currentNode = currentNode.getParent();
 		} while(currentNode != null);
+		
+	}
+	Point getWinner(){
+		ArrayList<Node> children = root.getChildren();
+		Node bestChild = null;
+		int maxGames = -1, games;
+		if (children != null){
+			for (Node child : children){
+				games = child.getGames();
+				if (games > maxGames){
+					maxGames = games;
+					bestChild = child;
+				}
+
+			}
+		}
+
+		if (bestChild != null){
+			return bestChild.getPoint();
+		}
+		else {
+			return null;
+		}
+		
 		
 	}
 	//non recursive DFS
