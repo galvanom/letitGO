@@ -137,7 +137,25 @@ public class Montecarlo{
 	
 	private Node Expand(Node papa){
 		ArrayList<Node> papasChildren = papa.getChildren();
-		for (Point move: papa.allPossibleMoves){
+		int boardSize = root.getBoard().getSize();
+		int[][] childrenBoard = new int[boardSize][boardSize];
+		ArrayList<Point> notExpanded = new ArrayList<Point>(); 
+		
+		//TODO: Set 0 to childrenBoard
+		for (Node child: papasChildren){
+			childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
+		}
+		for (Point currentPoint: papa.allPossibleMoves){
+			if (childrenBoard[currentPoint.i][currentPoint.j] != 1){
+				notExpanded.add(currentPoint);
+			}
+		}
+		//TODO: return random point
+		if (notExpanded.size() != 0){
+			return papa.addChild(notExpanded.get(0));
+		}
+
+		/*for (Point move: papa.allPossibleMoves){
 			if (papasChildren == null){
 				return papa.addChild(move);
 			}
@@ -148,6 +166,8 @@ public class Montecarlo{
 			}	
 		}
 		System.out.printf("allPossibleMoves size: %d\n", papa.allPossibleMoves.size());
+
+		*/
 		return null;
 	}
 	private int Simulation(Node node){
