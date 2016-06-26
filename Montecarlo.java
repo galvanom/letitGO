@@ -1,7 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-//TODO: Change functions capital letters
 public class Montecarlo{
 	private class Node{
 		Node parent;
@@ -57,16 +56,16 @@ public class Montecarlo{
 		Point getPoint(){
 			return point;
 		}
-		int getStoneType(){  //TODO: Don't need this function
+		int getStoneType(){  
 			return stoneType;
 		}
-		Board getBoard(){ //TODO: Don't need this function
+		Board getBoard(){
 			return board;
 		}
 		Node getParent(){
 			return parent;
 		}
-		int StartPlayout(){
+		int startPlayout(){
 			if (playout == null){
 				playout = new Playout();
 			}
@@ -81,16 +80,16 @@ public class Montecarlo{
 		//root.addChild(new Point(1,1));
 		//root.addChild(new Point(2,2));
 		//root.getChildren().get(0).addChild(new Point(3,3));
-		Node node = SelectNode(root);
+		Node node = selectNode(root);
 
-		node = Expand(node);
+		node = expand(node);
 		if (node == null)
 			System.out.printf("node == null\n");
-		int winner = Simulation(node);
-		BackPropagation(node, winner);
+		int winner = simulation(node);
+		backPropagation(node, winner);
 
 	}
-	private Node SelectNode(Node node){
+	private Node selectNode(Node node){
 		int i, n, w, t; 
 		double value, bestValue = -1, c = 0.44;
 		Node bestNode = null;
@@ -135,45 +134,40 @@ public class Montecarlo{
 		
 	}
 	
-	private Node Expand(Node papa){
+	private Node expand(Node papa){
 		ArrayList<Node> papasChildren = papa.getChildren();
 		int boardSize = root.getBoard().getSize();
 		int[][] childrenBoard = new int[boardSize][boardSize];
 		ArrayList<Point> notExpanded = new ArrayList<Point>(); 
+		Random random = new Random();
+		int randomPoint;
 		
-		//TODO: Set 0 to childrenBoard
-		for (Node child: papasChildren){
-			childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
+		for (int i = 0; i < boardSize; i++)
+			Arrays.fill(childrenBoard[i], 0);
+
+		if (papasChildren != null){
+			for (Node child: papasChildren){
+				childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
+			}
 		}
 		for (Point currentPoint: papa.allPossibleMoves){
 			if (childrenBoard[currentPoint.i][currentPoint.j] != 1){
 				notExpanded.add(currentPoint);
 			}
 		}
-		//TODO: return random point
+
 		if (notExpanded.size() != 0){
-			return papa.addChild(notExpanded.get(0));
+			randomPoint = random.nextInt(notExpanded.size());
+			return papa.addChild(notExpanded.get(randomPoint));
 		}
 
-		/*for (Point move: papa.allPossibleMoves){
-			if (papasChildren == null){
-				return papa.addChild(move);
-			}
-			for (Node child: papasChildren){
-				 if (move.i != child.getPoint().i || move.j != child.getPoint().j){
-					return papa.addChild(move);
-				}
-			}	
-		}
-		System.out.printf("allPossibleMoves size: %d\n", papa.allPossibleMoves.size());
-
-		*/
+		
 		return null;
 	}
-	private int Simulation(Node node){
-		return node.StartPlayout();
+	private int simulation(Node node){
+		return node.startPlayout();
 	}
-	private void BackPropagation(Node startNode, int winner){
+	private void backPropagation(Node startNode, int winner){
 		Node currentNode = startNode;
 		do{
 			if (currentNode.getStoneType() == winner)
