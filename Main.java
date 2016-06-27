@@ -10,11 +10,15 @@ public class Main{
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		board.loadFromFile("board9x9_1.dat");	
+		board.printBoard();
+		//playout.playRandomGame(board, Board.ENEMY);
+
 		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
-		for (int i = 0; i < 10; i++){
+		for (int i = 0; i < 100; i++){
 			
 			mc.playOneSequence();
+			System.gc();
 
 		}
 		
@@ -28,7 +32,7 @@ public class Main{
 		else {
 			System.out.printf("\nCan't get best move, function returned null.\n");
 		}
-
+		
 		/*
 		for (int i = 0; i < 100; i++){
 			board = new Board(9);

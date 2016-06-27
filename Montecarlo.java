@@ -76,15 +76,16 @@ public class Montecarlo{
 	Montecarlo(Board board, int whoseTurn){
 		root = new Node(null, board, null, whoseTurn);
 	}
-	void playOneSequence(){
+	public void playOneSequence(){
 		//root.addChild(new Point(1,1));
 		//root.addChild(new Point(2,2));
 		//root.getChildren().get(0).addChild(new Point(3,3));
 		Node node = selectNode(root);
 
 		node = expand(node);
-		//if (node == null)
-		//	System.out.printf("node == null\n");
+		if (node == null){
+			return;
+		}
 		int winner = simulation(node);
 		backPropagation(node, winner);
 
@@ -161,7 +162,6 @@ public class Montecarlo{
 			return papa.addChild(notExpanded.get(randomPoint));
 		}
 
-		
 		return null;
 	}
 	private int simulation(Node node){
@@ -177,7 +177,7 @@ public class Montecarlo{
 		} while(currentNode != null);
 		
 	}
-	Point getWinner(){
+	public Point getWinner(){
 		ArrayList<Node> children = root.getChildren();
 		Node bestChild = null;
 		int maxGames = -1, games;
@@ -202,7 +202,7 @@ public class Montecarlo{
 		
 	}
 	//non recursive DFS
-	void printTree(){
+	public void printTree(){
 		Node node;
 		ArrayList<Node> nodeChildren;
 		Stack<Node> stack = new Stack<Node>();

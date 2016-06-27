@@ -28,6 +28,7 @@ public class Playout{
 			makeMove(playBoard, p, stoneType);
 
 		}
+		playBoard.printBoard();
 
 		int[] score = getScore(playBoard);
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
@@ -47,8 +48,12 @@ public class Playout{
 				p = new Point(i,j);
 				if (board.getPoint(p) == Board.EMPTY){
 					//System.out.printf ("b");
-					if (checkRules(p, stoneType, board))
+					if (checkRules(p, stoneType, board)){
 						points.add(p);
+						/*if (p.i == 8 && p.j == 3)
+							System.out.printf("\n %d %d\n", p.i, p.j);
+							*/
+					}
 				}
 			}
 
@@ -268,6 +273,15 @@ public class Playout{
 					else
 						enemyScore++;
 
+
+				}
+				else {
+					if (board.getPoint(p) == Board.FRIENDLY){
+						friendScore++;
+					}
+					if (board.getPoint(p) == Board.ENEMY){
+						enemyScore++;
+					}
 
 				}
 			}
