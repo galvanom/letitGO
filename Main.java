@@ -9,19 +9,20 @@ public class Main{
 		Point p;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
-		board.loadFromFile("board9x9_1.dat");	
+		//board.loadFromFile("board9x9_1.dat");	
 		board.printBoard();
 		//playout.playRandomGame(board, Board.ENEMY);
 
 		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
+		long startTime = System.currentTimeMillis();
 		for (int i = 0; i < 100; i++){
 			
 			mc.playOneSequence();
-			System.gc();
+			//System.gc();
 
 		}
-		
+		System.out.println(System.currentTimeMillis() - startTime);
 		//mc.printTree();
 		
 		p = mc.getWinner();

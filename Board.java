@@ -176,6 +176,7 @@ public class Board{
 	void setKO(Point point){
 		koPoint = point;
 		koPointLifeTime = 0;
+		
 	}
 	boolean isKO(Point point){
 		if (koPointLifeTime == 0 && koPoint != null){

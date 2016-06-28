@@ -2,7 +2,13 @@ import java.util.*;
 import java.io.*;
 
 public class Playout{
-	//TODO: return winner
+	int counter, counterRules, counterDS;
+	Playout(){
+		counter = 0;
+		counterRules = 0;
+		counterDS = 0;
+	}
+
 	int playRandomGame(final Board board, int first_stone){
 		ArrayList<Point> free_points;
 		Random random = new Random();
@@ -28,7 +34,8 @@ public class Playout{
 			makeMove(playBoard, p, stoneType);
 
 		}
-		playBoard.printBoard();
+		//playBoard.printBoard();
+		//System.out.printf("Total: %d CheckRules: %d RemDeadSt: %d\n", counter, counterRules, counterDS);
 
 		int[] score = getScore(playBoard);
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
@@ -100,7 +107,7 @@ public class Playout{
 										new Point(p.i, p.j+1),	//right
 										new Point(p.i, p.j-1)	//left 
 									};
-
+		ArrayList<Point> group;
 		
 		//new_board.printBoard();
 
@@ -113,39 +120,39 @@ public class Playout{
 			return false;
 		}
 
-		/*
-		//KO check
-		new_board.saveBoardState();
-		new_board.setPoint(p, stoneType);
-		//System.out.printf("[%d,%d]", p.i,p.j);
-		//new_board.printBoard();
-		removeDeadStones(new_board, Board.getOppositeSide(stoneType));
-		if (board.matchBoardState(new_board)){ //KO
-			//System.out.println("KO");
-			return false;
-		}
-		else{
-			//System.out.println("NewBoard:");
-			//new_board.printBoard();
-			new_board.loadBoardState();
-		}
-		*/
+
 		new_board.setPoint(p, stoneType);
 
 		 //posible suicide move
-		if (isGroupDead(new_board, p) == null){
+		counterRules++;
+		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
+			
 			return true;
+
 		}
 
 		//check could we kill neigbour enemy groups with this move
+		//group = null;
+/*label1:*/	
 		for (Point next: surroundedStones){
-			
-			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){ //TODO: Always enemy?
+			counterRules++;
+
+			/*if (board.getPoint(next) == Board.getOppositeSide(stoneType)){ 
+				if (group != null){
+					for (Point stone: group){
+						if (stone.i == next.i && stone.j == next.j){
+							continue label1;
+						}
+					}
+				}*/
+			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
 				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
-				if (isGroupDead(new_board, next) != null)
+				group = getGroup(new_board, next);
+				if (isGroupDead(new_board, group) == true){
 					return true;
-				
+				}
 			}
+			
 
 		}
 
@@ -153,48 +160,72 @@ public class Playout{
 	}
 
 	void removeDeadStones(Board board, int stoneType){
-		int i,j, delStonesNumber = 0;
+		int i,j, deletedStonesNumber = 0;
 		Point point, lastPoint = null;
-		ArrayList<Point> deleteThisStones;
+		ArrayList<Point> group;
+		boolean[][] visited = new boolean[board.getSize()][board.getSize()];
+		
+		for(i = 0; i < board.getSize(); i++)
+			for(j = 0; j < board.getSize(); j++)
+				visited[i][j] = false;
+
 		for(i = 0; i < board.getSize(); i++){
 			for(j = 0; j < board.getSize(); j++){
 				point = new Point(i,j);
+				if (visited[point.i][point.j] == true){
+					continue;
+				}
+				
 				if (board.getPoint(point) == stoneType){
-					deleteThisStones = isGroupDead(board, point);
-					if (deleteThisStones != null){
+
+					group = getGroup(board, point);
+					counterDS++;
+					if (isGroupDead(board, group) == true){
 						//System.out.println("\nDeleted stones: ");
-						delStonesNumber += deleteThisStones.size();
+						deletedStonesNumber += group.size();
 						lastPoint = point; //possible ko point
 							    
 
-						for (Point stone: deleteThisStones){
+						for (Point stone: group){
 							board.setPoint(stone, Board.EMPTY);
 							//System.out.printf("[%d,%d] ",stone.i, stone.j);
 						}
 						//System.out.println();
 					}
+					else{
+						for (Point stone: group){
+							visited[stone.i][stone.j] = true;
+						}
+					}
 				}
 			
 			}
 		}
-		if (delStonesNumber == 1 && lastPoint != null){
+		if (deletedStonesNumber == 1 && lastPoint != null){
+			System.out.println("Heloooooooooooooooooooooo");
 			board.setKO(lastPoint);
 		}
 	}
-	ArrayList<Point> isGroupDead (Board board, Point p){
+	boolean isGroupDead(Board board, ArrayList<Point> group){
+		for (Point stone: group){
+			if (getDameNumber(stone, board) != 0){
+				return false;
+			}
+		}
+
+		return true;
+	}
+	ArrayList<Point> getGroup (Board board, Point p){
 		int i,j;
 		int dame_number;
 		Point point,up, down, left, right;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
-		
+		counter++;
 		queue.add(p);
-		dame_number = 0;
-
 		while (queue.size() > 0){
 			point = queue.poll();
 			visited.add(point);
-			dame_number += getDameNumber(point,board);
 			
 			up = new Point(point.i-1, point.j);
 			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
@@ -219,16 +250,8 @@ public class Playout{
 			}
 
 		}
-		//System.out.printf("\nDames:%d", dame_number);
-
-		if (dame_number == 0){
-			//System.out.println("Group is dead");
-			return visited;
-		}
-		
-		return null;
-		
-
+	
+		return visited;
 	}
 	boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
 		Iterator<Point> it_v = visited.iterator();
