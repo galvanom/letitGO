@@ -202,7 +202,7 @@ public class Playout{
 			}
 		}
 		if (deletedStonesNumber == 1 && lastPoint != null){
-			System.out.println("Heloooooooooooooooooooooo");
+			//System.out.printf("lastPoint: %d %d\n", lastPoint.i, lastPoint.j);
 			board.setKO(lastPoint);
 		}
 	}

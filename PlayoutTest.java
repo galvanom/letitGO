@@ -1,6 +1,7 @@
 import java.io.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class PlayoutTest{
@@ -13,35 +14,42 @@ public class PlayoutTest{
 	public void removeDeadStonesTest1(){
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
-		int firstPoint =  board.getPoint(2,6);
-		int secondPoint = board.getPoint(3,6);
+		int firstPoint;
+		int secondPoint;
 		Playout pl = new Playout();
 		
 		pl.removeDeadStones(board, Board.ENEMY);
-		assertFalse("removeDeadStonesTest1 failed", firstPoint == Board.EMPTY && secondPoint == Board.EMPTY);
+		firstPoint =  board.getPoint(2,6);
+		secondPoint = board.getPoint(3,6);
+		assertTrue("removeDeadStonesTest1 failed", firstPoint == Board.EMPTY && secondPoint == Board.EMPTY);
+
 	}
 	@Test
 	public void removeDeadStonesTest2(){
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
-		int point =  board.getPoint(0,0);
+		int point;
 		Playout pl = new Playout();
 		
 		pl.removeDeadStones(board, Board.FRIENDLY);
-		assertFalse("removeDeadStonesTest2 failed", point == Board.EMPTY);
+		point = board.getPoint(0,0);
+		assertTrue("removeDeadStonesTest2 failed", point == Board.EMPTY);
 	}
 	@Test
 	public void koTest(){
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
 		Playout pl = new Playout();
+		pl.removeDeadStones(board, Board.FRIENDLY);
+		pl.removeDeadStones(board, Board.ENEMY);
 
 		board.setPoint(8,6, Board.ENEMY);
 		pl.removeDeadStones(board, Board.FRIENDLY);
 		
-		System.out.printf("[%d %d]", board.koPoint.i, board.koPoint.j);
+		//board.setKO(new Point(8,7));
+		//System.out.printf("[%d %d]", board.koPoint.i, board.koPoint.j);
 
-		assertFalse("KO test failed", pl.checkRules(new Point(8,7), Board.FRIENDLY, board) == true);
+		assertTrue("KO test failed", pl.checkRules(new Point(8,7), Board.FRIENDLY, board) == false);
 		//board.printBoard();
 	}
 	@Test
@@ -49,21 +57,21 @@ public class PlayoutTest{
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
 		Playout pl = new Playout();
-		assertFalse("checkRulesTest1 failed", pl.checkRules(new Point(5,2), Board.FRIENDLY, board) == true);
+		assertTrue("checkRulesTest1 failed", pl.checkRules(new Point(5,2), Board.FRIENDLY, board) == false);
 	}
 	@Test
 	public void checkRulesTest2(){
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
 		Playout pl = new Playout();
-		assertFalse("checkRulesTest2 failed", pl.checkRules(new Point(0,8), Board.FRIENDLY, board) == true);
+		assertTrue("checkRulesTest2 failed", pl.checkRules(new Point(0,8), Board.FRIENDLY, board) == false);
 	}
 	@Test
 	public void isFriendlySingleEyePointTest(){
 		Board board = new Board(9);
 		board.loadFromFile("board9x9_1.dat");
 		Playout pl = new Playout();
-		assertFalse("isFriendlySingleEyePoint failed", pl.isFriendlySingleEyePoint(new Point(5,2), Board.ENEMY, board) == false);
+		assertTrue("isFriendlySingleEyePoint failed", pl.isFriendlySingleEyePoint(new Point(5,2), Board.ENEMY, board) == true);
 	}
 
 }
