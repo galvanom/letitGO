@@ -6,6 +6,7 @@ public class Board{
 	int size;
 	Point koPoint = null;
 	int koPointLifeTime = 0;
+	Point lastPoint = null;
 	//Point types
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
@@ -118,15 +119,19 @@ public class Board{
 
 	}
 	boolean setPoint(int i, int j, int pointType){
-		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY) //for KO
-			koPointLifeTime++;
+		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
+			koPointLifeTime++; //for KO
+			lastPoint = new Point(i,j);
+		}
 
 		board[i + 1][j + 1] = pointType;
 		return true;
 	}
 	boolean setPoint(Point p, int pointType){
-		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY) //for KO
-			koPointLifeTime++;
+		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){ 
+			koPointLifeTime++;//for KO
+			lastPoint = p;
+		}
 
 		board[p.i + 1][p.j + 1] = pointType;
 		return true; //TODO: Boolean ?
@@ -176,7 +181,7 @@ public class Board{
 	void setKO(Point point){
 		koPoint = point;
 		koPointLifeTime = 0;
-		
+
 	}
 	boolean isKO(Point point){
 		if (koPointLifeTime == 0 && koPoint != null){
@@ -186,6 +191,8 @@ public class Board{
 		}
 		return false;
 	}
-
+	Point getLastPoint(){
+		return lastPoint;
+	}
 
 }

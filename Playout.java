@@ -28,9 +28,10 @@ public class Playout{
 			}
 			passTimes = 0;
 
-			random_point = random.nextInt(free_points.size());
-			p = free_points.get(random_point);
-			//playBoard.saveBoardState(); //for KO
+			//random_point = random.nextInt(free_points.size());
+			//p = free_points.get(random_point);
+			playBoard.printBoard(); 
+			p = getBestMove(board, free_points);
 			makeMove(playBoard, p, stoneType);
 
 		}
@@ -40,6 +41,36 @@ public class Playout{
 		int[] score = getScore(playBoard);
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 		
+	}
+	Point getBestMove(Board board, ArrayList<Point> freePoints){
+		float rating, bestRating = -100;
+		Point bestPoint = null;
+		for (Point point: freePoints){
+			rating = rateMove(board, point);
+			if (rating > bestRating){
+				bestRating = rating;
+				bestPoint = point;
+			}
+		}
+		return bestPoint;
+	}
+	float rateMove(Board board, Point p){
+		float rating = 0;
+		//First line check
+		if (p.i == 0 || p.i == (board.getSize()-1) || p.j == 0 || p.j == (board.getSize()-1)){
+			rating -= 0.25;
+		}
+		//Distance between moves check
+		Point lastPoint = board.getLastPoint();
+		if (lastPoint != null){
+			float distance = (float)Math.sqrt(Math.pow((lastPoint.i - p.i), 2) + Math.pow((lastPoint.j - p.j), 2));
+			if (distance < 3.0)
+				rating += 0.25/distance;
+		}
+
+
+		return rating;
+
 	}
 	void makeMove(Board board, Point p, int stoneType){
 		board.setPoint(p, stoneType);
