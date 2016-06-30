@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 
+//TODO: Save Go specific functions to GoFun class
 public class Playout{
 	int counter, counterRules, counterDS;
 	Playout(){
@@ -19,6 +20,7 @@ public class Playout{
 		Point p;
 		Board playBoard = new Board(board);
 
+
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 			free_points = getFreePoints(playBoard, stoneType);
 			
@@ -31,7 +33,16 @@ public class Playout{
 			//random_point = random.nextInt(free_points.size());
 			//p = free_points.get(random_point);
 			playBoard.printBoard(); 
-			p = getBestMove(board, free_points);
+			
+			Heuristics hrs = new Heuristics();
+			Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
+			if (lastDame != null){
+				p = lastDame;
+			}
+			else{
+				p = getBestMove(playBoard, free_points);
+			}
+			
 			makeMove(playBoard, p, stoneType);
 
 		}
@@ -55,6 +66,7 @@ public class Playout{
 		return bestPoint;
 	}
 	float rateMove(Board board, Point p){
+
 		float rating = 0;
 		//First line check
 		if (p.i == 0 || p.i == (board.getSize()-1) || p.j == 0 || p.j == (board.getSize()-1)){
@@ -146,7 +158,7 @@ public class Playout{
 			return true;
 		if (isFriendlySingleEyePoint(p, stoneType, board))
 			return false;
-		if (board.isKO(p)){
+		if (board.isKO(p, stoneType)){
 			//System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
 			return false;
 		}
@@ -234,7 +246,7 @@ public class Playout{
 		}
 		if (deletedStonesNumber == 1 && lastPoint != null){
 			//System.out.printf("lastPoint: %d %d\n", lastPoint.i, lastPoint.j);
-			board.setKO(lastPoint);
+			board.setKO(lastPoint, Board.getOppositeSide(stoneType));
 		}
 	}
 	boolean isGroupDead(Board board, ArrayList<Point> group){

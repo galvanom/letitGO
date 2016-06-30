@@ -6,6 +6,7 @@ public class Board{
 	int size;
 	Point koPoint = null;
 	int koPointLifeTime = 0;
+	int koStoneType = EMPTY;
 	Point lastPoint = null;
 	//Point types
 	public static final int EMPTY = 0;
@@ -178,14 +179,15 @@ public class Board{
 			
 		return FRIENDLY;
 	}
-	void setKO(Point point){
+	void setKO(Point point, int stoneType){
 		koPoint = point;
+		koStoneType = stoneType;
 		koPointLifeTime = 0;
 
 	}
-	boolean isKO(Point point){
+	boolean isKO(Point point, int stoneType){
 		if (koPointLifeTime == 0 && koPoint != null){
-			if (koPoint.i == point.i && koPoint.j == point.j){
+			if (koPoint.i == point.i && koPoint.j == point.j && koStoneType == stoneType){
 				return true;
 			}
 		}

@@ -9,8 +9,18 @@ public class Main{
 		Point p;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
+		
 		//board.loadFromFile("board9x9_1.dat");	
 		board.printBoard();
+		/*
+
+		Heuristics hrs = new Heuristics();
+		Point lastDame = hrs.getLastDame(board, Board.ENEMY);
+		if (lastDame != null){
+			System.out.printf("Last dame: [%d,%d]",lastDame.i, lastDame.j);
+		}
+		*/
+		
 		//playout.playRandomGame(board, Board.ENEMY);
 
 		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
