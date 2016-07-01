@@ -27,7 +27,9 @@ public class Main{
 
 		long startTime = System.currentTimeMillis();
 		for (int i = 0; i < 1; i++){
-			
+
+			//playout.playRandomGame(board, Board.FRIENDLY);
+
 			mc.playOneSequence();
 			//System.gc();
 

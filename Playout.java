@@ -45,13 +45,18 @@ public class Playout{
 			
 			makeMove(playBoard, p, stoneType);
 
+
 		}
 		//playBoard.printBoard();
 		//System.out.printf("Total: %d CheckRules: %d RemDeadSt: %d\n", counter, counterRules, counterDS);
 
-		int[] score = getScore(playBoard);
-		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
+		//playBoard = null;
 		
+
+		int[] score = getScore(playBoard);
+
+		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
+
 	}
 	Point getBestMove(Board board, ArrayList<Point> freePoints){
 		float rating, bestRating = -100;
@@ -92,7 +97,7 @@ public class Playout{
 		int i,j;
 		ArrayList<Point> points = new ArrayList<Point>();
 		Point p;
-
+		
 		for (i = 0; i < board.getSize(); i++)
 			for (j = 0; j < board.getSize(); j++){
 				p = new Point(i,j);
@@ -100,12 +105,12 @@ public class Playout{
 					//System.out.printf ("b");
 					if (checkRules(p, stoneType, board)){
 						points.add(p);
-						/*if (p.i == 8 && p.j == 3)
-							System.out.printf("\n %d %d\n", p.i, p.j);
-							*/
+
 					}
 				}
+
 			}
+	
 
 		return points;
 	}
@@ -142,7 +147,7 @@ public class Playout{
 	boolean checkRules(Point p, int stoneType, Board board){
 
 		//Create new board copy to change existing board state without changes in the main board
-		Board new_board = new Board(board);
+		Board new_board = board;//new Board(board);
 		
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
@@ -151,7 +156,8 @@ public class Playout{
 										new Point(p.i, p.j-1)	//left 
 									};
 		ArrayList<Point> group;
-		
+		int pValue = board.getPoint(p);
+
 		//new_board.printBoard();
 
 		if (getDameNumber(p, board) != 0) 
@@ -169,7 +175,7 @@ public class Playout{
 		 //posible suicide move
 		counterRules++;
 		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
-			
+			board.setPoint(p, pValue);	
 			return true;
 
 		}
@@ -192,13 +198,14 @@ public class Playout{
 				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 				group = getGroup(new_board, next);
 				if (isGroupDead(new_board, group) == true){
+					board.setPoint(p, pValue);	
 					return true;
 				}
 			}
 			
 
 		}
-
+		board.setPoint(p, pValue);	
 		return false;
 	}
 
@@ -293,7 +300,7 @@ public class Playout{
 			}
 
 		}
-	
+		
 		return visited;
 	}
 	boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){

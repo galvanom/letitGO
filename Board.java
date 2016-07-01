@@ -117,6 +117,7 @@ public class Board{
 		catch(IOException e){
 			System.out.println("File read error");
 		}
+		
 
 	}
 	boolean setPoint(int i, int j, int pointType){
