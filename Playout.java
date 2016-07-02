@@ -11,7 +11,10 @@ public class Playout{
 	}
 
 	int playRandomGame(final Board board, int first_stone){
-		ArrayList<Point> free_points;
+		//ArrayList<Point> free_points;
+		int boardSize = board.getSize();
+		Point[] free_points = new int[boardSize*boardSize];
+		int freePointsSize;
 		Random random = new Random();
 		int random_point;
 		int stoneType = first_stone;
@@ -22,8 +25,14 @@ public class Playout{
 
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
-			free_points = getFreePoints(playBoard, stoneType);
-			
+			getFreePoints(playBoard, stoneType, free_points);
+			for (int i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
+				if (free_points[i] == null){
+					break;
+				}
+				freePointsSize++;
+			}
+
 			if (free_points.size() == 0){
 				passTimes++;
 				continue;
@@ -32,7 +41,7 @@ public class Playout{
 
 			//random_point = random.nextInt(free_points.size());
 			//p = free_points.get(random_point);
-			playBoard.printBoard(); 
+			//playBoard.printBoard(); 
 			
 			Heuristics hrs = new Heuristics();
 			Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
