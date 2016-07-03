@@ -23,21 +23,21 @@ public class Main{
 		
 		//playout.playRandomGame(board, Board.ENEMY);
 
-		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
+		//Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
 		long startTime = System.currentTimeMillis();
 		for (int i = 0; i < 1; i++){
 
-			//playout.playRandomGame(board, Board.FRIENDLY);
+			playout.playRandomGame(board, Board.FRIENDLY);
 
-			mc.playOneSequence();
+		//	mc.playOneSequence();
 			//System.gc();
 
 		}
 		System.out.println(System.currentTimeMillis() - startTime);
 		//mc.printTree();
 		
-		p = mc.getWinner();
+		/*p = mc.getWinner();
 		if (p != null){
 			System.out.printf("\nBest move is [%d, %d]\n", p.i, p.j);
 			board.printBoard();

@@ -13,10 +13,10 @@ public class Playout{
 	int playRandomGame(final Board board, int first_stone){
 		//ArrayList<Point> free_points;
 		int boardSize = board.getSize();
-		Point[] free_points = new int[boardSize*boardSize];
+		Point[] free_points = new Point[boardSize*boardSize];
 		int freePointsSize;
 		Random random = new Random();
-		int random_point;
+		int random_point,i,j;
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
@@ -26,22 +26,22 @@ public class Playout{
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 			getFreePoints(playBoard, stoneType, free_points);
-			for (int i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
+			for (i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
 				if (free_points[i] == null){
 					break;
 				}
 				freePointsSize++;
 			}
-
+			/*
 			if (free_points.size() == 0){
 				passTimes++;
 				continue;
-			}
+			}*/
 			passTimes = 0;
 
 			//random_point = random.nextInt(free_points.size());
 			//p = free_points.get(random_point);
-			//playBoard.printBoard(); 
+			playBoard.printBoard(); 
 			
 			Heuristics hrs = new Heuristics();
 			Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
@@ -67,10 +67,13 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
-	Point getBestMove(Board board, ArrayList<Point> freePoints){
+	Point getBestMove(Board board, Point[] freePoints){
 		float rating, bestRating = -100;
 		Point bestPoint = null;
 		for (Point point: freePoints){
+			if (point == null){
+				break;
+			}
 			rating = rateMove(board, point);
 			if (rating > bestRating){
 				bestRating = rating;
@@ -102,26 +105,28 @@ public class Playout{
 		board.setPoint(p, stoneType);
 		removeDeadStones(board, Board.getOppositeSide(stoneType));
 	}
-	ArrayList<Point> getFreePoints(Board board, int stoneType){
-		int i,j;
-		ArrayList<Point> points = new ArrayList<Point>();
+	void getFreePoints(Board board, int stoneType, Point[] freePoints){
+		int i,j, freePointsSize;
+		int boardSize = board.getSize();
+
 		Point p;
-		
-		for (i = 0; i < board.getSize(); i++)
-			for (j = 0; j < board.getSize(); j++){
+		freePointsSize = 0;
+		for (i = 0; i < boardSize; i++)
+			for (j = 0; j < boardSize; j++){
 				p = new Point(i,j);
 				if (board.getPoint(p) == Board.EMPTY){
 					//System.out.printf ("b");
 					if (checkRules(p, stoneType, board)){
-						points.add(p);
+						freePoints[freePointsSize] = p;
 
 					}
 				}
 
 			}
-	
-
-		return points;
+		
+		if (freePointsSize < boardSize)
+			freePoints[freePointsSize] = null;
+		
 	}
 
 	int getDameNumber(Point p, Board board){
