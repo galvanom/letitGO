@@ -30,30 +30,32 @@ public class Playout{
 				if (free_points[i] == null){
 					break;
 				}
+
 				freePointsSize++;
 			}
-			/*
-			if (free_points.size() == 0){
+
+			//System.out.printf("freePoints: %d\n", freePointsSize);
+			if (freePointsSize == 0){
 				passTimes++;
 				continue;
-			}*/
+			}
 			passTimes = 0;
 
 			//random_point = random.nextInt(free_points.size());
 			//p = free_points.get(random_point);
-			playBoard.printBoard(); 
+			 
 			
 			Heuristics hrs = new Heuristics();
-			Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
-			if (lastDame != null){
-				p = lastDame;
-			}
-			else{
-				p = getBestMove(playBoard, free_points);
-			}
+			//Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
+			//if (lastDame != null){
+			//	p = lastDame;
+			//}
+			//else{
+			p = getBestMove(playBoard, free_points);
+			//}
 			
 			makeMove(playBoard, p, stoneType);
-
+			//playBoard.printBoard();
 
 		}
 		//playBoard.printBoard();
@@ -118,13 +120,14 @@ public class Playout{
 					//System.out.printf ("b");
 					if (checkRules(p, stoneType, board)){
 						freePoints[freePointsSize] = p;
+						freePointsSize++;
 
 					}
 				}
 
 			}
 		
-		if (freePointsSize < boardSize)
+		if (freePointsSize < boardSize * boardSize)
 			freePoints[freePointsSize] = null;
 		
 	}
@@ -171,29 +174,35 @@ public class Playout{
 									};
 		ArrayList<Point> group;
 		int pValue = board.getPoint(p);
-
+		
 		//new_board.printBoard();
 
-		if (getDameNumber(p, board) != 0) 
+		if (getDameNumber(p, board) != 0){
+
 			return true;
-		if (isFriendlySingleEyePoint(p, stoneType, board))
+		}
+		if (isFriendlySingleEyePoint(p, stoneType, board)){
+
 			return false;
+		}
 		if (board.isKO(p, stoneType)){
 			//System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
+
 			return false;
 		}
 
-
+		new_board.saveState();
 		new_board.setPoint(p, stoneType);
-
+		
 		 //posible suicide move
 		counterRules++;
 		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
 			board.setPoint(p, pValue);	
+			new_board.loadState();
 			return true;
 
 		}
-
+		
 		//check could we kill neigbour enemy groups with this move
 		//group = null;
 /*label1:*/	
@@ -213,13 +222,16 @@ public class Playout{
 				group = getGroup(new_board, next);
 				if (isGroupDead(new_board, group) == true){
 					board.setPoint(p, pValue);	
+					new_board.loadState();
 					return true;
 				}
 			}
 			
 
 		}
-		board.setPoint(p, pValue);	
+		
+		board.setPoint(p, pValue);
+		new_board.loadState();
 		return false;
 	}
 
@@ -267,7 +279,7 @@ public class Playout{
 		}
 		if (deletedStonesNumber == 1 && lastPoint != null){
 			//System.out.printf("lastPoint: %d %d\n", lastPoint.i, lastPoint.j);
-			board.setKO(lastPoint, Board.getOppositeSide(stoneType));
+			board.setKO(lastPoint, stoneType);
 		}
 	}
 	boolean isGroupDead(Board board, ArrayList<Point> group){

@@ -8,6 +8,11 @@ public class Board{
 	int koPointLifeTime = 0;
 	int koStoneType = EMPTY;
 	Point lastPoint = null;
+
+	Point koPoint_saved = null;
+	int koPointLifeTime_saved = 0;
+	int koStoneType_saved = EMPTY;
+	Point lastPoint_saved = null;
 	//Point types
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
@@ -117,8 +122,20 @@ public class Board{
 		catch(IOException e){
 			System.out.println("File read error");
 		}
-		
 
+
+	}
+	void saveState(){
+		koPoint_saved = koPoint;
+		koPointLifeTime_saved = koPointLifeTime;
+		koStoneType_saved = koStoneType;
+		lastPoint_saved = lastPoint;
+	}
+	void loadState(){
+		koPoint = koPoint_saved;
+		koPointLifeTime = koPointLifeTime_saved;
+		koStoneType = koStoneType_saved;
+		lastPoint = lastPoint_saved;
 	}
 	boolean setPoint(int i, int j, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
@@ -187,7 +204,11 @@ public class Board{
 
 	}
 	boolean isKO(Point point, int stoneType){
+		
+
 		if (koPointLifeTime == 0 && koPoint != null){
+			//System.out.printf("koPointLifeTime: %d KoPoint:[%d,%d] Point: [%d,%d] koStoneType: %d stoneType: %d\n", koPointLifeTime, koPoint.i, koPoint.j, point.i, point.j,koStoneType,stoneType );
+
 			if (koPoint.i == point.i && koPoint.j == point.j && koStoneType == stoneType){
 				return true;
 			}
