@@ -164,7 +164,7 @@ public class Playout{
 	boolean checkRules(Point p, int stoneType, Board board){
 
 		//Create new board copy to change existing board state without changes in the main board
-		Board new_board = board;//new Board(board);
+		//Board new_board = board;//new Board(board);
 		
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
@@ -190,15 +190,15 @@ public class Playout{
 
 			return false;
 		}
-
-		new_board.saveState();
+		Board new_board = new Board(board);
+		//new_board.saveState();
 		new_board.setPoint(p, stoneType);
 		
 		 //posible suicide move
 		counterRules++;
 		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
-			board.setPoint(p, pValue);	
-			new_board.loadState();
+			//board.setPoint(p, pValue);	
+			//new_board.loadState();
 			return true;
 
 		}
@@ -221,8 +221,8 @@ public class Playout{
 				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 				group = getGroup(new_board, next);
 				if (isGroupDead(new_board, group) == true){
-					board.setPoint(p, pValue);	
-					new_board.loadState();
+					//board.setPoint(p, pValue);	
+					//new_board.loadState();
 					return true;
 				}
 			}
@@ -230,8 +230,8 @@ public class Playout{
 
 		}
 		
-		board.setPoint(p, pValue);
-		new_board.loadState();
+		//board.setPoint(p, pValue);
+		//new_board.loadState();
 		return false;
 	}
 
