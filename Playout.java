@@ -11,9 +11,9 @@ public class Playout{
 	}
 
 	int playRandomGame(final Board board, int first_stone){
-		//ArrayList<Point> free_points;
+		ArrayList<Point> free_points;
 		int boardSize = board.getSize();
-		Point[] free_points = new Point[boardSize*boardSize];
+		//Point[] free_points = new Point[boardSize*boardSize];
 		int freePointsSize;
 		Random random = new Random();
 		int random_point,i,j;
@@ -25,17 +25,17 @@ public class Playout{
 
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
-			getFreePoints(playBoard, stoneType, free_points);
-			for (i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
+			free_points = getFreePoints(playBoard, stoneType);
+			/*for (i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
 				if (free_points[i] == null){
 					break;
 				}
 
 				freePointsSize++;
 			}
-
+			*/
 			//System.out.printf("freePoints: %d\n", freePointsSize);
-			if (freePointsSize == 0){
+			if (free_points.size() == 0){
 				passTimes++;
 				continue;
 			}
@@ -55,7 +55,9 @@ public class Playout{
 			//}
 			
 			makeMove(playBoard, p, stoneType);
-			//playBoard.printBoard();
+			playBoard.printBoard();
+
+			free_points.clear();
 
 		}
 		//playBoard.printBoard();
@@ -63,19 +65,16 @@ public class Playout{
 
 		//playBoard = null;
 		
-
+		//System.gc();
 		int[] score = getScore(playBoard);
 
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
-	Point getBestMove(Board board, Point[] freePoints){
+	Point getBestMove(Board board, ArrayList<Point> freePoints){
 		float rating, bestRating = -100;
 		Point bestPoint = null;
 		for (Point point: freePoints){
-			if (point == null){
-				break;
-			}
 			rating = rateMove(board, point);
 			if (rating > bestRating){
 				bestRating = rating;
@@ -107,29 +106,24 @@ public class Playout{
 		board.setPoint(p, stoneType);
 		removeDeadStones(board, Board.getOppositeSide(stoneType));
 	}
-	void getFreePoints(Board board, int stoneType, Point[] freePoints){
-		int i,j, freePointsSize;
+	ArrayList<Point> getFreePoints(Board board, int stoneType){
+		int i,j;
 		int boardSize = board.getSize();
+		ArrayList<Point> freePoints = new ArrayList<Point>();
 
 		Point p;
-		freePointsSize = 0;
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++){
 				p = new Point(i,j);
 				if (board.getPoint(p) == Board.EMPTY){
-					//System.out.printf ("b");
 					if (checkRules(p, stoneType, board)){
-						freePoints[freePointsSize] = p;
-						freePointsSize++;
+						freePoints.add(p);
 
 					}
 				}
 
 			}
-		
-		if (freePointsSize < boardSize * boardSize)
-			freePoints[freePointsSize] = null;
-		
+		return freePoints;		
 	}
 
 	int getDameNumber(Point p, Board board){
@@ -204,19 +198,9 @@ public class Playout{
 		}
 		
 		//check could we kill neigbour enemy groups with this move
-		//group = null;
-/*label1:*/	
 		for (Point next: surroundedStones){
 			counterRules++;
 
-			/*if (board.getPoint(next) == Board.getOppositeSide(stoneType)){ 
-				if (group != null){
-					for (Point stone: group){
-						if (stone.i == next.i && stone.j == next.j){
-							continue label1;
-						}
-					}
-				}*/
 			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
 				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 				group = getGroup(new_board, next);
