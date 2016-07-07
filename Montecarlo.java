@@ -77,9 +77,6 @@ public class Montecarlo{
 		root = new Node(null, board, null, whoseTurn);
 	}
 	public void playOneSequence(){
-		//root.addChild(new Point(1,1));
-		//root.addChild(new Point(2,2));
-		//root.getChildren().get(0).addChild(new Point(3,3));
 		Node node = selectNode(root);
 
 		node = expand(node);
@@ -112,15 +109,14 @@ public class Montecarlo{
 				*/
 			
 			for (Node child: children){
-				t += child.getGames();//     +1;
+				t += child.getGames();
 			}
 			
 
 			for (Node child: children){
-				n = child.getGames();//      +1;
-				w = child.getWins();//    +1;
-				//if (n==0)
-				//	n = 1;
+				n = child.getGames();
+				w = child.getWins();
+
 				value = w/n + c * Math.sqrt(Math.log(t)/n);
 				
 				if (value > bestValue){

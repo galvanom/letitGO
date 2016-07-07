@@ -3,7 +3,6 @@ import java.io.*;
 
 //TODO: Save Go specific functions to GoFun class
 public class Playout{
-	int counter, counterRules, counterDS;
 	Playout(){
 		counter = 0;
 		counterRules = 0;
@@ -26,34 +25,18 @@ public class Playout{
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 			free_points = getFreePoints(playBoard, stoneType);
-			/*for (i = 0, freePointsSize = 0; i < boardSize*boardSize ; i++){
-				if (free_points[i] == null){
-					break;
-				}
 
-				freePointsSize++;
-			}
-			*/
-			//System.out.printf("freePoints: %d\n", freePointsSize);
 			if (free_points.size() == 0){
 				passTimes++;
 				continue;
 			}
 			passTimes = 0;
 
-			//random_point = random.nextInt(free_points.size());
-			//p = free_points.get(random_point);
-			 
+
 			
-			Heuristics hrs = new Heuristics();
-			//Point lastDame = hrs.getLastDame(playBoard, Board.getOppositeSide(stoneType));
-			//if (lastDame != null){
-			//	p = lastDame;
-			//}
-			//else{
+
 			p = getBestMove(playBoard, free_points);
-			//}
-			
+
 			makeMove(playBoard, p, stoneType);
 			playBoard.printBoard();
 
@@ -61,11 +44,7 @@ public class Playout{
 
 		}
 		//playBoard.printBoard();
-		//System.out.printf("Total: %d CheckRules: %d RemDeadSt: %d\n", counter, counterRules, counterDS);
 
-		//playBoard = null;
-		
-		//System.gc();
 		int[] score = getScore(playBoard);
 
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
@@ -157,9 +136,6 @@ public class Playout{
 
 	boolean checkRules(Point p, int stoneType, Board board){
 
-		//Create new board copy to change existing board state without changes in the main board
-		//Board new_board = board;//new Board(board);
-		
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
 										new Point(p.i+1, p.j),	//down	
@@ -169,21 +145,18 @@ public class Playout{
 		ArrayList<Point> group;
 		int pValue = board.getPoint(p);
 		
-		//new_board.printBoard();
 
 		if (getDameNumber(p, board) != 0){
-
 			return true;
 		}
 		if (isFriendlySingleEyePoint(p, stoneType, board)){
-
 			return false;
 		}
 		if (board.isKO(p, stoneType)){
-			//System.out.printf("\nKO [%d,%d]\n", p.i,p.j);
-
 			return false;
 		}
+
+		//Create new board copy to change existing board state without changes in the main board
 		Board new_board = new Board(board);
 		//new_board.saveState();
 		new_board.setPoint(p, stoneType);
@@ -241,16 +214,13 @@ public class Playout{
 					group = getGroup(board, point);
 					counterDS++;
 					if (isGroupDead(board, group) == true){
-						//System.out.println("\nDeleted stones: ");
 						deletedStonesNumber += group.size();
 						lastPoint = point; //possible ko point
 							    
 
 						for (Point stone: group){
 							board.setPoint(stone, Board.EMPTY);
-							//System.out.printf("[%d,%d] ",stone.i, stone.j);
 						}
-						//System.out.println();
 					}
 					else{
 						for (Point stone: group){
@@ -262,7 +232,6 @@ public class Playout{
 			}
 		}
 		if (deletedStonesNumber == 1 && lastPoint != null){
-			//System.out.printf("lastPoint: %d %d\n", lastPoint.i, lastPoint.j);
 			board.setKO(lastPoint, stoneType);
 		}
 	}
@@ -290,23 +259,23 @@ public class Playout{
 			up = new Point(point.i-1, point.j);
 			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
 				queue.add(up);
-				//System.out.printf("%d %d\n",up.i, up.j);
+
 			}
 			right = new Point(point.i, point.j+1);
 			if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
 				queue.add(right);
-				//System.out.printf("%d %d\n",right.i, right.j);
+
 			}
 
 			down = new Point(point.i+1, point.j);
 			if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
 				queue.add(down);
-				//System.out.printf("%d %d\n",down.i, down.j);
+
 			}
 			left = new Point(point.i, point.j-1);
 			if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
 				queue.add(left);
-				//System.out.printf("%d %d\n",left.i, left.j);
+
 			}
 
 		}
@@ -369,7 +338,6 @@ public class Playout{
 				}
 			}
 		}
-		//System.out.printf("\nFriend score: %d Enemy score: %d", friendScore, enemyScore);
 
 		int[] score = {friendScore, enemyScore};
 		return score;
