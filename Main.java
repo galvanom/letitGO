@@ -47,7 +47,7 @@ public class Main{
 			System.out.printf("\nCan't get best move, function returned null.\n");
 		}
 		
-		/*
+		*/
 
 	}
 	

@@ -4,9 +4,6 @@ import java.io.*;
 //TODO: Save Go specific functions to GoFun class
 public class Playout{
 	Playout(){
-		counter = 0;
-		counterRules = 0;
-		counterDS = 0;
 	}
 
 	int playRandomGame(final Board board, int first_stone){
@@ -24,6 +21,12 @@ public class Playout{
 
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
+
+			//Before get random moves, engine has to try moves in the last move's neighbourhood.
+			//This moves have to be either "capture/release capture" or the patterns
+
+
+
 			free_points = getFreePoints(playBoard, stoneType);
 
 			if (free_points.size() == 0){
@@ -50,6 +53,25 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
+	ArrayList<Point> getNeighbours(Board board, Point point){
+		ArrayList<Point> neighbours = new ArrayList<Point>();
+		neighbours.add(board.getPoint(p.i+1, p.j));
+		neighbours.add(board.getPoint(p.i-1, p.j));
+		neighbours.add(board.getPoint(p.i, p.j+1));
+		neighbours.add(board.getPoint(p.i, p.j-1));
+
+		return neighbours;
+	}
+	ArrayList<Point> getDiagonalNeighbours(Board board, Point point){
+		ArrayList<Point> neighbours = new ArrayList<Point>();
+		neighbours.add(board.getPoint(p.i+1, p.j+1));
+		neighbours.add(board.getPoint(p.i-1, p.j-1));
+		neighbours.add(board.getPoint(p.i-1, p.j+1));
+		neighbours.add(board.getPoint(p.i+1, p.j-1));
+
+		return neighbours;
+	}
+
 	Point getBestMove(Board board, ArrayList<Point> freePoints){
 		float rating, bestRating = -100;
 		Point bestPoint = null;
@@ -162,7 +184,7 @@ public class Playout{
 		new_board.setPoint(p, stoneType);
 		
 		 //posible suicide move
-		counterRules++;
+		
 		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
 			//board.setPoint(p, pValue);	
 			//new_board.loadState();
@@ -172,7 +194,7 @@ public class Playout{
 		
 		//check could we kill neigbour enemy groups with this move
 		for (Point next: surroundedStones){
-			counterRules++;
+			
 
 			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
 				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
@@ -212,7 +234,7 @@ public class Playout{
 				if (board.getPoint(point) == stoneType){
 
 					group = getGroup(board, point);
-					counterDS++;
+					
 					if (isGroupDead(board, group) == true){
 						deletedStonesNumber += group.size();
 						lastPoint = point; //possible ko point
@@ -250,7 +272,7 @@ public class Playout{
 		Point point,up, down, left, right;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
-		counter++;
+		
 		queue.add(p);
 		while (queue.size() > 0){
 			point = queue.poll();
