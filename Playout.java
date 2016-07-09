@@ -24,7 +24,7 @@ public class Playout{
 
 			//Before get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-
+			getHeuristicMove(board, stoneType);
 
 
 			free_points = getFreePoints(playBoard, stoneType);
@@ -53,7 +53,25 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
-	ArrayList<Point> getNeighbours(Board board, Point point){
+	Point getHeuristicMove(final Board board, int stoneType){
+		ArrayList<Point> points;
+		if (board.getLastPoint() != null){
+			points = getNeighbours(Board board, board.getLastPoint());
+			if (points != null){ //No check for getDiagonalNeighbours == null 
+				points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
+			}
+		}
+		if (points == null){
+			return null;
+		}
+
+		for (Point point: points){
+			
+		}
+
+		return null;
+	}
+	ArrayList<Point> getNeighbours(final Board board, Point point){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(board.getPoint(p.i+1, p.j));
 		neighbours.add(board.getPoint(p.i-1, p.j));
@@ -62,7 +80,7 @@ public class Playout{
 
 		return neighbours;
 	}
-	ArrayList<Point> getDiagonalNeighbours(Board board, Point point){
+	ArrayList<Point> getDiagonalNeighbours(final Board board, Point point){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(board.getPoint(p.i+1, p.j+1));
 		neighbours.add(board.getPoint(p.i-1, p.j-1));
