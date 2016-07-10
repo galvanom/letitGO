@@ -71,6 +71,28 @@ public class Playout{
 
 		return null;
 	}
+	ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
+		int boardSize = board.getSize();
+		byte visited[][] = new byte[boardSize][boardSize];
+		int i,j;
+		ArrayList<Point> dame = new ArrayList<Point>(); //What is initialization value?
+		ArrayList<Point> neigbours;
+		for (i = 0; i < boardSize; i++)
+			for (j = 0; j < boardSize; j++)
+				visited[i][j] = 0;
+		for (Point stone: group){
+
+			neighbours = getNeighbours(board, stone);
+			for (Point neigbour: neigbours){
+				if (neigbour == Board.EMPTY && visited[neigbour.i][neigbour.j] == 0){
+					dame.add(neigbour);
+					visited[neigbour.i][neigbour.j] = 1;
+				}
+			}
+
+		}
+		return dame;
+	}
 	ArrayList<Point> getNeighbours(final Board board, Point point){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(board.getPoint(p.i+1, p.j));
