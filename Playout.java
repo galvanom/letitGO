@@ -27,8 +27,8 @@ public class Playout{
 			p = getHeuristicMove(playBoard, stoneType);
 			if (p != null){
 				makeMove(playBoard, p, stoneType);
-				//System.out.printf("\n****Heuristic occured. The point is [%d,%d] ****",p.i , p.j);
-				//playBoard.printBoard();
+				System.out.printf("\n****Heuristic occured. The point is [%d,%d] ****",p.i , p.j);
+				playBoard.printBoard();
 				continue;
 			}
 
@@ -42,8 +42,8 @@ public class Playout{
 
 
 			
-
-			p = getBestMove(playBoard, free_points);
+			p = free_points.get(random.nextInt(free_points.size()));
+			//p = getBestMove(playBoard, free_points);
 
 			makeMove(playBoard, p, stoneType);
 			//playBoard.printBoard();
@@ -58,16 +58,16 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
+	//TODO: Heuristic doesnt work properly. Need to test and fix
 	Point getHeuristicMove(final Board board, int stoneType){
-		Point[] points = null;
-		ArrayList<Point> group, groupDame;
+		ArrayList<Point> points = null;
+		ArrayList<Point> group;
+		ArrayList<Point> groupDame;
 		ArrayList<Point> visited = new ArrayList<Point>();
 		int pointType;
 		if (board.getLastPoint() != null){
 			points = getNeighbours(board, board.getLastPoint());
-			/*if (points != null){ //No check for getDiagonalNeighbours == null 
-				points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
-			}*/
+			points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
 		}
 		else{
 			
@@ -104,7 +104,7 @@ public class Playout{
 		byte visited[][] = new byte[boardSize][boardSize];
 		int i,j;
 		ArrayList<Point> dame = new ArrayList<Point>(); //What is initialization value?
-		Point[] neigbours;
+		ArrayList<Point> neigbours;
 
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++)
@@ -123,21 +123,21 @@ public class Playout{
 		}
 		return dame;
 	}
-	Point[] getNeighbours(final Board board, Point p){
-		Point[] neighbours = new Point[4];
-		neighbours[0] = (new Point(p.i+1, p.j));
-		neighbours[1] = (new Point(p.i-1, p.j));
-		neighbours[2] = (new Point(p.i, p.j+1));
-		neighbours[3] = (new Point(p.i, p.j-1));
+	ArrayList<Point> getNeighbours(final Board board, Point p){
+		ArrayList<Point> neighbours = new ArrayList<Point>();
+		neighbours.add(new Point(p.i+1, p.j));
+		neighbours.add(new Point(p.i-1, p.j));
+		neighbours.add(new Point(p.i, p.j+1));
+		neighbours.add(new Point(p.i, p.j-1));
 
 		return neighbours;
 	}
 	ArrayList<Point> getDiagonalNeighbours(final Board board, Point p){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(new Point(p.i+1, p.j+1));
-		neighbours.add(new Point(p.i-1, p.j-1));
-		neighbours.add(new Point(p.i-1, p.j+1));
 		neighbours.add(new Point(p.i+1, p.j-1));
+		neighbours.add(new Point(p.i-1, p.j-1));
+		neighbours.add(new Point(p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
 
 		return neighbours;
 	}

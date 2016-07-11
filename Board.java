@@ -51,6 +51,7 @@ public class Board{
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
+			
 
 	}
 	void printBoard(){
