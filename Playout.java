@@ -16,7 +16,7 @@ public class Playout{
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
-		Point p;
+		Point p = null;
 		Board playBoard = new Board(board);
 
 
@@ -24,8 +24,13 @@ public class Playout{
 
 			//Before get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-			getHeuristicMove(board, stoneType);
-
+			p = getHeuristicMove(playBoard, stoneType);
+			if (p != null){
+				makeMove(playBoard, p, stoneType);
+				//System.out.printf("\n****Heuristic occured. The point is [%d,%d] ****",p.i , p.j);
+				//playBoard.printBoard();
+				continue;
+			}
 
 			free_points = getFreePoints(playBoard, stoneType);
 
@@ -41,7 +46,7 @@ public class Playout{
 			p = getBestMove(playBoard, free_points);
 
 			makeMove(playBoard, p, stoneType);
-			playBoard.printBoard();
+			//playBoard.printBoard();
 
 			free_points.clear();
 
@@ -54,19 +59,42 @@ public class Playout{
 
 	}
 	Point getHeuristicMove(final Board board, int stoneType){
-		ArrayList<Point> points;
+		Point[] points = null;
+		ArrayList<Point> group, groupDame;
+		ArrayList<Point> visited = new ArrayList<Point>();
+		int pointType;
 		if (board.getLastPoint() != null){
-			points = getNeighbours(Board board, board.getLastPoint());
-			if (points != null){ //No check for getDiagonalNeighbours == null 
+			points = getNeighbours(board, board.getLastPoint());
+			/*if (points != null){ //No check for getDiagonalNeighbours == null 
 				points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
-			}
+			}*/
+		}
+		else{
+			
+			return null;
 		}
 		if (points == null){
 			return null;
 		}
 
 		for (Point point: points){
-			
+			pointType = board.getPoint(point);
+			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
+				continue;
+			}
+			if (!checkRules(point, stoneType, board)){
+				continue;
+			}
+
+			group = getGroup(board, point);
+			groupDame = getGroupDame(board, group);
+			if (groupDame.size() != 1){
+				continue;
+			}
+			if (pointType == Board.getOppositeSide(stoneType)){
+				return groupDame.get(0);
+			}
+			visited.add(point);
 		}
 
 		return null;
@@ -76,38 +104,40 @@ public class Playout{
 		byte visited[][] = new byte[boardSize][boardSize];
 		int i,j;
 		ArrayList<Point> dame = new ArrayList<Point>(); //What is initialization value?
-		ArrayList<Point> neigbours;
+		Point[] neigbours;
+
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++)
 				visited[i][j] = 0;
 		for (Point stone: group){
-
-			neighbours = getNeighbours(board, stone);
-			for (Point neigbour: neigbours){
-				if (neigbour == Board.EMPTY && visited[neigbour.i][neigbour.j] == 0){
-					dame.add(neigbour);
-					visited[neigbour.i][neigbour.j] = 1;
+			
+			neigbours = getNeighbours(board, stone);
+			for (Point neighbour: neigbours){
+				//System.out.printf("\nstone: [%d,%d], neighbour: [%d,%d]\n", stone.i, stone.j, neighbour.i, neighbour.j);
+				if (board.getPoint(neighbour) == Board.EMPTY && visited[neighbour.i][neighbour.j] == 0){
+					dame.add(neighbour);
+					visited[neighbour.i][neighbour.j] = 1;
 				}
 			}
-
+	
 		}
 		return dame;
 	}
-	ArrayList<Point> getNeighbours(final Board board, Point point){
-		ArrayList<Point> neighbours = new ArrayList<Point>();
-		neighbours.add(board.getPoint(p.i+1, p.j));
-		neighbours.add(board.getPoint(p.i-1, p.j));
-		neighbours.add(board.getPoint(p.i, p.j+1));
-		neighbours.add(board.getPoint(p.i, p.j-1));
+	Point[] getNeighbours(final Board board, Point p){
+		Point[] neighbours = new Point[4];
+		neighbours[0] = (new Point(p.i+1, p.j));
+		neighbours[1] = (new Point(p.i-1, p.j));
+		neighbours[2] = (new Point(p.i, p.j+1));
+		neighbours[3] = (new Point(p.i, p.j-1));
 
 		return neighbours;
 	}
-	ArrayList<Point> getDiagonalNeighbours(final Board board, Point point){
+	ArrayList<Point> getDiagonalNeighbours(final Board board, Point p){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
-		neighbours.add(board.getPoint(p.i+1, p.j+1));
-		neighbours.add(board.getPoint(p.i-1, p.j-1));
-		neighbours.add(board.getPoint(p.i-1, p.j+1));
-		neighbours.add(board.getPoint(p.i+1, p.j-1));
+		neighbours.add(new Point(p.i+1, p.j+1));
+		neighbours.add(new Point(p.i-1, p.j-1));
+		neighbours.add(new Point(p.i-1, p.j+1));
+		neighbours.add(new Point(p.i+1, p.j-1));
 
 		return neighbours;
 	}
@@ -312,34 +342,40 @@ public class Playout{
 		Point point,up, down, left, right;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
-		
+		int boardSize = board.getSize();
 		queue.add(p);
 		while (queue.size() > 0){
 			point = queue.poll();
 			visited.add(point);
 			
-			up = new Point(point.i-1, point.j);
-			if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
-				queue.add(up);
+			//if (point.i-1 >= 0){
+				up = new Point(point.i-1, point.j);
+				if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
+					queue.add(up);
 
-			}
-			right = new Point(point.i, point.j+1);
-			if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
-				queue.add(right);
+				}
+			//}
+			//if (point.j+1 < boardSize){
+				right = new Point(point.i, point.j+1);
+				if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
+					queue.add(right);
 
-			}
+				}
+			//}
+			//if (point.i+1 < boardSize){
+				down = new Point(point.i+1, point.j);
+				if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
+					queue.add(down);
 
-			down = new Point(point.i+1, point.j);
-			if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
-				queue.add(down);
+				}
+			//}
+			//if (point.j-1 >= 0){
+				left = new Point(point.i, point.j-1);
+				if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
+					queue.add(left);
 
-			}
-			left = new Point(point.i, point.j-1);
-			if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
-				queue.add(left);
-
-			}
-
+				}
+			//}
 		}
 		
 		return visited;

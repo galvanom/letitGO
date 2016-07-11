@@ -159,7 +159,9 @@ public class Board{
 		return board[i + 1][j + 1];
 	}
 	int getPoint(Point p){
+		//System.out.printf("getPoint [%d,%d]\n", p.i,p.j);
 		return board[p.i + 1][p.j + 1];
+
 	}
 
 	int getSize(){
