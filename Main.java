@@ -6,11 +6,11 @@ public class Main{
 	public static void main(String[] args){
 	
 		Board board = new Board(9);
-		Point p;
+		Point p = null;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		
-		//board.loadFromFile("board9x9_1.dat");	
+		//board.loadFromFile("board9x9_2.dat");	
 		board.printBoard();
 		/*
 
@@ -25,12 +25,20 @@ public class Main{
 		//Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1; i++){
+		for (int i = 0; i < 10000; i++){
 			if (i%100 == 0){
 				System.gc();
 			}
 			playout.playRandomGame(board, Board.FRIENDLY);
-
+			//board.lastPoint = new Point(5,2);
+			/*p = playout.getHeuristicMove(board,Board.FRIENDLY);
+			if (p != null){
+				System.out.printf("\nPoint [%d,%d]\n", p.i, p.j);
+			}
+			else {
+				System.out.printf("\nNo point\n");
+			}
+		*/
 		//	mc.playOneSequence();
 			//System.gc();
 

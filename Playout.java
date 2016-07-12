@@ -26,9 +26,10 @@ public class Playout{
 			//This moves have to be either "capture/release capture" or the patterns
 			p = getHeuristicMove(playBoard, stoneType);
 			if (p != null){
+				//playBoard.printBoard();
 				makeMove(playBoard, p, stoneType);
-				System.out.printf("\n****Heuristic occured. The point is [%d,%d] ****",p.i , p.j);
-				playBoard.printBoard();
+				//System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",p.i , p.j, stoneType == Board.ENEMY ? "X" :"O");
+				//playBoard.printBoard();
 				continue;
 			}
 
@@ -55,16 +56,22 @@ public class Playout{
 
 		int[] score = getScore(playBoard);
 
+		//System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
-	//TODO: Heuristic doesnt work properly. Need to test and fix
+	//TODO: Make test for it.
 	Point getHeuristicMove(final Board board, int stoneType){
 		ArrayList<Point> points = null;
 		ArrayList<Point> group;
 		ArrayList<Point> groupDame;
-		ArrayList<Point> visited = new ArrayList<Point>();
+		ArrayList<Point> neighbours;
+		ArrayList<Point> enemyGroup, enemyGroupDame, friendlyGroup, friendlyGroupDame;
+		int boardSize = board.getSize();
+		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
 		int pointType;
+		Board checkBoard;
+		Point atariGroupDame;
 		if (board.getLastPoint() != null){
 			points = getNeighbours(board, board.getLastPoint());
 			points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
@@ -82,19 +89,72 @@ public class Playout{
 			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
 				continue;
 			}
-			if (!checkRules(point, stoneType, board)){
+
+			/*if (!checkRules(point, stoneType, board)){
 				continue;
 			}
-
+			*/
 			group = getGroup(board, point);
 			groupDame = getGroupDame(board, group);
-			if (groupDame.size() != 1){
-				continue;
+			//if group in atari
+			if (groupDame.size() == 1){
+				atariGroupDame = groupDame.get(0);
+				//if this is enemy group return move to capture it
+				if (pointType == Board.getOppositeSide(stoneType) && checkRules(atariGroupDame, stoneType, board) == true){
+					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
+					return atariGroupDame;
+					//return null;
+				}
+				//if this is friendly group, try to capture neighbour enemy group or
+				//try to escape but dont't make selfatari as well as the ladder
+				else if (pointType == stoneType){
+					
+					//trying to kill enemy
+					for (int i = 0; i < boardSize; i++)
+						for (int j = 0; j < boardSize; j++)
+							visitedNeighbours[i][j] = 0;
+
+					for (Point stone: group){
+						neighbours = getNeighbours(board, stone);
+						for (Point neighbour: neighbours){
+							if (board.getPoint(neighbour) == stoneType){
+								continue;
+							}
+							if (board.getPoint(neighbour) == Board.BORDER){
+								continue;
+							}
+
+							if (visitedNeighbours[neighbour.i][neighbour.j] == 1){
+								continue;
+							}
+							enemyGroup = getGroup(board, neighbour);
+							enemyGroupDame = getGroupDame(board, enemyGroup);
+							if (enemyGroupDame.size() == 1 && checkRules(enemyGroupDame.get(0), stoneType, board) == true){
+
+								return enemyGroupDame.get(0);
+							}
+							for (Point enemyStone: enemyGroup)
+								visitedNeighbours[enemyStone.i][enemyStone.j] = 1;							
+						}
+					}
+					
+					//Try to put a stone to the free dame and avoid self atari and the ladder
+					if (checkRules(atariGroupDame, stoneType, board) == true){
+						checkBoard = new Board(board);
+						checkBoard.setPoint(atariGroupDame, stoneType);
+						friendlyGroup = getGroup(checkBoard, atariGroupDame);
+						friendlyGroupDame = getGroupDame(checkBoard, friendlyGroup);
+						if (friendlyGroupDame.size() > 2){
+							return atariGroupDame;
+						}
+					}
+
+					
+
+				}
+				
 			}
-			if (pointType == Board.getOppositeSide(stoneType)){
-				return groupDame.get(0);
-			}
-			visited.add(point);
+
 		}
 
 		return null;
@@ -137,7 +197,7 @@ public class Playout{
 		neighbours.add(new Point(p.i+1, p.j+1));
 		neighbours.add(new Point(p.i+1, p.j-1));
 		neighbours.add(new Point(p.i-1, p.j-1));
-		neighbours.add(new Point(p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
+		//neighbours.add(new Point(p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
 
 		return neighbours;
 	}
