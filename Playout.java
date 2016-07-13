@@ -16,7 +16,8 @@ public class Playout{
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
-		Point p = null;
+		Point p = new Point();
+		Point heurPoint = new Point();
 		Board playBoard = new Board(board);
 
 
@@ -24,7 +25,8 @@ public class Playout{
 
 			//Before get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-			p = getHeuristicMove(playBoard, stoneType);
+			
+			
 			if (p != null){
 				//playBoard.printBoard();
 				makeMove(playBoard, p, stoneType);
@@ -32,7 +34,7 @@ public class Playout{
 				//playBoard.printBoard();
 				continue;
 			}
-
+			
 			free_points = getFreePoints(playBoard, stoneType);
 
 			if (free_points.size() == 0){
@@ -49,8 +51,8 @@ public class Playout{
 			makeMove(playBoard, p, stoneType);
 			//playBoard.printBoard();
 
-			free_points.clear();
-
+			//free_points.clear();
+			p = getHeuristicMove(playBoard, stoneType);
 		}
 		//playBoard.printBoard();
 
@@ -72,6 +74,8 @@ public class Playout{
 		int pointType;
 		Board checkBoard;
 		Point atariGroupDame;
+		Point smth = null;
+
 		if (board.getLastPoint() != null){
 			points = getNeighbours(board, board.getLastPoint());
 			points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
@@ -83,20 +87,22 @@ public class Playout{
 		if (points == null){
 			return null;
 		}
-
+		
 		for (Point point: points){
 			pointType = board.getPoint(point);
 			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
 				continue;
 			}
 
-			/*if (!checkRules(point, stoneType, board)){
+			if (!checkRules(point, stoneType, board)){
 				continue;
 			}
-			*/
+			
+			
 			group = getGroup(board, point);
 			groupDame = getGroupDame(board, group);
 			//if group in atari
+			
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
 				//if this is enemy group return move to capture it
@@ -154,11 +160,12 @@ public class Playout{
 				}
 				
 			}
-
+			
 		}
-
-		return null;
+	
+	return null;
 	}
+
 	ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
 		int boardSize = board.getSize();
 		byte visited[][] = new byte[boardSize][boardSize];
@@ -233,6 +240,7 @@ public class Playout{
 		return rating;
 
 	}
+
 	void makeMove(Board board, Point p, int stoneType){
 		board.setPoint(p, stoneType);
 		removeDeadStones(board, Board.getOppositeSide(stoneType));

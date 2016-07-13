@@ -1,7 +1,8 @@
 class Point{
 	int i, j;
 	Point(){
-
+		i = -1;
+		j = -1;
 	}
 	Point(int i, int j){
 		this.i = i;
@@ -12,6 +13,6 @@ class Point{
 			return true;
 		return false;
 	}
-
+	
 
 }

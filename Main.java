@@ -25,8 +25,8 @@ public class Main{
 		//Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);
 
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 10000; i++){
-			if (i%100 == 0){
+		for (int i = 0; i < 100; i++){
+			if (i%1000 == 0){
 				System.gc();
 			}
 			playout.playRandomGame(board, Board.FRIENDLY);
