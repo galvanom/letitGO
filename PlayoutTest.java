@@ -6,14 +6,9 @@ import org.junit.Test;
 
 public class PlayoutTest{
 	@Test
-	public void initTest(){
-		Playout pl = new Playout();
-		assertEquals(0, pl.counter);
-	}
-	@Test
 	public void removeDeadStonesTest1(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		int firstPoint;
 		int secondPoint;
 		Playout pl = new Playout();
@@ -27,7 +22,7 @@ public class PlayoutTest{
 	@Test
 	public void removeDeadStonesTest2(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		int point;
 		Playout pl = new Playout();
 		
@@ -38,7 +33,7 @@ public class PlayoutTest{
 	@Test
 	public void koTest(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		Playout pl = new Playout();
 		pl.removeDeadStones(board, Board.FRIENDLY);
 		pl.removeDeadStones(board, Board.ENEMY);
@@ -55,23 +50,59 @@ public class PlayoutTest{
 	@Test
 	public void checkRulesTest1(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		Playout pl = new Playout();
 		assertTrue("checkRulesTest1 failed", pl.checkRules(new Point(5,2), Board.FRIENDLY, board) == false);
 	}
 	@Test
 	public void checkRulesTest2(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		Playout pl = new Playout();
 		assertTrue("checkRulesTest2 failed", pl.checkRules(new Point(0,8), Board.FRIENDLY, board) == false);
 	}
 	@Test
 	public void isFriendlySingleEyePointTest(){
 		Board board = new Board(9);
-		board.loadFromFile("board9x9_1.dat");
+		board.loadFromFile("playout_test1.dat");
 		Playout pl = new Playout();
 		assertTrue("isFriendlySingleEyePoint failed", pl.isFriendlySingleEyePoint(new Point(5,2), Board.ENEMY, board) == true);
 	}
+	//Test killing the enemy group
+	@Test
+	public void getHeuristicMoveTest1(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test2.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(2,0);
+		Point p = pl.getHeuristicMove(board, Board.FRIENDLY);
+
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest1 for FRIENDLY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest1 for FRIENDLY failed. Not expected behavior", p.i == 2 && p.j == 0);
+
+		p = pl.getHeuristicMove(board, Board.ENEMY);
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest1 for ENEMY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest1 for ENEMY. Not expected behavior", p.i == 0 && p.j == 1);
+	}
+	@Test
+	public void getHeuristicMoveTest2(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test2.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(6,7);
+		Point p = pl.getHeuristicMove(board, Board.FRIENDLY);
+		
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest2 for FRIENDLY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest2 for FRIENDLY failed. Not expected behavior", p.i == 6 && p.j == 8);
+
+		p = pl.getHeuristicMove(board, Board.ENEMY);
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest2 for ENEMY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest2 for ENEMY. Not expected behavior", p.i == 6 && p.j == 7);
+	}
+	
 
 }

@@ -54,7 +54,6 @@ public class Board{
 			
 
 	}
-
 	void printBoard(){
 		int i, j, k;
 		System.out.print("\n  ");

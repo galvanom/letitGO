@@ -16,8 +16,8 @@ public class Playout{
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
-		Point p = new Point();
-		Point heurPoint = new Point();
+		Point p = null;
+		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
 
 
@@ -25,7 +25,7 @@ public class Playout{
 
 			//Before get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-			
+			p = getHeuristicMove(playBoard, stoneType);
 			
 			if (p != null){
 				//playBoard.printBoard();
@@ -34,6 +34,9 @@ public class Playout{
 				//playBoard.printBoard();
 				continue;
 			}
+
+			//TODO: Improve getFreePoints for the perfomance goal. Bigger number of free points bigger CPU load.
+			//Maybe this too many garbage to collect and GC runs more frequently then usually
 			
 			free_points = getFreePoints(playBoard, stoneType);
 
@@ -44,15 +47,14 @@ public class Playout{
 			passTimes = 0;
 
 
-			
+			//p = free_points.get(0);
 			p = free_points.get(random.nextInt(free_points.size()));
 			//p = getBestMove(playBoard, free_points);
 
 			makeMove(playBoard, p, stoneType);
 			//playBoard.printBoard();
 
-			//free_points.clear();
-			p = getHeuristicMove(playBoard, stoneType);
+			
 		}
 		//playBoard.printBoard();
 
