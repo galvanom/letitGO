@@ -103,6 +103,62 @@ public class PlayoutTest{
 		assertTrue("getHeuristicMoveTest2 for ENEMY failed. Point is Null", p != null );
 		assertTrue("getHeuristicMoveTest2 for ENEMY. Not expected behavior", p.i == 6 && p.j == 7);
 	}
-	
+	@Test
+	public void getHeuristicMoveTest3(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test3.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(4,2);
+		Point p = pl.getHeuristicMove(board, Board.FRIENDLY);
+		
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest3 for FRIENDLY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest3 for FRIENDLY failed. Not expected behavior", p.i == 2 && p.j == 1);
+
+		board.lastPoint = new Point(1,2);
+		p = pl.getHeuristicMove(board, Board.ENEMY);
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest3 for ENEMY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest3 for ENEMY. Not expected behavior", p.i == 3 && p.j == 1);
+	}
+	@Test
+	public void getHeuristicMoveTest4(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test4.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(1,3);
+		Point p = pl.getHeuristicMove(board, Board.FRIENDLY);
+		
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest4 for FRIENDLY failed. Point is Null", p != null );
+		assertTrue("getHeuristicMoveTest4 for FRIENDLY failed. Not expected behavior", p.i == 2 && p.j == 4);
+
+	}
+	//ladder test
+	@Test
+	public void getHeuristicMoveTest5(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test5.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(3,4);
+		Point p = pl.getHeuristicMove(board, Board.ENEMY);
+		
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest5 for ENEMY failed. Point is not Null", p == null );
+	}
+	//self-atari
+	@Test
+	public void getHeuristicMoveTest6(){
+		Board board = new Board(9);
+		board.loadFromFile("playout_test6.dat");
+		Playout pl = new Playout();
+		board.lastPoint = new Point(8,8);
+		Point p = pl.getHeuristicMove(board, Board.ENEMY);
+		
+		//System.out.printf("Point %d,%d\n", p.i, p.j);
+		assertTrue("getHeuristicMoveTest6 for ENEMY failed. Point is not Null", p == null );
+	}
+
+
 
 }
