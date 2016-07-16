@@ -3,7 +3,16 @@ import java.io.*;
 
 //TODO: Save Go specific functions to GoFun class
 public class Playout{
+	String[][] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
+       {"XOX",  // hane pattern - enclosing hane
+        "...",
+        "???"},
+       {"XO.",  // hane pattern - non-cutting hane
+        "...",
+        "?.?"}
+    };
 	Playout(){
+		getPermutations3x3(pat3src);
 	}
 
 	int playRandomGame(final Board board, int first_stone){
@@ -63,6 +72,19 @@ public class Playout{
 		//System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
+	}
+	boolean isPattern3x3(Board board, Point point){
+		return false;
+	}
+	String[][] getPermutations3x3(String[][] patterns){
+		int length = patterns.length()*4;
+		String[][] permutations = new String[length][];
+
+		for (String[] pattern : patterns){
+			//
+		}
+
+		return permutations;
 	}
 	//TODO: Make test for it.
 	Point getHeuristicMove(final Board board, int stoneType){
