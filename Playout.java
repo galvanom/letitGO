@@ -79,9 +79,17 @@ public class Playout{
 	String[][] getPermutations3x3(String[][] patterns){
 		int length = patterns.length()*4;
 		String[][] permutations = new String[length][];
-
+		String[] newPattern;
+		int next = 0;
 		for (String[] pattern : patterns){
-			//
+			//horizontal flip
+			newPattern = new String[3];
+			newPattern[0] = pattern[2];
+			newPattern[1] = pattern[1];
+			newPattern[2] = pattern[0];
+			permutations[next] = newPattern;
+			next++;
+			
 		}
 
 		return permutations;
