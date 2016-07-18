@@ -89,6 +89,13 @@ public class Playout{
 			newPattern[2] = pattern[0];
 			permutations[next] = newPattern;
 			next++;
+			//vertical flip
+			newPattern = new String[3];
+			newPattern[0] = "" + pattern[0].charAt(2) + pattern[0].charAt(1) + pattern[0].charAt(0);
+			newPattern[1] = "" + pattern[1].charAt(2) + pattern[1].charAt(1) + pattern[1].charAt(0);
+			newPattern[2] = "" + pattern[2].charAt(2) + pattern[2].charAt(1) + pattern[2].charAt(0);
+			permutations[next] = newPattern;
+			next++;
 			
 		}
 
