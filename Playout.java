@@ -12,7 +12,12 @@ public class Playout{
         "?.?"}
     };
 	Playout(){
-		getPermutations3x3(pat3src);
+		String[][] permutations = Pattern33.getPermutations3x3(pat3src);
+		for (String[] perm: permutations){
+			for(String line: perm){
+				System.out.printf("%s\n",line);
+			}
+		}
 	}
 
 	int playRandomGame(final Board board, int first_stone){
@@ -73,33 +78,52 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 
 	}
-	boolean isPattern3x3(Board board, Point point){
-		return false;
-	}
-	String[][] getPermutations3x3(String[][] patterns){
-		int length = patterns.length()*4;
-		String[][] permutations = new String[length][];
-		String[] newPattern;
-		int next = 0;
-		for (String[] pattern : patterns){
-			//horizontal flip
-			newPattern = new String[3];
+	public static class Pattern33{
+		static boolean isPattern3x3(Board board, Point point){
+			return false;
+		}
+		static String[][] getPermutations3x3(String[][] patterns){
+			int length = patterns.length*4;
+			String[][] permutations = new String[length][];
+			int next = 0;
+			for (String[] pattern : patterns){
+				//horizontal flip
+				permutations[next] = getHorizPermutation(pattern);
+				next++;
+				//vertical flip
+				permutations[next] = getVertPermutation(pattern);
+				next++;
+				//90 degree
+				permutations[next] = get90degPermutation(pattern);
+				next++;
+
+				
+			}
+
+			return permutations;
+		}
+		static String[] get90degPermutation(String[] pattern){
+			String[] newPattern = new String[3];
+			newPattern[0] = "" + pattern[2].charAt(0) + pattern[1].charAt(0) + pattern[0].charAt(0);
+			newPattern[1] = "" + pattern[2].charAt(1) + pattern[1].charAt(1) + pattern[0].charAt(1);
+			newPattern[2] = "" + pattern[2].charAt(2) + pattern[1].charAt(2) + pattern[0].charAt(2);
+			return newPattern;
+		}
+		static String[] getHorizPermutation(String[] pattern){
+			String[] newPattern = new String[3];
 			newPattern[0] = pattern[2];
 			newPattern[1] = pattern[1];
 			newPattern[2] = pattern[0];
-			permutations[next] = newPattern;
-			next++;
-			//vertical flip
-			newPattern = new String[3];
+			return newPattern;
+		}
+		static String[] getVertPermutation(String[] pattern){
+			String[] newPattern = new String[3];
 			newPattern[0] = "" + pattern[0].charAt(2) + pattern[0].charAt(1) + pattern[0].charAt(0);
 			newPattern[1] = "" + pattern[1].charAt(2) + pattern[1].charAt(1) + pattern[1].charAt(0);
 			newPattern[2] = "" + pattern[2].charAt(2) + pattern[2].charAt(1) + pattern[2].charAt(0);
-			permutations[next] = newPattern;
-			next++;
-			
+			return newPattern;
 		}
 
-		return permutations;
 	}
 	//TODO: Make test for it.
 	Point getHeuristicMove(final Board board, int stoneType){
