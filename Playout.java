@@ -11,9 +11,11 @@ public class Playout{
         '.','.','.',
         '?','.','?'}
     };
+
+    static char[][] permutations;
 	Playout(){
-		char[][] permutations = Pattern33.getPermutations3x3(pat3src);
-		for (char[] perm: permutations){
+		permutations = Pattern33.getPermutations3x3(pat3src);
+		/*for (char[] perm: permutations){
 			for(int i = 0; i < 9; i++){
 				if (i % 3 == 0)
 					System.out.println();
@@ -21,6 +23,7 @@ public class Playout{
 
 			}
 		}
+	*/
 	}
 
 	int playRandomGame(final Board board, int first_stone){
@@ -36,7 +39,14 @@ public class Playout{
 		Point p = null;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
-
+		
+		//Tests for patterns
+		if (Pattern33.isPattern3x3(playBoard, new Point(7,1)))
+			System.out.printf("\n***Pattern found!\n");
+		else
+			System.out.printf("\n***No pattern found\n");
+			
+	
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 
@@ -44,7 +54,7 @@ public class Playout{
 			//This moves have to be either "capture/release capture" or the patterns
 			p = getHeuristicMove(playBoard, stoneType);
 			
-			if (p != null){
+			if (p != null ) {
 				//playBoard.printBoard();
 				makeMove(playBoard, p, stoneType);
 				//System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",p.i , p.j, stoneType == Board.ENEMY ? "X" :"O");
@@ -83,15 +93,70 @@ public class Playout{
 	}
 	public static class Pattern33{
 		static boolean isPattern3x3(Board board, Point point){
+			char[] square33 = new char[9];
+			int i,j,k;
+			int stoneType;
+			HashMap<String,String> map = new HashMap<String,String>();
+			String symbols;
+			map.put("x","O.");
+			map.put("X","X");
+			map.put("O","O");
+			map.put("o","X.");
+			map.put("?","XO.");
+			map.put(".",".");
+			if (point.i == 0 || point.i == board.getSize()-1 || point.j == 0 || point.j == board.getSize()-1)
+				return false;
+			//Get 3x3 region around the point
+			for (i = point.i-1, k = 0;i <= point.i + 1;i++){
+				j = point.j - 1;
+				for (;j <= point.j + 1; j++,k++){
+					stoneType = board.getPoint(i,j);
+					switch (stoneType){
+						case Board.ENEMY:
+							square33[k] = 'X';
+							break;
+						case Board.FRIENDLY:
+							square33[k] = 'O';
+							break;
+						case Board.EMPTY:
+							square33[k] = '.';
+								
+					}
+					System.out.printf("%c ", square33[k]);
+				}
+
+			}
+			//Compare to the all patterns and them permutations
+			boolean flag;
+			for (char[] perm: permutations){
+				System.out.println(String.valueOf(perm));
+				toNextPoint:
+				for (i = 0; i < 9; i++){
+					System.out.println(square33[i]);
+					symbols = map.get(String.valueOf(perm[i]));
+					for (j = 0; j < symbols.length(); j++){
+						if (symbols.charAt(j) == square33[i])
+							continue toNextPoint;
+					}
+					break;
+
+				}
+				if (i == 9){
+					return true;
+				}
+			}
 			return false;
 		}
+		//TODO: get all permutations of each pattern, not only four
 		static char[][] getPermutations3x3(char[][] patterns){
-			int length = patterns.length*3;
+			int length = patterns.length*5;
 			char[][] permutations = new char[length][];
 			int next = 0;
 			for (char[] pattern : patterns){
-
-				/*//horizontal flip
+				//original
+				permutations[next] = pattern;
+				next++;
+				//horizontal flip
 				permutations[next] = getHorizPermutation(pattern);
 				next++;
 				//vertical flip
@@ -100,7 +165,7 @@ public class Playout{
 				//90 degree
 				permutations[next] = get90degPermutation(pattern);
 				next++;
-				*/
+				
 				permutations[next] = changeColors(pattern);
 				next++;
 				
@@ -212,8 +277,10 @@ public class Playout{
 			if (!checkRules(point, stoneType, board)){
 				continue;
 			}
-			
-			
+			/*Patterns matching
+			if (Pattern33.isPattern3x3(board, point))
+				return point;
+			*/
 			group = getGroup(board, point);
 			groupDame = getGroupDame(board, group);
 			//if group in atari
@@ -319,7 +386,7 @@ public class Playout{
 		neighbours.add(new Point(p.i+1, p.j+1));
 		neighbours.add(new Point(p.i+1, p.j-1));
 		neighbours.add(new Point(p.i-1, p.j-1));
-		//neighbours.add(new Point(p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
+		neighbours.add(new Point(p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
 
 		return neighbours;
 	}

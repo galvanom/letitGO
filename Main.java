@@ -10,7 +10,7 @@ public class Main{
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		
-		//board.loadFromFile("board9x9_2.dat");	
+		board.loadFromFile("patterns_test1.dat");	
 		board.printBoard();
 		/*
 
