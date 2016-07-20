@@ -3,19 +3,22 @@ import java.io.*;
 
 //TODO: Save Go specific functions to GoFun class
 public class Playout{
-	String[][] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
-       {"XOX",  // hane pattern - enclosing hane
-        "...",
-        "???"},
-       {"XO.",  // hane pattern - non-cutting hane
-        "...",
-        "?.?"}
+	char[][] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
+       {'X','O','X',  // hane pattern - enclosing hane
+        '.','.','.',
+        '?','?','?'},
+       {'X','O','.',  // hane pattern - non-cutting hane
+        '.','.','.',
+        '?','.','?'}
     };
 	Playout(){
-		String[][] permutations = Pattern33.getPermutations3x3(pat3src);
-		for (String[] perm: permutations){
-			for(String line: perm){
-				System.out.printf("%s\n",line);
+		char[][] permutations = Pattern33.getPermutations3x3(pat3src);
+		for (char[] perm: permutations){
+			for(int i = 0; i < 9; i++){
+				if (i % 3 == 0)
+					System.out.println();
+				System.out.printf("%c",perm[i]);
+
 			}
 		}
 	}
@@ -82,12 +85,13 @@ public class Playout{
 		static boolean isPattern3x3(Board board, Point point){
 			return false;
 		}
-		static String[][] getPermutations3x3(String[][] patterns){
-			int length = patterns.length*4;
-			String[][] permutations = new String[length][];
+		static char[][] getPermutations3x3(char[][] patterns){
+			int length = patterns.length*3;
+			char[][] permutations = new char[length][];
 			int next = 0;
-			for (String[] pattern : patterns){
-				//horizontal flip
+			for (char[] pattern : patterns){
+
+				/*//horizontal flip
 				permutations[next] = getHorizPermutation(pattern);
 				next++;
 				//vertical flip
@@ -96,31 +100,79 @@ public class Playout{
 				//90 degree
 				permutations[next] = get90degPermutation(pattern);
 				next++;
-
+				*/
+				permutations[next] = changeColors(pattern);
+				next++;
 				
 			}
 
 			return permutations;
 		}
-		static String[] get90degPermutation(String[] pattern){
-			String[] newPattern = new String[3];
-			newPattern[0] = "" + pattern[2].charAt(0) + pattern[1].charAt(0) + pattern[0].charAt(0);
-			newPattern[1] = "" + pattern[2].charAt(1) + pattern[1].charAt(1) + pattern[0].charAt(1);
-			newPattern[2] = "" + pattern[2].charAt(2) + pattern[1].charAt(2) + pattern[0].charAt(2);
+		static char[] get90degPermutation(char[] pattern){
+			char[] newPattern = new char[9];
+			newPattern[0] = pattern[6];
+			newPattern[1] = pattern[3];
+			newPattern[2] = pattern[0];
+			newPattern[3] = pattern[7];
+			newPattern[4] = pattern[4];
+			newPattern[5] = pattern[1];
+			newPattern[6] = pattern[8];
+			newPattern[7] = pattern[5];
+			newPattern[8] = pattern[2];
 			return newPattern;
 		}
-		static String[] getHorizPermutation(String[] pattern){
-			String[] newPattern = new String[3];
+		static char[] getHorizPermutation(char[] pattern){
+			char[] newPattern = new char[9];
+			newPattern[0] = pattern[6];
+			newPattern[1] = pattern[7];
+			newPattern[2] = pattern[8];
+			newPattern[3] = pattern[3];
+			newPattern[4] = pattern[4];
+			newPattern[5] = pattern[5];
+			newPattern[6] = pattern[0];
+			newPattern[7] = pattern[1];
+			newPattern[8] = pattern[2];
+			return newPattern;
+		}
+		static char[] getVertPermutation(char[] pattern){
+			char[] newPattern = new char[9];
 			newPattern[0] = pattern[2];
 			newPattern[1] = pattern[1];
 			newPattern[2] = pattern[0];
+			newPattern[3] = pattern[5];
+			newPattern[4] = pattern[4];
+			newPattern[5] = pattern[3];
+			newPattern[6] = pattern[8];
+			newPattern[7] = pattern[7];
+			newPattern[8] = pattern[6];
 			return newPattern;
 		}
-		static String[] getVertPermutation(String[] pattern){
-			String[] newPattern = new String[3];
-			newPattern[0] = "" + pattern[0].charAt(2) + pattern[0].charAt(1) + pattern[0].charAt(0);
-			newPattern[1] = "" + pattern[1].charAt(2) + pattern[1].charAt(1) + pattern[1].charAt(0);
-			newPattern[2] = "" + pattern[2].charAt(2) + pattern[2].charAt(1) + pattern[2].charAt(0);
+		static char[] changeColors(char[] pattern){
+			char[] newPattern = new char[9];
+			char currentPoint;
+			byte next = 0;
+			for (char point: pattern){
+				switch (point){
+					case 'X':
+						currentPoint = 'O';
+						break;
+					case 'O':
+						currentPoint = 'X';
+						break;
+					case 'x':
+						currentPoint = 'o';
+						break;
+					case 'o':
+						currentPoint = 'x';
+						break;
+					default:
+						currentPoint = point;
+				}
+
+				
+				newPattern[next++] = currentPoint;
+				
+			}
 			return newPattern;
 		}
 
