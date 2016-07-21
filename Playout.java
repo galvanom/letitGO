@@ -3,26 +3,23 @@ import java.io.*;
 
 //TODO: Save Go specific functions to GoFun class
 public class Playout{
-	char[][] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
-       {'X','O','X',  // hane pattern - enclosing hane
-        '.','.','.',
-        '?','?','?'},
-       {'X','O','.',  // hane pattern - non-cutting hane
-        '.','.','.',
-        '?','.','?'}
+	String [] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
+       "XOX...???",
+       "XO....?.?"
     };
 
-    static char[][] permutations;
+    static HashSet<String> permutations;
 	Playout(){
 		permutations = Pattern33.getPermutations3x3(pat3src);
-		for (char[] perm: permutations){
+		/*for (String perm: permutations){
+			System.out.println();
 			for(int i = 0; i < 9; i++){
 				if (i % 3 == 0)
 					System.out.println();
-				System.out.printf("%c",perm[i]);
+				System.out.printf("%c",perm.charAt(i));
 
 			}
-		}
+		}*/
 	
 	}
 
@@ -39,14 +36,14 @@ public class Playout{
 		Point p = null;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
-		/*
+		
 		//Tests for patterns
-		if (Pattern33.isPattern3x3(playBoard, new Point(7,1)))
+		/*if (Pattern33.isPattern3x3(playBoard, new Point(1,7)))
 			System.out.printf("\n***Pattern found!\n");
 		else
 			System.out.printf("\n***No pattern found\n");
-			
-		*/
+		*/	
+		
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 
@@ -122,18 +119,18 @@ public class Playout{
 							square33[k] = '.';
 								
 					}
-					System.out.printf("%c ", square33[k]);
+					//System.out.printf("%c ", square33[k]);
 				}
 
 			}
 			//Compare to the all patterns and them permutations
 			boolean flag;
-			for (char[] perm: permutations){
-				System.out.println(String.valueOf(perm));
+			for (String perm: permutations){
+				//System.out.println(String.valueOf(perm));
 				toNextPoint:
 				for (i = 0; i < 9; i++){
-					System.out.println(square33[i]);
-					symbols = map.get(String.valueOf(perm[i]));
+					//System.out.println(square33[i]);
+					symbols = map.get(String.valueOf(perm.charAt(i)));
 					for (j = 0; j < symbols.length(); j++){
 						if (symbols.charAt(j) == square33[i])
 							continue toNextPoint;
@@ -148,91 +145,72 @@ public class Playout{
 			return false;
 		}
 
-		//TODO: get all permutations of each pattern, not only four
-		static char[][] getPermutations3x3(char[][] patterns){
-			int length = patterns.length*24;
-			char[][] permutations = new char[length][];
-			char[] currentPattern;
-			int next = 0;
-			for (char[] pattern : patterns){
+		static HashSet<String> getPermutations3x3(String[] patterns){
+			/*int length = patterns.length*24;
+			char[][] permutations = new char[length][];*/
+			String currentPattern;
+			//int next = 0;
+			HashSet<String> st = new HashSet<String>();
+			for (String pattern : patterns){
 				currentPattern = pattern;
 				for (int i = 0; i < 2; i++){
 					for (int j = 0; j < 4; j++){
-						permutations[next] = currentPattern;
-						next++;
-						permutations[next] = getHorizPermutation(currentPattern);
-						next++;
-						permutations[next] = getVertPermutation(currentPattern);
-						next++;
+						st.add(currentPattern);
+						st.add(getHorizPermutation(currentPattern));
+						st.add(getVertPermutation(currentPattern));
 						currentPattern = get90degPermutation(currentPattern);
 					}
 					currentPattern = changeColors(currentPattern);
 				}
-				/*
-				//original
-				permutations[next] = pattern;
-				next++;
-				//horizontal flip
-				permutations[next] = getHorizPermutation(pattern);
-				next++;
-				//vertical flip
-				permutations[next] = getVertPermutation(pattern);
-				next++;
-				//90 degree
-				permutations[next] = get90degPermutation(pattern);
-				next++;
-				
-				permutations[next] = changeColors(pattern);
-				next++;
-				*/
 			}
 
-			return permutations;
+			return st;
 		}
-		static char[] get90degPermutation(char[] pattern){
+		static String get90degPermutation(String pattern){
 			char[] newPattern = new char[9];
-			newPattern[0] = pattern[6];
-			newPattern[1] = pattern[3];
-			newPattern[2] = pattern[0];
-			newPattern[3] = pattern[7];
-			newPattern[4] = pattern[4];
-			newPattern[5] = pattern[1];
-			newPattern[6] = pattern[8];
-			newPattern[7] = pattern[5];
-			newPattern[8] = pattern[2];
-			return newPattern;
+			newPattern[0] = pattern.charAt(6);
+			newPattern[1] = pattern.charAt(3);
+			newPattern[2] = pattern.charAt(0);
+			newPattern[3] = pattern.charAt(7);
+			newPattern[4] = pattern.charAt(4);
+			newPattern[5] = pattern.charAt(1);
+			newPattern[6] = pattern.charAt(8);
+			newPattern[7] = pattern.charAt(5);
+			newPattern[8] = pattern.charAt(2);
+			return String.valueOf(newPattern);
 		}
-		static char[] getHorizPermutation(char[] pattern){
+		static String getHorizPermutation(String pattern){
 			char[] newPattern = new char[9];
-			newPattern[0] = pattern[6];
-			newPattern[1] = pattern[7];
-			newPattern[2] = pattern[8];
-			newPattern[3] = pattern[3];
-			newPattern[4] = pattern[4];
-			newPattern[5] = pattern[5];
-			newPattern[6] = pattern[0];
-			newPattern[7] = pattern[1];
-			newPattern[8] = pattern[2];
-			return newPattern;
+			newPattern[0] = pattern.charAt(6);
+			newPattern[1] = pattern.charAt(7);
+			newPattern[2] = pattern.charAt(8);
+			newPattern[3] = pattern.charAt(3);
+			newPattern[4] = pattern.charAt(4);
+			newPattern[5] = pattern.charAt(5);
+			newPattern[6] = pattern.charAt(0);
+			newPattern[7] = pattern.charAt(1);
+			newPattern[8] = pattern.charAt(2);
+			return String.valueOf(newPattern);
 		}
-		static char[] getVertPermutation(char[] pattern){
+		static String getVertPermutation(String pattern){
 			char[] newPattern = new char[9];
-			newPattern[0] = pattern[2];
-			newPattern[1] = pattern[1];
-			newPattern[2] = pattern[0];
-			newPattern[3] = pattern[5];
-			newPattern[4] = pattern[4];
-			newPattern[5] = pattern[3];
-			newPattern[6] = pattern[8];
-			newPattern[7] = pattern[7];
-			newPattern[8] = pattern[6];
-			return newPattern;
+			newPattern[0] = pattern.charAt(2);
+			newPattern[1] = pattern.charAt(1);
+			newPattern[2] = pattern.charAt(0);
+			newPattern[3] = pattern.charAt(5);
+			newPattern[4] = pattern.charAt(4);
+			newPattern[5] = pattern.charAt(3);
+			newPattern[6] = pattern.charAt(8);
+			newPattern[7] = pattern.charAt(7);
+			newPattern[8] = pattern.charAt(6);
+			return String.valueOf(newPattern);
 		}
-		static char[] changeColors(char[] pattern){
+		static String changeColors(String pattern){
 			char[] newPattern = new char[9];
 			char currentPoint;
-			byte next = 0;
-			for (char point: pattern){
+			char point;
+			for (int i = 0; i < 9; i++){
+				point = pattern.charAt(i) ;
 				switch (point){
 					case 'X':
 						currentPoint = 'O';
@@ -251,10 +229,10 @@ public class Playout{
 				}
 
 				
-				newPattern[next++] = currentPoint;
+				newPattern[i] = currentPoint;
 				
 			}
-			return newPattern;
+			return String.valueOf(newPattern);
 		}
 
 	}
@@ -293,10 +271,10 @@ public class Playout{
 			if (!checkRules(point, stoneType, board)){
 				continue;
 			}
-			/*Patterns matching
+			//Patterns matching
 			if (Pattern33.isPattern3x3(board, point))
 				return point;
-			*/
+			
 			group = getGroup(board, point);
 			groupDame = getGroupDame(board, group);
 			//if group in atari
