@@ -15,7 +15,7 @@ public class Playout{
     static char[][] permutations;
 	Playout(){
 		permutations = Pattern33.getPermutations3x3(pat3src);
-		/*for (char[] perm: permutations){
+		for (char[] perm: permutations){
 			for(int i = 0; i < 9; i++){
 				if (i % 3 == 0)
 					System.out.println();
@@ -23,7 +23,7 @@ public class Playout{
 
 			}
 		}
-	*/
+	
 	}
 
 	int playRandomGame(final Board board, int first_stone){
@@ -39,14 +39,14 @@ public class Playout{
 		Point p = null;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
-		
+		/*
 		//Tests for patterns
 		if (Pattern33.isPattern3x3(playBoard, new Point(7,1)))
 			System.out.printf("\n***Pattern found!\n");
 		else
 			System.out.printf("\n***No pattern found\n");
 			
-	
+		*/
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 
@@ -147,12 +147,28 @@ public class Playout{
 			}
 			return false;
 		}
+
 		//TODO: get all permutations of each pattern, not only four
 		static char[][] getPermutations3x3(char[][] patterns){
-			int length = patterns.length*5;
+			int length = patterns.length*24;
 			char[][] permutations = new char[length][];
+			char[] currentPattern;
 			int next = 0;
 			for (char[] pattern : patterns){
+				currentPattern = pattern;
+				for (int i = 0; i < 2; i++){
+					for (int j = 0; j < 4; j++){
+						permutations[next] = currentPattern;
+						next++;
+						permutations[next] = getHorizPermutation(currentPattern);
+						next++;
+						permutations[next] = getVertPermutation(currentPattern);
+						next++;
+						currentPattern = get90degPermutation(currentPattern);
+					}
+					currentPattern = changeColors(currentPattern);
+				}
+				/*
 				//original
 				permutations[next] = pattern;
 				next++;
@@ -168,7 +184,7 @@ public class Playout{
 				
 				permutations[next] = changeColors(pattern);
 				next++;
-				
+				*/
 			}
 
 			return permutations;
