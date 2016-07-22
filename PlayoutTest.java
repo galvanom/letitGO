@@ -158,6 +158,22 @@ public class PlayoutTest{
 		//System.out.printf("Point %d,%d\n", p.i, p.j);
 		assertTrue("getHeuristicMoveTest6 for ENEMY failed. Point is not Null", p == null );
 	}
+	//3x3 patterns
+	@Test
+	public void Patterns33Test(){
+		Board board = new Board(9);
+		board.loadFromFile("patterns_test1.dat");
+		Playout pl = new Playout();
+				
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(1,1)));
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(1,4)));
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(1,7)));
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(4,1)));
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(4,4)));
+		assertTrue("Patterns test failed\n", Playout.Pattern33.isPattern3x3(board, new Point(4,7)));
+		assertTrue("Patterns test failed\n", !Playout.Pattern33.isPattern3x3(board, new Point(7,1)));
+
+	}
 
 
 
