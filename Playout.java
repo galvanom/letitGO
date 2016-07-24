@@ -236,19 +236,24 @@ public class Playout{
 		}
 
 	}
-	//TODO: Make test for it.
-	Point getHeuristicMove(final Board board, int stoneType){
-		ArrayList<Point> points = null;
+	//TODO:Rewrite it for using various points number (not lastpoint neigbours only)
+	//TODO:Function has to return Arraylist of heuristic points, not the first point
+	//TODO:Function gets the parameter for returning the first accured heuristic point for playouts
+
+	ArrayList<Point> getHeuristicMove(final Board board, Point points, int ownStoneType){
+		//ArrayList<Point> points = null;
 		ArrayList<Point> group;
 		ArrayList<Point> groupDame;
 		ArrayList<Point> neighbours;
 		ArrayList<Point> enemyGroup, enemyGroupDame, friendlyGroup, friendlyGroupDame;
 		int boardSize = board.getSize();
 		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
+		byte visitedGroups[][] = new byte[boardSize][boardSize];
 		int pointType;
 		Board checkBoard;
 		Point atariGroupDame;
 		Point smth = null;
+		int i,j;
 
 		if (board.getLastPoint() != null){
 			points = getNeighbours(board, board.getLastPoint());
@@ -258,17 +263,22 @@ public class Playout{
 			
 			return null;
 		}
+
+
 		if (points == null){
 			return null;
 		}
-		
+		for (i = 0; i < boardSize; i++) //TODO: Try to merge it with visitedNeighbours
+			for (j = 0; j < boardSize; j++)
+				visitedGroups[i][j] = 0;
+
 		for (Point point: points){
 			pointType = board.getPoint(point);
 			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
 				continue;
 			}
 
-			if (!checkRules(point, stoneType, board)){
+			if (!checkRules(point, ownStoneType, board)){
 				continue;
 			}
 			//Patterns matching
@@ -282,24 +292,24 @@ public class Playout{
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
 				//if this is enemy group return move to capture it
-				if (pointType == Board.getOppositeSide(stoneType) && checkRules(atariGroupDame, stoneType, board) == true){
+				if (pointType == Board.getOppositeSide(ownStoneType) && checkRules(atariGroupDame, ownStoneType, board) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
 					return atariGroupDame;
 					//return null;
 				}
 				//if this is friendly group, try to capture neighbour enemy group or
 				//try to escape but dont't make selfatari as well as the ladder
-				else if (pointType == stoneType){
+				else if (pointType == ownStoneType){
 					
 					//trying to kill enemy
-					for (int i = 0; i < boardSize; i++)
-						for (int j = 0; j < boardSize; j++)
+					for (i = 0; i < boardSize; i++)
+						for (j = 0; j < boardSize; j++)
 							visitedNeighbours[i][j] = 0;
 
 					for (Point stone: group){
 						neighbours = getNeighbours(board, stone);
 						for (Point neighbour: neighbours){
-							if (board.getPoint(neighbour) == stoneType){
+							if (board.getPoint(neighbour) == ownStoneType){
 								continue;
 							}
 							if (board.getPoint(neighbour) == Board.BORDER){
@@ -311,7 +321,7 @@ public class Playout{
 							}
 							enemyGroup = getGroup(board, neighbour);
 							enemyGroupDame = getGroupDame(board, enemyGroup);
-							if (enemyGroupDame.size() == 1 && checkRules(enemyGroupDame.get(0), stoneType, board) == true){
+							if (enemyGroupDame.size() == 1 && checkRules(enemyGroupDame.get(0), ownStoneType, board) == true){
 
 								return enemyGroupDame.get(0);
 							}
@@ -321,9 +331,9 @@ public class Playout{
 					}
 					
 					//Try to put a stone to the free dame and avoid self atari and the ladder
-					if (checkRules(atariGroupDame, stoneType, board) == true){
+					if (checkRules(atariGroupDame, ownStoneType, board) == true){
 						checkBoard = new Board(board);
-						checkBoard.setPoint(atariGroupDame, stoneType);
+						checkBoard.setPoint(atariGroupDame, ownStoneType);
 						friendlyGroup = getGroup(checkBoard, atariGroupDame);
 						friendlyGroupDame = getGroupDame(checkBoard, friendlyGroup);
 						if (friendlyGroupDame.size() > 2){
