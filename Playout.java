@@ -33,9 +33,11 @@ public class Playout{
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
-		Point p = null;
+		ArrayList<Point> heurMove = null;
+		Point move;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
+		ArrayList<Point> points = null;
 		
 		//Tests for patterns
 		/*if (Pattern33.isPattern3x3(playBoard, new Point(1,7)))
@@ -49,15 +51,22 @@ public class Playout{
 
 			//Before get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-			p = getHeuristicMove(playBoard, stoneType);
-			
-			if (p != null ) {
-				//playBoard.printBoard();
-				makeMove(playBoard, p, stoneType);
-				//System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",p.i , p.j, stoneType == Board.ENEMY ? "X" :"O");
-				//playBoard.printBoard();
-				continue;
+			if (playBoard.getLastPoint() != null){
+				points = getNeighbours(playBoard, playBoard.getLastPoint());
+				points.addAll(getDiagonalNeighbours(playBoard, playBoard.getLastPoint()));
+
+				heurMove = getHeuristicMove(playBoard, points, stoneType, true);
+				if (heurMove != null && heurMove.isEmpty() == false) {
+					playBoard.printBoard();
+					makeMove(playBoard, heurMove.get(0), stoneType);
+					System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",heurMove.get(0).i , heurMove.get(0).j, stoneType == Board.ENEMY ? "X" :"O");
+					playBoard.printBoard();
+					continue;
+				}
 			}
+			
+			
+
 
 			//TODO: Improve getFreePoints for the perfomance goal. Bigger number of free points bigger CPU load.
 			//Maybe this too many garbage to collect and GC runs more frequently then usually
@@ -72,10 +81,10 @@ public class Playout{
 
 
 			//p = free_points.get(0);
-			p = free_points.get(random.nextInt(free_points.size()));
+			move = free_points.get(random.nextInt(free_points.size()));
 			//p = getBestMove(playBoard, free_points);
 
-			makeMove(playBoard, p, stoneType);
+			makeMove(playBoard, move, stoneType);
 			//playBoard.printBoard();
 
 			
@@ -240,12 +249,13 @@ public class Playout{
 	//TODO:Function has to return Arraylist of heuristic points, not the first point
 	//TODO:Function gets the parameter for returning the first accured heuristic point for playouts
 
-	ArrayList<Point> getHeuristicMove(final Board board, Point points, int ownStoneType){
+	ArrayList<Point> getHeuristicMove(final Board board, ArrayList<Point> points, int ownStoneType, boolean isFast){
 		//ArrayList<Point> points = null;
 		ArrayList<Point> group;
 		ArrayList<Point> groupDame;
 		ArrayList<Point> neighbours;
 		ArrayList<Point> enemyGroup, enemyGroupDame, friendlyGroup, friendlyGroupDame;
+		ArrayList<Point> allHeuristicMoves = new ArrayList<Point>();
 		int boardSize = board.getSize();
 		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
 		byte visitedGroups[][] = new byte[boardSize][boardSize];
@@ -254,19 +264,12 @@ public class Playout{
 		Point atariGroupDame;
 		Point smth = null;
 		int i,j;
-
-		if (board.getLastPoint() != null){
-			points = getNeighbours(board, board.getLastPoint());
-			points.addAll(getDiagonalNeighbours(board, board.getLastPoint()));
-		}
-		else{
-			
-			return null;
-		}
+		/*
 
 
+		*/
 		if (points == null){
-			return null;
+			return allHeuristicMoves;
 		}
 		for (i = 0; i < boardSize; i++) //TODO: Try to merge it with visitedNeighbours
 			for (j = 0; j < boardSize; j++)
@@ -281,10 +284,12 @@ public class Playout{
 			if (!checkRules(point, ownStoneType, board)){
 				continue;
 			}
-			//Patterns matching
+			
+			/*//Patterns matching
 			if (Pattern33.isPattern3x3(board, point))
 				return point;
-			
+			*/
+
 			group = getGroup(board, point);
 			groupDame = getGroupDame(board, group);
 			//if group in atari
@@ -294,7 +299,10 @@ public class Playout{
 				//if this is enemy group return move to capture it
 				if (pointType == Board.getOppositeSide(ownStoneType) && checkRules(atariGroupDame, ownStoneType, board) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
-					return atariGroupDame;
+					 allHeuristicMoves.add(atariGroupDame);
+					 if (isFast){
+					 	return allHeuristicMoves;
+					 }
 					//return null;
 				}
 				//if this is friendly group, try to capture neighbour enemy group or
@@ -309,21 +317,21 @@ public class Playout{
 					for (Point stone: group){
 						neighbours = getNeighbours(board, stone);
 						for (Point neighbour: neighbours){
-							if (board.getPoint(neighbour) == ownStoneType){
+							if (board.getPoint(neighbour) != Board.getOppositeSide(ownStoneType)){
 								continue;
 							}
-							if (board.getPoint(neighbour) == Board.BORDER){
-								continue;
-							}
-
 							if (visitedNeighbours[neighbour.i][neighbour.j] == 1){
 								continue;
 							}
 							enemyGroup = getGroup(board, neighbour);
 							enemyGroupDame = getGroupDame(board, enemyGroup);
 							if (enemyGroupDame.size() == 1 && checkRules(enemyGroupDame.get(0), ownStoneType, board) == true){
-
-								return enemyGroupDame.get(0);
+								
+								allHeuristicMoves.add(enemyGroupDame.get(0));
+								if (isFast){
+									return allHeuristicMoves;
+								}
+								
 							}
 							for (Point enemyStone: enemyGroup)
 								visitedNeighbours[enemyStone.i][enemyStone.j] = 1;							
@@ -337,7 +345,10 @@ public class Playout{
 						friendlyGroup = getGroup(checkBoard, atariGroupDame);
 						friendlyGroupDame = getGroupDame(checkBoard, friendlyGroup);
 						if (friendlyGroupDame.size() > 2){
-							return atariGroupDame;
+							allHeuristicMoves.add(atariGroupDame);
+							if (isFast){
+								return allHeuristicMoves;
+							}
 						}
 					}
 
@@ -346,10 +357,11 @@ public class Playout{
 				}
 				
 			}
-			
+			for (Point visitedStone: group)
+				visitedGroups[visitedStone.i][visitedStone.j] = 1;	
 		}
 	
-	return null;
+	return allHeuristicMoves;
 	}
 
 	ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
