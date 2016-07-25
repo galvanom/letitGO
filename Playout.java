@@ -34,7 +34,7 @@ public class Playout{
 		int passTimes = 0;
 		int MAX_MOVES = 200;
 		ArrayList<Point> heurMove = null;
-		Point move;
+		Point move, patternMove;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
 		ArrayList<Point> points = null;
@@ -55,16 +55,25 @@ public class Playout{
 				points = getNeighbours(playBoard, playBoard.getLastPoint());
 				points.addAll(getDiagonalNeighbours(playBoard, playBoard.getLastPoint()));
 
-				heurMove = getHeuristicMove(playBoard, points, stoneType, true);
-				if (heurMove != null && heurMove.isEmpty() == false) {
+				patternMove = getPatternMove(playBoard, points);
+				if (patternMove != null){
 					playBoard.printBoard();
-					makeMove(playBoard, heurMove.get(0), stoneType);
-					System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",heurMove.get(0).i , heurMove.get(0).j, stoneType == Board.ENEMY ? "X" :"O");
+					makeMove(playBoard, patternMove, stoneType);
+					System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
 					playBoard.printBoard();
 					continue;
 				}
+
+				heurMove = getHeuristicMove(playBoard, points, stoneType, true);
+				if (heurMove != null && heurMove.isEmpty() == false) {
+					//playBoard.printBoard();
+					makeMove(playBoard, heurMove.get(0), stoneType);
+					//System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",heurMove.get(0).i , heurMove.get(0).j, stoneType == Board.ENEMY ? "X" :"O");
+					//playBoard.printBoard();
+					continue;
+				}
 			}
-			
+
 			
 
 
@@ -110,7 +119,7 @@ public class Playout{
 			map.put("o","X.");
 			map.put("?","XO.");
 			map.put(".",".");
-			if (point.i == 0 || point.i == board.getSize()-1 || point.j == 0 || point.j == board.getSize()-1)
+			if (point.i <= 0 || point.i >= board.getSize()-1 || point.j <= 0 || point.j >= board.getSize()-1)
 				return false;
 			//Get 3x3 region around the point
 			for (i = point.i-1, k = 0;i <= point.i + 1;i++){
@@ -245,6 +254,18 @@ public class Playout{
 		}
 
 	}
+	Point getPatternMove(Board board, ArrayList<Point> points){
+		if (points != null){
+			for (Point point: points){
+				//System.out.printf("\n[%d,%d]\n", point.i, point.j);
+				if (Pattern33.isPattern3x3(board, point))
+					return point;
+			}
+		}
+		return null;
+			
+	}
+
 	//TODO:Rewrite it for using various points number (not lastpoint neigbours only)
 	//TODO:Function has to return Arraylist of heuristic points, not the first point
 	//TODO:Function gets the parameter for returning the first accured heuristic point for playouts
@@ -264,10 +285,7 @@ public class Playout{
 		Point atariGroupDame;
 		Point smth = null;
 		int i,j;
-		/*
 
-
-		*/
 		if (points == null){
 			return allHeuristicMoves;
 		}
@@ -286,8 +304,7 @@ public class Playout{
 			}
 			
 			/*//Patterns matching
-			if (Pattern33.isPattern3x3(board, point))
-				return point;
+
 			*/
 
 			group = getGroup(board, point);
