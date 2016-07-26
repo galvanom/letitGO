@@ -5,7 +5,13 @@ import java.io.*;
 public class Playout{
 	String [] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
        "XOX...???",
-       "XO....?.?"
+       "XO....?.?",
+       "XO?X..x.?",
+       ".O.X.....",
+       "XO?O.o?o?",
+       "XO?O.X???",
+       "?X?O.Oooo",
+       "OX?o.O???"
     };
 
     static HashSet<String> permutations;
@@ -49,12 +55,13 @@ public class Playout{
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 
-			//Before get random moves, engine has to try moves in the last move's neighbourhood.
+			//Before to get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
+			
 			if (playBoard.getLastPoint() != null){
 				points = getNeighbours(playBoard, playBoard.getLastPoint());
 				points.addAll(getDiagonalNeighbours(playBoard, playBoard.getLastPoint()));
-
+				
 				patternMove = getPatternMove(playBoard, points);
 				if (patternMove != null){
 					playBoard.printBoard();
@@ -63,7 +70,7 @@ public class Playout{
 					playBoard.printBoard();
 					continue;
 				}
-
+				
 				heurMove = getHeuristicMove(playBoard, points, stoneType, true);
 				if (heurMove != null && heurMove.isEmpty() == false) {
 					//playBoard.printBoard();
@@ -72,8 +79,9 @@ public class Playout{
 					//playBoard.printBoard();
 					continue;
 				}
+				
 			}
-
+			
 			
 
 
@@ -254,22 +262,22 @@ public class Playout{
 		}
 
 	}
+	//Test it
 	Point getPatternMove(Board board, ArrayList<Point> points){
 		if (points != null){
 			for (Point point: points){
 				//System.out.printf("\n[%d,%d]\n", point.i, point.j);
-				if (Pattern33.isPattern3x3(board, point))
-					return point;
+				if (board.getPoint(point) == Board.EMPTY){
+					if (Pattern33.isPattern3x3(board, point))
+						return point;
+				}
 			}
 		}
 		return null;
 			
 	}
 
-	//TODO:Rewrite it for using various points number (not lastpoint neigbours only)
-	//TODO:Function has to return Arraylist of heuristic points, not the first point
-	//TODO:Function gets the parameter for returning the first accured heuristic point for playouts
-
+	//TODO:Test it
 	ArrayList<Point> getHeuristicMove(final Board board, ArrayList<Point> points, int ownStoneType, boolean isFast){
 		//ArrayList<Point> points = null;
 		ArrayList<Point> group;
