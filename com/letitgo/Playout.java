@@ -1,23 +1,15 @@
 import java.util.*;
 import java.io.*;
+import com.letitgo.heuristics.*;
 
-//TODO: Save Go specific functions to GoFun class
+//TODO: Save Go specific functions to GameLogic class
 public class Playout{
-
+	Heuristics heuristics;
 
     Playout(){
-		permutations = Pattern33.getPermutations3x3(pat3src);
-		/*for (String perm: permutations){
-			System.out.println();
-			for(int i = 0; i < 9; i++){
-				if (i % 3 == 0)
-					System.out.println();
-				System.out.printf("%c",perm.charAt(i));
-
-			}
-		}*/
-	
-	}
+		heuristics = new Heuristics();
+		heuristics.setPattern33(new Pattern33());
+		}
 
 	int playRandomGame(final Board board, int first_stone){
 		ArrayList<Point> free_points;
@@ -52,7 +44,7 @@ public class Playout{
 				points = getNeighbours(playBoard, playBoard.getLastPoint());
 				points.addAll(getDiagonalNeighbours(playBoard, playBoard.getLastPoint()));
 				
-				patternMove = getPatternMove(playBoard, points);
+				patternMove = heuristics.Pattern33.getPatternMove(playBoard, points);
 				if (patternMove != null){
 					playBoard.printBoard();
 					makeMove(playBoard, patternMove, stoneType);
@@ -72,9 +64,6 @@ public class Playout{
 				
 			}
 			
-			
-
-
 			//TODO: Improve getFreePoints for the perfomance goal. Bigger number of free points bigger CPU load.
 			//Maybe this too many garbage to collect and GC runs more frequently then usually
 			
