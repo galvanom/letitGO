@@ -7,12 +7,10 @@ public class Heuristics{
 	public Capture capture;
 
 	public Heuristics(){
+		this.pattern33 = new Pattern33();
 		this.capture = new Capture();
 	}
-	public void setPattern33(Pattern33 patt){
-		this.pattern33 = patt;
-	}
-    
+
 
  
 

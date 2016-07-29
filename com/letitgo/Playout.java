@@ -9,7 +9,6 @@ public class Playout{
 
     public Playout(){
 		heuristics = new Heuristics();
-		heuristics.setPattern33(new Pattern33());
 		}
 
 	public int playRandomGame(final Board board, int first_stone){
