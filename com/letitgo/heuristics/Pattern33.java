@@ -1,7 +1,12 @@
 package com.letitgo.heuristics;
+import java.util.*;
+import com.letitgo.Board;
+import com.letitgo.Playout;
+import com.letitgo.Point;
+
 public  class Pattern33{
-	private final HashSet<String> permutations;
-	private static final String [] pat3src = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
+	private HashSet<String> permutations;
+	private static final String [] patterns = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
 						       "XOX...???",
 						       "XO....?.?",
 						       "XO?X..x.?",
@@ -13,9 +18,18 @@ public  class Pattern33{
 						    	};
 	public Pattern33(){
 		//Initializing patterns...
-		getPermutations3x3()
+		getPermutations3x3();
 	}
-	public Point getPatternMove(Board board, ArrayList<Point> points){
+	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
+	public Point getFirstMove(Board board){
+		ArrayList<Point> points = new ArrayList<Point>();
+		points = Playout.getNeighbours(board, board.getLastPoint());
+		points.addAll(Playout.getDiagonalNeighbours(board, board.getLastPoint()));
+		
+		return getPatternMove(board, points);
+	}
+
+	private Point getPatternMove(Board board, ArrayList<Point> points){
 		if (points != null){
 			for (Point point: points){
 				//System.out.printf("\n[%d,%d]\n", point.i, point.j);
@@ -63,7 +77,7 @@ public  class Pattern33{
 			}
 
 		}
-		//Compare to the all patterns and them permutations
+		//Compare to the all patterns and they permutations
 		for (String perm: permutations){
 			//System.out.println(String.valueOf(perm));
 			toNextPoint:

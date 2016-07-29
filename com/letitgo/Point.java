@@ -1,14 +1,15 @@
-class Point{
-	int i, j;
-	Point(){
+package com.letitgo;
+public class Point{
+	public int i, j;
+	public Point(){
 		i = -1;
 		j = -1;
 	}
-	Point(int i, int j){
+	public Point(int i, int j){
 		this.i = i;
 		this.j = j;
 	}
-	boolean isEqualsTo(Point other){
+	public boolean isEqualsTo(Point other){
 		if (this.i == other.i && this.j == other.j)
 			return true;
 		return false;

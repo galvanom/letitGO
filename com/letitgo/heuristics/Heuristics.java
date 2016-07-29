@@ -3,10 +3,14 @@ import java.io.*;
 import java.util.*;
 
 public class Heuristics{
-	public Pattern33;
+	public Pattern33 pattern33;
+	public Capture capture;
 
-	void setPattern33(Pattern33 patt){
-		this.Pattern33 = patt;
+	public Heuristics(){
+		this.capture = new Capture();
+	}
+	public void setPattern33(Pattern33 patt){
+		this.pattern33 = patt;
 	}
     
 

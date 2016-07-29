@@ -1,3 +1,4 @@
+package com.letitgo;
 import java.util.*;
 import java.io.*;
 
@@ -19,9 +20,9 @@ public class Board{
 	public static final int FRIENDLY= 2;
 	public static final int ENEMY = 3;
 
-	Board(){};
+	public Board(){};
 
-	Board(int size){
+	public Board(int size){
 		int i, j;
 		this.size = size+2;
 		board = new int[this.size][this.size];
@@ -36,7 +37,7 @@ public class Board{
 
 		}
 	}
-	Board(Board otherBoard){
+	public Board(Board otherBoard){
 		int i,j;
 		this.size = otherBoard.getSize()+2;
 		this.board = new int[this.size][this.size];
@@ -54,7 +55,7 @@ public class Board{
 			
 
 	}
-	void printBoard(){
+	public void printBoard(){
 		int i, j, k;
 		System.out.print("\n  ");
 		for (k = 0; k < size-2; k++){
@@ -88,7 +89,7 @@ public class Board{
 		
 	}
 	//TODO: Gavnokod!!!
-	void loadFromFile(String filename){
+	public void loadFromFile(String filename){
 		int i,j;
 		char point;
 		int c;
@@ -126,19 +127,19 @@ public class Board{
 
 
 	}
-	void saveState(){
+	public void saveState(){
 		koPoint_saved = koPoint;
 		koPointLifeTime_saved = koPointLifeTime;
 		koStoneType_saved = koStoneType;
 		lastPoint_saved = lastPoint;
 	}
-	void loadState(){
+	public void loadState(){
 		koPoint = koPoint_saved;
 		koPointLifeTime = koPointLifeTime_saved;
 		koStoneType = koStoneType_saved;
 		lastPoint = lastPoint_saved;
 	}
-	boolean setPoint(int i, int j, int pointType){
+	public boolean setPoint(int i, int j, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
 			koPointLifeTime++; //for KO
 			lastPoint = new Point(i,j);
@@ -147,7 +148,7 @@ public class Board{
 		board[i + 1][j + 1] = pointType;
 		return true;
 	}
-	boolean setPoint(Point p, int pointType){
+	public boolean setPoint(Point p, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){ 
 			koPointLifeTime++;//for KO
 			lastPoint = p;
@@ -156,26 +157,26 @@ public class Board{
 		board[p.i + 1][p.j + 1] = pointType;
 		return true; //TODO: Boolean ?
 	}
-	int getPoint(int i, int j){
+	public int getPoint(int i, int j){
 		return board[i + 1][j + 1];
 	}
-	int getPoint(Point p){
+	public int getPoint(Point p){
 		//System.out.printf("getPoint [%d,%d]\n", p.i,p.j);
 		return board[p.i + 1][p.j + 1];
 
 	}
 
-	int getSize(){
+	public int getSize(){
 		return size - 2;
 	}
-	void saveBoardState(){
+	public void saveBoardState(){
 		int i,j;
 		boardState = new int[this.size][this.size];
 		for (i = 0; i < this.size; i++)
 			for (j = 0; j < this.size; j++)
 				boardState[i][j] = board[i][j];
 	}
-	void loadBoardState(){
+	public void loadBoardState(){
 		int i,j;
 		if (boardState == null)
 			return;
@@ -184,7 +185,7 @@ public class Board{
 				board[i][j] = boardState[i][j];
 
 	}
-	boolean matchBoardState(Board otherBoard){
+	private boolean matchBoardState(Board otherBoard){
 		int i,j;
 		if (boardState == null)
 			return false;
@@ -194,19 +195,19 @@ public class Board{
 					return false;
 		return true;
 	}
-	static int getOppositeSide(int stone){
+	public static int getOppositeSide(int stone){
 		if (stone == FRIENDLY)
 			return ENEMY;
 			
 		return FRIENDLY;
 	}
-	void setKO(Point point, int stoneType){
+	public void setKO(Point point, int stoneType){
 		koPoint = point;
 		koStoneType = stoneType;
 		koPointLifeTime = 0;
 
 	}
-	boolean isKO(Point point, int stoneType){
+	public boolean isKO(Point point, int stoneType){
 		
 
 		if (koPointLifeTime == 0 && koPoint != null){
@@ -218,7 +219,7 @@ public class Board{
 		}
 		return false;
 	}
-	Point getLastPoint(){
+	public Point getLastPoint(){
 		return lastPoint;
 	}
 

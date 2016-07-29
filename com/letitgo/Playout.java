@@ -1,17 +1,18 @@
+package com.letitgo;
 import java.util.*;
 import java.io.*;
 import com.letitgo.heuristics.*;
 
 //TODO: Save Go specific functions to GameLogic class
 public class Playout{
-	Heuristics heuristics;
+	private final Heuristics heuristics;
 
-    Playout(){
+    public Playout(){
 		heuristics = new Heuristics();
 		heuristics.setPattern33(new Pattern33());
 		}
 
-	int playRandomGame(final Board board, int first_stone){
+	public int playRandomGame(final Board board, int first_stone){
 		ArrayList<Point> free_points;
 		int boardSize = board.getSize();
 		//Point[] free_points = new Point[boardSize*boardSize];
@@ -21,7 +22,7 @@ public class Playout{
 		int stoneType = first_stone;
 		int passTimes = 0;
 		int MAX_MOVES = 200;
-		ArrayList<Point> heurMove = null;
+		Point captureMove = null;
 		Point move, patternMove;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
@@ -41,22 +42,22 @@ public class Playout{
 			//This moves have to be either "capture/release capture" or the patterns
 			
 			if (playBoard.getLastPoint() != null){
-				points = getNeighbours(playBoard, playBoard.getLastPoint());
-				points.addAll(getDiagonalNeighbours(playBoard, playBoard.getLastPoint()));
+
 				
-				patternMove = heuristics.Pattern33.getPatternMove(playBoard, points);
+				patternMove = heuristics.pattern33.getFirstMove(playBoard);
+
 				if (patternMove != null){
-					playBoard.printBoard();
+					//playBoard.printBoard();
 					makeMove(playBoard, patternMove, stoneType);
-					System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					playBoard.printBoard();
+					//System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
+					//playBoard.printBoard();
 					continue;
 				}
 				
-				heurMove = getHeuristicMove(playBoard, points, stoneType, true);
-				if (heurMove != null && heurMove.isEmpty() == false) {
+				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
+				if (captureMove != null) {
 					//playBoard.printBoard();
-					makeMove(playBoard, heurMove.get(0), stoneType);
+					makeMove(playBoard, captureMove, stoneType);
 					//System.out.printf("\n****Heuristic occured. The point is [%d,%d] Stone type is: %s ****",heurMove.get(0).i , heurMove.get(0).j, stoneType == Board.ENEMY ? "X" :"O");
 					//playBoard.printBoard();
 					continue;
@@ -64,7 +65,7 @@ public class Playout{
 				
 			}
 			
-			//TODO: Improve getFreePoints for the perfomance goal. Bigger number of free points bigger CPU load.
+			//TODO: Improve getFreePoints for the perfomance goal. The bigger number of free points is the bigger CPU load.
 			//Maybe this too many garbage to collect and GC runs more frequently then usually
 			
 			free_points = getFreePoints(playBoard, stoneType);
@@ -94,121 +95,7 @@ public class Playout{
 
 	}
 
-
-
-	//TODO:Test it
-	ArrayList<Point> getHeuristicMove(final Board board, ArrayList<Point> points, int ownStoneType, boolean isFast){
-		//ArrayList<Point> points = null;
-		ArrayList<Point> group;
-		ArrayList<Point> groupDame;
-		ArrayList<Point> neighbours;
-		ArrayList<Point> enemyGroup, enemyGroupDame, friendlyGroup, friendlyGroupDame;
-		ArrayList<Point> allHeuristicMoves = new ArrayList<Point>();
-		int boardSize = board.getSize();
-		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
-		byte visitedGroups[][] = new byte[boardSize][boardSize];
-		int pointType;
-		Board checkBoard;
-		Point atariGroupDame;
-		Point smth = null;
-		int i,j;
-
-		if (points == null){
-			return allHeuristicMoves;
-		}
-		for (i = 0; i < boardSize; i++) //TODO: Try to merge it with visitedNeighbours
-			for (j = 0; j < boardSize; j++)
-				visitedGroups[i][j] = 0;
-
-		for (Point point: points){
-			pointType = board.getPoint(point);
-			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
-				continue;
-			}
-
-			if (!checkRules(point, ownStoneType, board)){
-				continue;
-			}
-			
-			/*//Patterns matching
-
-			*/
-
-			group = getGroup(board, point);
-			groupDame = getGroupDame(board, group);
-			//if group in atari
-			
-			if (groupDame.size() == 1){
-				atariGroupDame = groupDame.get(0);
-				//if this is enemy group return move to capture it
-				if (pointType == Board.getOppositeSide(ownStoneType) && checkRules(atariGroupDame, ownStoneType, board) == true){
-					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
-					 allHeuristicMoves.add(atariGroupDame);
-					 if (isFast){
-					 	return allHeuristicMoves;
-					 }
-					//return null;
-				}
-				//if this is friendly group, try to capture neighbour enemy group or
-				//try to escape but dont't make selfatari as well as the ladder
-				else if (pointType == ownStoneType){
-					
-					//trying to kill enemy
-					for (i = 0; i < boardSize; i++)
-						for (j = 0; j < boardSize; j++)
-							visitedNeighbours[i][j] = 0;
-
-					for (Point stone: group){
-						neighbours = getNeighbours(board, stone);
-						for (Point neighbour: neighbours){
-							if (board.getPoint(neighbour) != Board.getOppositeSide(ownStoneType)){
-								continue;
-							}
-							if (visitedNeighbours[neighbour.i][neighbour.j] == 1){
-								continue;
-							}
-							enemyGroup = getGroup(board, neighbour);
-							enemyGroupDame = getGroupDame(board, enemyGroup);
-							if (enemyGroupDame.size() == 1 && checkRules(enemyGroupDame.get(0), ownStoneType, board) == true){
-								
-								allHeuristicMoves.add(enemyGroupDame.get(0));
-								if (isFast){
-									return allHeuristicMoves;
-								}
-								
-							}
-							for (Point enemyStone: enemyGroup)
-								visitedNeighbours[enemyStone.i][enemyStone.j] = 1;							
-						}
-					}
-					
-					//Try to put a stone to the free dame and avoid self atari and the ladder
-					if (checkRules(atariGroupDame, ownStoneType, board) == true){
-						checkBoard = new Board(board);
-						checkBoard.setPoint(atariGroupDame, ownStoneType);
-						friendlyGroup = getGroup(checkBoard, atariGroupDame);
-						friendlyGroupDame = getGroupDame(checkBoard, friendlyGroup);
-						if (friendlyGroupDame.size() > 2){
-							allHeuristicMoves.add(atariGroupDame);
-							if (isFast){
-								return allHeuristicMoves;
-							}
-						}
-					}
-
-					
-
-				}
-				
-			}
-			for (Point visitedStone: group)
-				visitedGroups[visitedStone.i][visitedStone.j] = 1;	
-		}
-	
-	return allHeuristicMoves;
-	}
-
-	ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
+	public static ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
 		int boardSize = board.getSize();
 		byte visited[][] = new byte[boardSize][boardSize];
 		int i,j;
@@ -232,7 +119,7 @@ public class Playout{
 		}
 		return dame;
 	}
-	ArrayList<Point> getNeighbours(final Board board, Point p){
+	public static ArrayList<Point> getNeighbours(final Board board, Point p){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(new Point(p.i+1, p.j));
 		neighbours.add(new Point(p.i-1, p.j));
@@ -241,7 +128,7 @@ public class Playout{
 
 		return neighbours;
 	}
-	ArrayList<Point> getDiagonalNeighbours(final Board board, Point p){
+	public static ArrayList<Point> getDiagonalNeighbours(final Board board, Point p){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(new Point(p.i+1, p.j+1));
 		neighbours.add(new Point(p.i+1, p.j-1));
@@ -287,7 +174,7 @@ public class Playout{
 		board.setPoint(p, stoneType);
 		removeDeadStones(board, Board.getOppositeSide(stoneType));
 	}
-	ArrayList<Point> getFreePoints(Board board, int stoneType){
+	public static ArrayList<Point> getFreePoints(Board board, int stoneType){
 		int i,j;
 		int boardSize = board.getSize();
 		ArrayList<Point> freePoints = new ArrayList<Point>();
@@ -307,7 +194,7 @@ public class Playout{
 		return freePoints;		
 	}
 
-	int getDameNumber(Point p, Board board){
+	public static int getDameNumber(Point p, Board board){
 		int dame_count = 0;
 		if (board.getPoint(p.i+1, p.j) == Board.EMPTY)
 			dame_count++;
@@ -321,7 +208,7 @@ public class Playout{
 		return dame_count;
 	}
 	
-	static boolean isFriendlySingleEyePoint(Point p, int stoneType, Board board){ 
+	public static boolean isFriendlySingleEyePoint(Point p, int stoneType, Board board){ 
 		boolean is_friendly = true;
 		if (board.getPoint(p.i+1, p.j) == Board.getOppositeSide(stoneType)) 
 			return false;
@@ -336,7 +223,7 @@ public class Playout{
 	}
 
 
-	boolean checkRules(Point p, int stoneType, Board board){
+	public static boolean checkRules(Point p, int stoneType, Board board){
 
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
 		Point[] surroundedStones = {	new Point(p.i-1, p.j),	//up 
@@ -394,7 +281,7 @@ public class Playout{
 		return false;
 	}
 
-	void removeDeadStones(Board board, int stoneType){
+	public static void removeDeadStones(Board board, int stoneType){
 		int i,j, deletedStonesNumber = 0;
 		Point point, lastPoint = null;
 		ArrayList<Point> group;
@@ -437,7 +324,7 @@ public class Playout{
 			board.setKO(lastPoint, stoneType);
 		}
 	}
-	boolean isGroupDead(Board board, ArrayList<Point> group){
+	public static boolean isGroupDead(Board board, ArrayList<Point> group){
 		for (Point stone: group){
 			if (getDameNumber(stone, board) != 0){
 				return false;
@@ -446,7 +333,7 @@ public class Playout{
 
 		return true;
 	}
-	ArrayList<Point> getGroup (Board board, Point p){
+	public static ArrayList<Point> getGroup (Board board, Point p){
 		int i,j;
 		int dame_number;
 		Point point,up, down, left, right;
@@ -490,7 +377,7 @@ public class Playout{
 		
 		return visited;
 	}
-	boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
+	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
 		Iterator<Point> it_v = visited.iterator();
 		Iterator<Point> it_q = queue.iterator();
 		while(it_v.hasNext()){
@@ -504,7 +391,7 @@ public class Playout{
 
 		return false;
 	}
-	int[] getScore(Board board){
+	private int[] getScore(Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		int surroundedStones[] = new int[4];
 		Point p;
