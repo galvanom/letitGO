@@ -11,7 +11,4 @@ public class Heuristics{
 		this.capture = new Capture();
 	}
 
-
- 
-
 }

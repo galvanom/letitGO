@@ -13,8 +13,13 @@ public class Capture{
 		points = Playout.getNeighbours(board, board.getLastPoint());
 		points.addAll(Playout.getDiagonalNeighbours(board, board.getLastPoint()));
 		captureMoves = getCaptureMoves(board, points, ownStoneType, true);
-
-		return captureMoves.get(0);
+		
+		if (captureMoves.size() > 0){
+			return captureMoves.get(0);
+		}
+		else{
+			return null;
+		}
 	}
 	//Full version. Returns all available capture moves at the board
 	public ArrayList<Point> getAllMoves(final Board board, int ownStoneType){

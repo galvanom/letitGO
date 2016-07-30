@@ -17,6 +17,7 @@ public  class Pattern33{
 						       "OX?o.O???"
 						    	};
 	public Pattern33(){
+		permutations = new HashSet<String>();
 		//Initializing patterns...
 		getPermutations3x3();
 	}
@@ -105,8 +106,8 @@ public  class Pattern33{
 		//int next = 0;
 		for (String pattern : patterns){
 			currentPattern = pattern;
-			for (int i = 0; i < 2; i++){
-				for (int j = 0; j < 4; j++){
+			for (int i = 0; i < 2; i++){ // 2 different colors 
+				for (int j = 0; j < 4; j++){ // 4 90 degree permutations 
 					permutations.add(currentPattern);
 					permutations.add(getHorizPermutation(currentPattern));
 					permutations.add(getVertPermutation(currentPattern));
