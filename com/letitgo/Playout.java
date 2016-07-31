@@ -158,7 +158,7 @@ public class Playout{
 		return freePoints;		
 	}
 
-
+	//Point class
 	public static ArrayList<Point> getNeighbours(final Board board, Point p){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
 		neighbours.add(new Point(p.i+1, p.j));
@@ -177,97 +177,6 @@ public class Playout{
 
 		return neighbours;
 	}
-	public static ArrayList<Point> getGroupDame(final Board board, ArrayList<Point> group){
-		int boardSize = board.getSize();
-		byte visited[][] = new byte[boardSize][boardSize];
-		int i,j;
-		ArrayList<Point> dame = new ArrayList<Point>(); //What is initialization value?
-		ArrayList<Point> neigbours;
-
-		for (i = 0; i < boardSize; i++)
-			for (j = 0; j < boardSize; j++)
-				visited[i][j] = 0;
-		for (Point stone: group){
-			
-			neigbours = getNeighbours(board, stone);
-			for (Point neighbour: neigbours){
-				//System.out.printf("\nstone: [%d,%d], neighbour: [%d,%d]\n", stone.i, stone.j, neighbour.i, neighbour.j);
-				if (board.getPoint(neighbour) == Board.EMPTY && visited[neighbour.i][neighbour.j] == 0){
-					dame.add(neighbour);
-					visited[neighbour.i][neighbour.j] = 1;
-				}
-			}
-	
-		}
-		return dame;
-	}
-	public static boolean isGroupDead(Board board, ArrayList<Point> group){
-		for (Point stone: group){
-			if (getDameNumber(stone, board) != 0){
-				return false;
-			}
-		}
-
-		return true;
-	}
-	public static ArrayList<Point> getGroup (Board board, Point p){
-		int i,j;
-		int dame_number;
-		Point point,up, down, left, right;
-		LinkedList<Point> queue = new LinkedList<Point>();
-		ArrayList<Point> visited = new ArrayList<Point>();
-		int boardSize = board.getSize();
-		queue.add(p);
-		while (queue.size() > 0){
-			point = queue.poll();
-			visited.add(point);
-			
-			//if (point.i-1 >= 0){
-				up = new Point(point.i-1, point.j);
-				if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
-					queue.add(up);
-
-				}
-			//}
-			//if (point.j+1 < boardSize){
-				right = new Point(point.i, point.j+1);
-				if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
-					queue.add(right);
-
-				}
-			//}
-			//if (point.i+1 < boardSize){
-				down = new Point(point.i+1, point.j);
-				if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
-					queue.add(down);
-
-				}
-			//}
-			//if (point.j-1 >= 0){
-				left = new Point(point.i, point.j-1);
-				if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
-					queue.add(left);
-
-				}
-			//}
-		}
-		
-		return visited;
-	}
-	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
-		Iterator<Point> it_v = visited.iterator();
-		Iterator<Point> it_q = queue.iterator();
-		while(it_v.hasNext()){
-			if (p.isEqualsTo(it_v.next()))
-				return true;
-		}
-		while(it_q.hasNext()){
-			if (p.isEqualsTo(it_q.next()))
-				return true;
-		}
-
-		return false;
-	}
 	public static int getDameNumber(Point p, Board board){
 		int dame_count = 0;
 		if (board.getPoint(p.i+1, p.j) == Board.EMPTY)
@@ -281,6 +190,23 @@ public class Playout{
 
 		return dame_count;
 	}
+	public static boolean isFriendlySingleEyePoint(Point p, int stoneType, Board board){ 
+		boolean is_friendly = true;
+		if (board.getPoint(p.i+1, p.j) == Board.getOppositeSide(stoneType)) 
+			return false;
+		if (board.getPoint(p.i-1, p.j) == Board.getOppositeSide(stoneType))
+			return false;
+		if (board.getPoint(p.i, p.j+1) == Board.getOppositeSide(stoneType))
+			return false;;
+		if (board.getPoint(p.i, p.j-1) == Board.getOppositeSide(stoneType))
+			return false;
+
+		return true;
+	}
+	//Group class
+
+
+
 /*
 	Point getBestMove(Board board, ArrayList<Point> freePoints){
 		float rating, bestRating = -100;
@@ -314,23 +240,12 @@ public class Playout{
 
 	}
 */
+	//Board class
 	void makeMove(Board board, Point p, int stoneType){
 		board.setPoint(p, stoneType);
 		removeDeadStones(board, Board.getOppositeSide(stoneType));
 	}
-	public static boolean isFriendlySingleEyePoint(Point p, int stoneType, Board board){ 
-		boolean is_friendly = true;
-		if (board.getPoint(p.i+1, p.j) == Board.getOppositeSide(stoneType)) 
-			return false;
-		if (board.getPoint(p.i-1, p.j) == Board.getOppositeSide(stoneType))
-			return false;
-		if (board.getPoint(p.i, p.j+1) == Board.getOppositeSide(stoneType))
-			return false;;
-		if (board.getPoint(p.i, p.j-1) == Board.getOppositeSide(stoneType))
-			return false;
 
-		return true;
-	}
 	public static boolean checkRules(Point p, int stoneType, Board board){
 
 		ArrayList<Point> points_to_delete = new ArrayList<Point>(), points;
@@ -431,6 +346,63 @@ public class Playout{
 			board.setKO(lastPoint, stoneType);
 		}
 	}
+	public static ArrayList<Point> getGroup (Board board, Point p){
+		int i,j;
+		int dame_number;
+		Point point,up, down, left, right;
+		LinkedList<Point> queue = new LinkedList<Point>();
+		ArrayList<Point> visited = new ArrayList<Point>();
+		int boardSize = board.getSize();
+		queue.add(p);
+		while (queue.size() > 0){
+			point = queue.poll();
+			visited.add(point);
+			
+			//if (point.i-1 >= 0){
+				up = new Point(point.i-1, point.j);
+				if ((board.getPoint(point) == board.getPoint(up)) && !isPointVisited(visited, queue, up)){
+					queue.add(up);
 
+				}
+			//}
+			//if (point.j+1 < boardSize){
+				right = new Point(point.i, point.j+1);
+				if ((board.getPoint(point) == board.getPoint(right)) && !isPointVisited(visited, queue, right)){
+					queue.add(right);
+
+				}
+			//}
+			//if (point.i+1 < boardSize){
+				down = new Point(point.i+1, point.j);
+				if ((board.getPoint(point) == board.getPoint(down)) && !isPointVisited(visited, queue, down)){
+					queue.add(down);
+
+				}
+			//}
+			//if (point.j-1 >= 0){
+				left = new Point(point.i, point.j-1);
+				if ((board.getPoint(point) == board.getPoint(left)) && !isPointVisited(visited, queue, left)){
+					queue.add(left);
+
+				}
+			//}
+		}
+		
+		return visited;
+	}
+	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
+		Iterator<Point> it_v = visited.iterator();
+		Iterator<Point> it_q = queue.iterator();
+		while(it_v.hasNext()){
+			if (p.isEqualsTo(it_v.next()))
+				return true;
+		}
+		while(it_q.hasNext()){
+			if (p.isEqualsTo(it_q.next()))
+				return true;
+		}
+
+		return false;
+	}
 
 }
