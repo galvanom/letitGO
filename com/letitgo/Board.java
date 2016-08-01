@@ -10,10 +10,6 @@ public class Board{
 	int koStoneType = EMPTY;
 	Point lastPoint = null;
 
-	Point koPoint_saved = null;
-	int koPointLifeTime_saved = 0;
-	int koStoneType_saved = EMPTY;
-	Point lastPoint_saved = null;
 	//Point types
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
@@ -52,7 +48,6 @@ public class Board{
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
-			
 
 	}
 	public void printBoard(){
@@ -88,7 +83,6 @@ public class Board{
 		}
 		
 	}
-	//TODO: Gavnokod!!!
 	public void loadFromFile(String filename){
 		int i,j;
 		char point;
@@ -124,83 +118,29 @@ public class Board{
 		catch(IOException e){
 			System.out.println("File read error");
 		}
-
-
 	}
-	public void saveState(){
-		koPoint_saved = koPoint;
-		koPointLifeTime_saved = koPointLifeTime;
-		koStoneType_saved = koStoneType;
-		lastPoint_saved = lastPoint;
-	}
-	public void loadState(){
-		koPoint = koPoint_saved;
-		koPointLifeTime = koPointLifeTime_saved;
-		koStoneType = koStoneType_saved;
-		lastPoint = lastPoint_saved;
-	}
-	public boolean setPoint(int i, int j, int pointType){
+	public void setPoint(int i, int j, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
 			koPointLifeTime++; //for KO
 			lastPoint = new Point(i,j);
 		}
 
 		board[i + 1][j + 1] = pointType;
-		return true;
 	}
-	public boolean setPoint(Point p, int pointType){
-		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){ 
-			koPointLifeTime++;//for KO
-			lastPoint = p;
-		}
-
-		board[p.i + 1][p.j + 1] = pointType;
-		return true; //TODO: Boolean ?
+	public void setPoint(Point p, int pointType){
+		setPoint(p.i, p.j, pointType);
 	}
 	public int getPoint(int i, int j){
 		return board[i + 1][j + 1];
 	}
 	public int getPoint(Point p){
-		//System.out.printf("getPoint [%d,%d]\n", p.i,p.j);
 		return board[p.i + 1][p.j + 1];
-
 	}
 
 	public int getSize(){
 		return size - 2;
 	}
-	public void saveBoardState(){
-		int i,j;
-		boardState = new int[this.size][this.size];
-		for (i = 0; i < this.size; i++)
-			for (j = 0; j < this.size; j++)
-				boardState[i][j] = board[i][j];
-	}
-	public void loadBoardState(){
-		int i,j;
-		if (boardState == null)
-			return;
-		for (i = 0; i < this.size; i++)
-			for (j = 0; j < this.size; j++)
-				board[i][j] = boardState[i][j];
 
-	}
-	private boolean matchBoardState(Board otherBoard){
-		int i,j;
-		if (boardState == null)
-			return false;
-		for (i = 0; i < otherBoard.getSize(); i++)
-			for (j = 0; j < otherBoard.getSize(); j++)
-				if (boardState[i+1][j+1] != otherBoard.getPoint(i,j))
-					return false;
-		return true;
-	}
-	public static int getOppositeSide(int stone){
-		if (stone == FRIENDLY)
-			return ENEMY;
-			
-		return FRIENDLY;
-	}
 	public void setKO(Point point, int stoneType){
 		koPoint = point;
 		koStoneType = stoneType;
@@ -208,8 +148,6 @@ public class Board{
 
 	}
 	public boolean isKO(Point point, int stoneType){
-		
-
 		if (koPointLifeTime == 0 && koPoint != null){
 			//System.out.printf("koPointLifeTime: %d KoPoint:[%d,%d] Point: [%d,%d] koStoneType: %d stoneType: %d\n", koPointLifeTime, koPoint.i, koPoint.j, point.i, point.j,koStoneType,stoneType );
 
@@ -222,5 +160,139 @@ public class Board{
 	public Point getLastPoint(){
 		return lastPoint;
 	}
+	public void makeMove(Point p, int stoneType){
+		board.setPoint(p, stoneType);
+		removeDeadStones(Board.getOppositeSide(stoneType));
+	}
+
+	public  boolean checkRules(Point p, int stoneType){
+
+		ArrayList<Point> points_to_delete = new ArrayList<Point>();
+		ArrayList<Point> points;
+		ArrayList<Point> neighbours = p.getNeighbours();
+		Group group;
+
+		if (p.getDameNumber() != 0){
+			return true;
+		}
+		if (p.isFriendlySingleEyePoint(stoneType)){
+			return false;
+		}
+		if (isKO(p, stoneType)){
+			return false;
+		}
+
+		
+		tryMove(p, stoneType);
+		 //posible suicide move
+		
+		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
+			returnMove(p);
+			return true;
+
+		}
+		
+		//check could we kill neigbour enemy groups with this move
+		for (Point neighbour: neighbours){
+			
+			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
+				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+				group = getGroup(neighbour);
+				if (group.isGroupDead() == true){
+					returnMove(p);
+					return true;
+				}
+			}
+			
+
+		}
+		
+		returnMove();
+		return false;
+	}
+	public void removeDeadStones(int stoneType){
+		int i,j, deletedStonesNumber = 0;
+		Point point, lastPoint = null; //change lastPoint name
+		Group group;
+		boolean[][] visited = new boolean[board.getSize()][board.getSize()];
+		
+		for(i = 0; i < board.getSize(); i++)
+			for(j = 0; j < board.getSize(); j++)
+				visited[i][j] = false;
+
+		for(i = 0; i < board.getSize(); i++){
+			for(j = 0; j < board.getSize(); j++){
+				point = new Point(this, i, j);
+				if (visited[point.i][point.j] == true){
+					continue;
+				}
+				
+				if (board.getPoint(point) == stoneType){
+
+					group = getGroup(point);
+					
+					if (group.isGroupDead() == true){
+						deletedStonesNumber += group.getSize();
+						lastPoint = point; //possible ko point
+							    
+
+						for (Point stone: group){
+							board.setPoint(stone, Board.EMPTY);
+						}
+					}
+					else{
+						for (Point stone: group){
+							visited[stone.i][stone.j] = true;
+						}
+					}
+				}
+			
+			}
+		}
+		if (deletedStonesNumber == 1 && lastPoint != null){
+			setKO(lastPoint, stoneType);
+		}
+	}
+	public Group getGroup (Point p){
+		int i,j;
+		int dame_number;
+		ArrayList<Point> neighbours = p.getNeighbours();
+		LinkedList<Point> queue = new LinkedList<Point>();
+		ArrayList<Point> visited = new ArrayList<Point>();
+		int boardSize = getSize();
+		Group = group;
+		
+		queue.add(p);
+		while (queue.size() > 0){
+			point = queue.poll();
+			visited.add(point);
+		
+			for (Point neighbour: neighbours){
+
+				if ((board.getPoint(point) == board.getPoint(neighbour)) && !isPointVisited(visited, queue, neighbour)){
+					queue.add(neighbour);
+				}
+			}
+			
+		}
+
+		group = new Group(this, visited);
+		return group;
+	}
+	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
+		Iterator<Point> it_v = visited.iterator();
+		Iterator<Point> it_q = queue.iterator();
+		while(it_v.hasNext()){
+			if (p.isEqualsTo(it_v.next()))
+				return true;
+		}
+		while(it_q.hasNext()){
+			if (p.isEqualsTo(it_q.next()))
+				return true;
+		}
+
+		return false;
+	}
+	//TODO: Implement methods tryMove() and undoMove()
 
 }

@@ -1,20 +1,31 @@
-public class Group{
+package com.letitgo;
+public class Group implements Iterable<Point>{
 	private ArrayList<Points> group;
 	private ArrayList<Points> groupDame;
+	private final Board board;
 
-	Group(){
-		group = new ArrayList<Point>;
+	Group(final Board board, ArrayList<Point> group){
+		this.board = board;
+		this.group = group;
 	}
+	@Override
+	public Iterator<Point> iterator(){
+		return this.group.iterator();
+	}
+	public getSize(){
+		return this.group.size();
+	}
+	// TODO: Don't know is this function needed or not
 	public void addPoint(Point point){
-		group.add(point);
+		this.group.add(point);
 	}
-	public int getGroupDameNumber(final Board board){
-		if (groupDame == null){
-			groupDame = getGroupDame(board);
+	public int getGroupDameNumber(){
+		if (this.groupDame == null){
+			this.groupDame = getGroupDame();
 		}
-		return groupDame.size();
+		return this.groupDame.size();
 	}
-	public ArrayList<Point> getGroupDame(final Board board){
+	public ArrayList<Point> getGroupDame(){
 		int boardSize = board.getSize();
 		byte visited[][] = new byte[boardSize][boardSize];
 		int i,j;
@@ -24,9 +35,9 @@ public class Group{
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++)
 				visited[i][j] = 0;
-		for (Point stone: group){
+		for (Point stone: this.group){
 			
-			neigbours = getNeighbours(board, stone);
+			neigbours = stone.getNeighbours();
 			for (Point neighbour: neigbours){
 				//System.out.printf("\nstone: [%d,%d], neighbour: [%d,%d]\n", stone.i, stone.j, neighbour.i, neighbour.j);
 				if (board.getPoint(neighbour) == Board.EMPTY && visited[neighbour.i][neighbour.j] == 0){
@@ -38,9 +49,9 @@ public class Group{
 		}
 		return dame;
 	}
-	public boolean isGroupDead(Board board){
-		for (Point stone: group){
-			if (getDameNumber(stone, board) != 0){
+	public boolean isGroupDead(){
+		for (Point stone: this.group){
+			if (stone.getDameNumber() != 0){
 				return false;
 			}
 		}
