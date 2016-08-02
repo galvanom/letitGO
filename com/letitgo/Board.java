@@ -3,12 +3,17 @@ import java.util.*;
 import java.io.*;
 
 public class Board{
-	int[][] board, boardState;
-	int size;
-	Point koPoint = null;
-	int koPointLifeTime = 0;
-	int koStoneType = EMPTY;
-	Point lastPoint = null;
+	private int[][] board, boardState;
+	private final int size;
+
+	private class BoardState{
+		public Point koPoint = null;
+		public int koPointLifeTime = 0;
+		public int koStoneType = EMPTY;
+		public Point lastPoint = null;
+	}
+	private BoardState currentState;
+	private BoardState previousState;
 
 	//Point types
 	public static final int EMPTY = 0;
@@ -32,6 +37,7 @@ public class Board{
 			board[i][this.size-1] = BORDER;
 
 		}
+
 	}
 	public Board(Board otherBoard){
 		int i,j;
@@ -48,6 +54,10 @@ public class Board{
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
+
+	}
+	public void tryMove(Point p){
+		previousState.koPoint = currentState.koPoint;
 
 	}
 	public void printBoard(){
@@ -122,7 +132,7 @@ public class Board{
 	public void setPoint(int i, int j, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
 			koPointLifeTime++; //for KO
-			lastPoint = new Point(i,j);
+			lastPoint = new Point(this, i,j);
 		}
 
 		board[i + 1][j + 1] = pointType;
@@ -185,8 +195,8 @@ public class Board{
 		
 		tryMove(p, stoneType);
 		 //posible suicide move
-		
-		if (isGroupDead(new_board, getGroup(new_board, p)) == false){
+		group = getGroup(p);
+		if (group.isGroupDead()) == false){
 			returnMove(p);
 			return true;
 

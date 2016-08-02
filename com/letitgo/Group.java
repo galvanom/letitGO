@@ -1,4 +1,5 @@
 package com.letitgo;
+import java.util.*;
 public class Group implements Iterable<Point>{
 	private ArrayList<Points> group;
 	private ArrayList<Points> groupDame;
@@ -12,7 +13,7 @@ public class Group implements Iterable<Point>{
 	public Iterator<Point> iterator(){
 		return this.group.iterator();
 	}
-	public getSize(){
+	public int getSize(){
 		return this.group.size();
 	}
 	// TODO: Don't know is this function needed or not

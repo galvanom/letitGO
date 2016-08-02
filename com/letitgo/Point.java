@@ -1,9 +1,11 @@
 package com.letitgo;
+import java.util.*;
+
 public class Point{
 	public int i, j;
 	private final Board board;
 	public Point(){
-		
+
 	}
 	public Point(Board board, int i, int j){
 		this.board = board;
