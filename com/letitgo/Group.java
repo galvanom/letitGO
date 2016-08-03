@@ -1,8 +1,8 @@
 package com.letitgo;
 import java.util.*;
 public class Group implements Iterable<Point>{
-	private ArrayList<Points> group;
-	private ArrayList<Points> groupDame;
+	private ArrayList<Point> group;
+	private ArrayList<Point> groupDame;
 	private final Board board;
 
 	Group(final Board board, ArrayList<Point> group){

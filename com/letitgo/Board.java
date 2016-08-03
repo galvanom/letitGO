@@ -18,7 +18,7 @@ public class Board{
 	public static final int FRIENDLY= 2;
 	public static final int ENEMY = 3;
 
-	public Board(){};
+	//public Board(){}
 
 	public Board(int size){
 		int i, j;
@@ -54,13 +54,13 @@ public class Board{
 
 	}
 	public void tryMove(Point p, int pointType){
-		this.tryMove = p;
+		this.tryPoint = p;
 		board[p.i + 1][p.j + 1] = pointType;
 	}
 	public void undoMove(){
-		if (tryMove != null){
-			board[tryMove.i + 1][tryMove.j + 1] = Board.EMPTY;
-			tryMove = null;
+		if (tryPoint != null){
+			board[tryPoint.i + 1][tryPoint.j + 1] = Board.EMPTY;
+			tryPoint = null;
 		}
 
 	}
@@ -175,8 +175,8 @@ public class Board{
 		return lastPoint;
 	}
 	public void makeMove(Point p, int stoneType){
-		board.setPoint(p, stoneType);
-		removeDeadStones(Board.getOppositeSide(stoneType));
+		setPoint(p, stoneType);
+		removeDeadStones(getOppositeSide(stoneType));
 	}
 
 	public  boolean checkRules(Point p, int stoneType){
@@ -205,11 +205,11 @@ public class Board{
 		tryMove(p, stoneType);
 
 		group = getGroup(p);
-		if (group.isGroupDead()) == true){
+		if (group.isGroupDead() == true){
 		
 			for (Point neighbour: neighbours){
 				
-				if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
+				if (getPoint(neighbour) == getOppositeSide(stoneType)){
 					//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 					group = getGroup(neighbour);
 					if (group.isGroupDead() == true){
@@ -229,20 +229,20 @@ public class Board{
 		int i,j, deletedStonesNumber = 0;
 		Point point, lastPoint = null; //change lastPoint name
 		Group group;
-		boolean[][] visited = new boolean[board.getSize()][board.getSize()];
+		boolean[][] visited = new boolean[getSize()][getSize()];
 		
-		for(i = 0; i < board.getSize(); i++)
-			for(j = 0; j < board.getSize(); j++)
+		for(i = 0; i < getSize(); i++)
+			for(j = 0; j < getSize(); j++)
 				visited[i][j] = false;
 
-		for(i = 0; i < board.getSize(); i++){
-			for(j = 0; j < board.getSize(); j++){
+		for(i = 0; i < getSize(); i++){
+			for(j = 0; j < getSize(); j++){
 				point = new Point(this, i, j);
 				if (visited[point.i][point.j] == true){
 					continue;
 				}
 				
-				if (board.getPoint(point) == stoneType){
+				if (getPoint(point) == stoneType){
 
 					group = getGroup(point);
 					
@@ -252,7 +252,7 @@ public class Board{
 							    
 
 						for (Point stone: group){
-							board.setPoint(stone, Board.EMPTY);
+							setPoint(stone, Board.EMPTY);
 						}
 					}
 					else{
@@ -271,27 +271,34 @@ public class Board{
 	public Group getGroup (Point p){
 		int i,j;
 		int dame_number;
-		ArrayList<Point> neighbours = p.getNeighbours();
+		ArrayList<Point> neighbours;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
 		int boardSize = getSize();
-		Group = group;
-		
-		queue.add(p);
-		while (queue.size() > 0){
-			point = queue.poll();
-			visited.add(point);
-		
-			for (Point neighbour: neighbours){
+		Group group = null;
+		Point currentPoint;
 
-				if ((board.getPoint(point) == board.getPoint(neighbour)) && !isPointVisited(visited, queue, neighbour)){
-					queue.add(neighbour);
-				}
-			}
+		if (getPoint(p) == Board.FRIENDLY || getPoint(p) == Board.ENEMY){
+
+			queue.add(p);
+			while (queue.size() > 0){
+				currentPoint = queue.poll();
+				neighbours = currentPoint.getNeighbours();
+				visited.add(currentPoint);
 			
+				for (Point neighbour: neighbours){
+					if ((getPoint(currentPoint) == getPoint(neighbour)) && !isPointVisited(visited, queue, neighbour)){
+						queue.add(neighbour);
+						System.out.printf("*[%d,%d]\n", neighbour.i, neighbour.j);
+					}
+				}
+				System.out.println(queue.size());
+				
+			}
+			group = new Group(this, visited);
 		}
 
-		group = new Group(this, visited);
+		
 		return group;
 	}
 	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
@@ -308,6 +315,10 @@ public class Board{
 
 		return false;
 	}
-	//TODO: Implement methods tryMove() and undoMove()
-
+	public static int getOppositeSide(int stone){
+		if (stone == FRIENDLY)
+			return ENEMY;
+			
+		return FRIENDLY;
+	}
 }

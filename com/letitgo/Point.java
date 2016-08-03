@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Point{
 	public int i, j;
-	private final Board board;
+	private Board board;
 	public Point(){
 
 	}
@@ -17,47 +17,47 @@ public class Point{
 			return true;
 		return false;
 	}
-	public static ArrayList<Point> getNeighbours(){
+	public ArrayList<Point> getNeighbours(){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
-		neighbours.add(new Point(board, p.i+1, p.j));
-		neighbours.add(new Point(board, p.i-1, p.j));
-		neighbours.add(new Point(board, p.i, p.j+1));
-		neighbours.add(new Point(board, p.i, p.j-1));
+		neighbours.add(new Point(board, this.i+1, this.j));
+		neighbours.add(new Point(board, this.i-1, this.j));
+		neighbours.add(new Point(board, this.i, this.j+1));
+		neighbours.add(new Point(board, this.i, this.j-1));
 
 		return neighbours;
 	}
-	public static ArrayList<Point> getDiagonalNeighbours(){
+	public ArrayList<Point> getDiagonalNeighbours(){
 		ArrayList<Point> neighbours = new ArrayList<Point>();
-		neighbours.add(new Point(board, p.i+1, p.j+1));
-		neighbours.add(new Point(board, p.i+1, p.j-1));
-		neighbours.add(new Point(board, p.i-1, p.j-1));
-		neighbours.add(new Point(board, p.i-1, p.j+1)); //WTF? This line increases execution for 5 times
+		neighbours.add(new Point(board, this.i+1, this.j+1));
+		neighbours.add(new Point(board, this.i+1, this.j-1));
+		neighbours.add(new Point(board, this.i-1, this.j-1));
+		neighbours.add(new Point(board, this.i-1, this.j+1)); //WTF? This line increases execution for 5 times
 
 		return neighbours;
 	}
 	// TODO: Maybe change to boolean hasDame()
-	public static int getDameNumber(){
+	public int getDameNumber(){
 		int dame_count = 0;
-		if (board.getPoint(p.i+1, p.j) == Board.EMPTY)
+		if (board.getPoint(this.i+1, this.j) == Board.EMPTY)
 			dame_count++;
-		if (board.getPoint(p.i-1, p.j) == Board.EMPTY)
+		if (board.getPoint(this.i-1, this.j) == Board.EMPTY)
 			dame_count++;
-		if (board.getPoint(p.i, p.j+1) == Board.EMPTY)
+		if (board.getPoint(this.i, this.j+1) == Board.EMPTY)
 			dame_count++;
-		if (board.getPoint(p.i, p.j-1) == Board.EMPTY)
+		if (board.getPoint(this.i, this.j-1) == Board.EMPTY)
 			dame_count++;
 
 		return dame_count;
 	}
-	public static boolean isFriendlySingleEyePoint(int stoneType){ 
+	public boolean isFriendlySingleEyePoint(int stoneType){ 
 		boolean is_friendly = true;
-		if (board.getPoint(p.i+1, p.j) == Board.getOppositeSide(stoneType)) 
+		if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
 			return false;
-		if (board.getPoint(p.i-1, p.j) == Board.getOppositeSide(stoneType))
+		if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
 			return false;
-		if (board.getPoint(p.i, p.j+1) == Board.getOppositeSide(stoneType))
+		if (board.getPoint(this.i, this.j+1) == Board.getOppositeSide(stoneType))
 			return false;;
-		if (board.getPoint(p.i, p.j-1) == Board.getOppositeSide(stoneType))
+		if (board.getPoint(this.i, this.j-1) == Board.getOppositeSide(stoneType))
 			return false;
 
 		return true;

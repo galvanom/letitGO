@@ -29,8 +29,12 @@ public class Main{
 		
 	*/
 		Board board = new Board(9);
+		//System.out.println ("Current directory is " + new File(".").getAbsolutePath());
 		board.loadFromFile("board9x9.dat");
 		Group group = board.getGroup(new Point(board, 1, 1));
+		for (Point stone : group){
+			System.out.printf("[%d,%d]\n", stone.i, stone.j);
+		}
 
 
 	}
