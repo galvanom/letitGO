@@ -6,14 +6,11 @@ public class Board{
 	private int[][] board, boardState;
 	private final int size;
 
-	private class BoardState{
-		public Point koPoint = null;
-		public int koPointLifeTime = 0;
-		public int koStoneType = EMPTY;
-		public Point lastPoint = null;
-	}
-	private BoardState currentState;
-	private BoardState previousState;
+	private Point koPoint = null;
+	private int koPointLifeTime = 0;
+	private int koStoneType = EMPTY;
+	private Point lastPoint = null;
+	private Point tryPoint = null;
 
 	//Point types
 	public static final int EMPTY = 0;
@@ -56,8 +53,15 @@ public class Board{
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
 
 	}
-	public void tryMove(Point p){
-		previousState.koPoint = currentState.koPoint;
+	public void tryMove(Point p, int pointType){
+		this.tryMove = p;
+		board[p.i + 1][p.j + 1] = pointType;
+	}
+	public void undoMove(){
+		if (tryMove != null){
+			board[tryMove.i + 1][tryMove.j + 1] = Board.EMPTY;
+			tryMove = null;
+		}
 
 	}
 	public void printBoard(){
@@ -181,44 +185,45 @@ public class Board{
 		ArrayList<Point> points;
 		ArrayList<Point> neighbours = p.getNeighbours();
 		Group group;
+		boolean rulesOK = false;
 
+		// If point has dame return true
 		if (p.getDameNumber() != 0){
 			return true;
 		}
+		// If point doesnt have dame but there is a friendly single eye return false
 		if (p.isFriendlySingleEyePoint(stoneType)){
 			return false;
 		}
+		// If there is a Ko return false
 		if (isKO(p, stoneType)){
 			return false;
 		}
 
-		
+	    // Check. Could we kill neigbour enemy groups with this move.
+	    // So we put a stone to the point position and look for dead enemy groups around
 		tryMove(p, stoneType);
-		 //posible suicide move
+
 		group = getGroup(p);
-		if (group.isGroupDead()) == false){
-			returnMove(p);
-			return true;
-
-		}
+		if (group.isGroupDead()) == true){
 		
-		//check could we kill neigbour enemy groups with this move
-		for (Point neighbour: neighbours){
-			
-			if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
-				//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
-				group = getGroup(neighbour);
-				if (group.isGroupDead() == true){
-					returnMove(p);
-					return true;
+			for (Point neighbour: neighbours){
+				
+				if (board.getPoint(next) == Board.getOppositeSide(stoneType)){
+					//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
+					group = getGroup(neighbour);
+					if (group.isGroupDead() == true){
+						rulesOK = true;
+						break;
+					}
 				}
+				
 			}
-			
-
 		}
-		
-		returnMove();
-		return false;
+
+		undoMove();
+
+		return rulesOK;
 	}
 	public void removeDeadStones(int stoneType){
 		int i,j, deletedStonesNumber = 0;
