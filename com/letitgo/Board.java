@@ -36,6 +36,7 @@ public class Board{
 		}
 
 	}
+	// TODO: Copy class fields too
 	public Board(Board otherBoard){
 		int i,j;
 		this.size = otherBoard.getSize()+2;
@@ -46,7 +47,6 @@ public class Board{
 			board[i][0] = BORDER;
 			board[this.size-1][i] = BORDER;
 			board[i][this.size-1] = BORDER;
-
 		}
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
@@ -268,7 +268,7 @@ public class Board{
 			setKO(lastPoint, stoneType);
 		}
 	}
-	public Group getGroup (Point p){
+	public Group getGroup(Point p){
 		int i,j;
 		int dame_number;
 		ArrayList<Point> neighbours;
@@ -289,11 +289,9 @@ public class Board{
 				for (Point neighbour: neighbours){
 					if ((getPoint(currentPoint) == getPoint(neighbour)) && !isPointVisited(visited, queue, neighbour)){
 						queue.add(neighbour);
-						System.out.printf("*[%d,%d]\n", neighbour.i, neighbour.j);
 					}
 				}
-				System.out.println(queue.size());
-				
+								
 			}
 			group = new Group(this, visited);
 		}
@@ -321,4 +319,5 @@ public class Board{
 			
 		return FRIENDLY;
 	}
+
 }

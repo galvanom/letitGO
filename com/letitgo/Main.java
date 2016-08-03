@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main{
 	public static void main(String[] args){
-		/*
+		
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
@@ -26,15 +26,7 @@ public class Main{
 
 		}
 		System.out.println(System.currentTimeMillis() - startTime);
-		
-	*/
-		Board board = new Board(9);
-		//System.out.println ("Current directory is " + new File(".").getAbsolutePath());
-		board.loadFromFile("board9x9.dat");
-		Group group = board.getGroup(new Point(board, 1, 1));
-		for (Point stone : group){
-			System.out.printf("[%d,%d]\n", stone.i, stone.j);
-		}
+	
 
 
 	}

@@ -24,8 +24,8 @@ public  class Pattern33{
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(Board board){
 		ArrayList<Point> points = new ArrayList<Point>();
-		points = Playout.getNeighbours(board, board.getLastPoint());
-		points.addAll(Playout.getDiagonalNeighbours(board, board.getLastPoint()));
+		points = board.getLastPoint().getNeighbours();
+		points.addAll(board.getLastPoint().getDiagonalNeighbours());
 		
 		return getPatternMove(board, points);
 	}

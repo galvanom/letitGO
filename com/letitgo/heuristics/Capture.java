@@ -3,6 +3,7 @@ import java.util.*;
 import com.letitgo.Board;
 import com.letitgo.Playout;
 import com.letitgo.Point;
+import com.letitgo.Group;
 
 public class Capture{
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
@@ -10,8 +11,8 @@ public class Capture{
 		ArrayList<Point> points = new ArrayList<Point>();
 		ArrayList<Point> captureMoves;
 		
-		points = Playout.getNeighbours(board, board.getLastPoint());
-		points.addAll(Playout.getDiagonalNeighbours(board, board.getLastPoint()));
+		points = board.getLastPoint().getNeighbours();
+		points.addAll(board.getLastPoint().getDiagonalNeighbours());
 		captureMoves = getCaptureMoves(board, points, ownStoneType, true);
 		
 		if (captureMoves.size() > 0){
@@ -28,7 +29,7 @@ public class Capture{
 
 		for (int i = 0; i < boardSize; i++){
 			for (int j = 0; j < boardSize; j++){
-				points.add(new Point(i,j));
+				points.add(new Point(board,i,j));
 			}
 		}
 		return getCaptureMoves(board, points, ownStoneType, false);
@@ -36,22 +37,25 @@ public class Capture{
 	}
 	private ArrayList<Point> getCaptureMoves(final Board board, ArrayList<Point> points, int ownStoneType, boolean isFast){
 		//ArrayList<Point> points = null;
-		ArrayList<Point> group;
+		Group group;
 		ArrayList<Point> groupDame;
 		ArrayList<Point> neighbours;
-		ArrayList<Point> enemyGroup, enemyGroupDame, friendlyGroup, friendlyGroupDame;
-		ArrayList<Point> allHeuristicMoves = new ArrayList<Point>();
+		Group enemyGroup, friendlyGroup; 
+		ArrayList<Point> enemyGroupDame, friendlyGroupDame;
+		ArrayList<Point> allCaptureMoves = new ArrayList<Point>();
 		int boardSize = board.getSize();
 		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
 		byte visitedGroups[][] = new byte[boardSize][boardSize];
 		int pointType;
+		/*-----*/
 		Board checkBoard;
+		/*-----*/
 		Point atariGroupDame;
 		Point smth = null;
 		int i,j;
 
 		if (points == null){
-			return allHeuristicMoves;
+			return allCaptureMoves;
 		}
 		for (i = 0; i < boardSize; i++) //TODO: Try to merge it with visitedNeighbours
 			for (j = 0; j < boardSize; j++)
@@ -63,7 +67,7 @@ public class Capture{
 				continue;
 			}
 
-			if (!Playout.checkRules(point, ownStoneType, board)){
+			if (!board.checkRules(point, ownStoneType)){
 				continue;
 			}
 			
@@ -71,18 +75,18 @@ public class Capture{
 
 			*/
 
-			group = Playout.getGroup(board, point);
-			groupDame = Playout.getGroupDame(board, group);
+			group = board.getGroup(point);
+			groupDame = group.getGroupDame();
 			//if group in atari
 			
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
 				//if this is enemy group return move to capture it
-				if (pointType == Board.getOppositeSide(ownStoneType) && Playout.checkRules(atariGroupDame, ownStoneType, board) == true){
+				if (pointType == Board.getOppositeSide(ownStoneType) && board.checkRules(atariGroupDame, ownStoneType) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
-					 allHeuristicMoves.add(atariGroupDame);
+					 allCaptureMoves.add(atariGroupDame);
 					 if (isFast){
-					 	return allHeuristicMoves;
+					 	return allCaptureMoves;
 					 }
 					//return null;
 				}
@@ -96,7 +100,7 @@ public class Capture{
 							visitedNeighbours[i][j] = 0;
 
 					for (Point stone: group){
-						neighbours = Playout.getNeighbours(board, stone);
+						neighbours = stone.getNeighbours();
 						for (Point neighbour: neighbours){
 							if (board.getPoint(neighbour) != Board.getOppositeSide(ownStoneType)){
 								continue;
@@ -104,13 +108,13 @@ public class Capture{
 							if (visitedNeighbours[neighbour.i][neighbour.j] == 1){
 								continue;
 							}
-							enemyGroup = Playout.getGroup(board, neighbour);
-							enemyGroupDame = Playout.getGroupDame(board, enemyGroup);
-							if (enemyGroupDame.size() == 1 && Playout.checkRules(enemyGroupDame.get(0), ownStoneType, board) == true){
+							enemyGroup = board.getGroup(neighbour);
+							enemyGroupDame = enemyGroup.getGroupDame();
+							if (enemyGroupDame.size() == 1 && board.checkRules(enemyGroupDame.get(0), ownStoneType) == true){
 								
-								allHeuristicMoves.add(enemyGroupDame.get(0));
+								allCaptureMoves.add(enemyGroupDame.get(0));
 								if (isFast){
-									return allHeuristicMoves;
+									return allCaptureMoves;
 								}
 								
 							}
@@ -120,17 +124,18 @@ public class Capture{
 					}
 					
 					//Try to put a stone to the free dame and avoid self atari and the ladder
-					if (Playout.checkRules(atariGroupDame, ownStoneType, board) == true){
-						checkBoard = new Board(board);
-						checkBoard.setPoint(atariGroupDame, ownStoneType);
-						friendlyGroup = Playout.getGroup(checkBoard, atariGroupDame);
-						friendlyGroupDame = Playout.getGroupDame(checkBoard, friendlyGroup);
+					if (board.checkRules(atariGroupDame, ownStoneType) == true){
+						board.tryMove(atariGroupDame, ownStoneType);
+						
+						friendlyGroup = board.getGroup(atariGroupDame);
+						friendlyGroupDame = friendlyGroup.getGroupDame();
 						if (friendlyGroupDame.size() > 2){
-							allHeuristicMoves.add(atariGroupDame);
+							allCaptureMoves.add(atariGroupDame);
 							if (isFast){
-								return allHeuristicMoves;
+								return allCaptureMoves;
 							}
 						}
+					
 					}
 
 				}
@@ -140,6 +145,6 @@ public class Capture{
 				visitedGroups[visitedStone.i][visitedStone.j] = 1;	
 		}
 	
-	return allHeuristicMoves;
+	return allCaptureMoves;
 	}
 }
