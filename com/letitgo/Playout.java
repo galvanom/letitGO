@@ -55,10 +55,10 @@ public class Playout{
 				
 				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
 				if (captureMove != null) {
-					playBoard.printBoard();
+					//playBoard.printBoard();
 					playBoard.makeMove(captureMove, stoneType);
-					System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					playBoard.printBoard();
+					//System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
+					//playBoard.printBoard();
 					continue;
 				}
 				

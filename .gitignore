@@ -2,3 +2,4 @@
 test.java
 *.jar
 *.bat
+build/com/letitgo/board9x9.dat

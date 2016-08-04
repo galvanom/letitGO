@@ -47,9 +47,6 @@ public class Capture{
 		byte visitedNeighbours[][] = new byte[boardSize][boardSize];
 		byte visitedGroups[][] = new byte[boardSize][boardSize];
 		int pointType;
-		/*-----*/
-		Board checkBoard;
-		/*-----*/
 		Point atariGroupDame;
 		Point smth = null;
 		int i,j;
@@ -62,18 +59,14 @@ public class Capture{
 				visitedGroups[i][j] = 0;
 
 		for (Point point: points){
-			pointType = board.getPoint(point);
+			Point xpoint = point;
+			Board newBoard = new Board(board);
+			pointType = board.getPoint(xpoint);
+
 			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
 				continue;
 			}
-
-			if (!board.checkRules(point, ownStoneType)){
-				continue;
-			}
-			
-			/*//Patterns matching
-
-			*/
+						
 
 			group = board.getGroup(point);
 			groupDame = group.getGroupDame();
@@ -129,12 +122,14 @@ public class Capture{
 						
 						friendlyGroup = board.getGroup(atariGroupDame);
 						friendlyGroupDame = friendlyGroup.getGroupDame();
+						board.undoMove();
 						if (friendlyGroupDame.size() > 2){
 							allCaptureMoves.add(atariGroupDame);
 							if (isFast){
 								return allCaptureMoves;
 							}
 						}
+
 					
 					}
 

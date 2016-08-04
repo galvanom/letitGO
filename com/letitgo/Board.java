@@ -10,7 +10,7 @@ public class Board{
 	private int koPointLifeTime = 0;
 	private int koStoneType = EMPTY;
 	private Point lastPoint = null;
-	private Point tryPoint = null;
+	public Point tryPoint = null;
 
 	//Point types
 	public static final int EMPTY = 0;
@@ -53,14 +53,14 @@ public class Board{
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
 
 	}
-	public void tryMove(Point p, int pointType){
+	public void tryMove(final Point p, int pointType){
 		this.tryPoint = p;
 		board[p.i + 1][p.j + 1] = pointType;
 	}
 	public void undoMove(){
-		if (tryPoint != null){
-			board[tryPoint.i + 1][tryPoint.j + 1] = Board.EMPTY;
-			tryPoint = null;
+		if (this.tryPoint != null){
+			board[this.tryPoint.i + 1][this.tryPoint.j + 1] = Board.EMPTY;
+			this.tryPoint = null;
 		}
 
 	}
@@ -179,13 +179,14 @@ public class Board{
 		removeDeadStones(getOppositeSide(stoneType));
 	}
 
-	public  boolean checkRules(Point p, int stoneType){
+	public  boolean checkRules(final Point p, int stoneType){
 
 		ArrayList<Point> points_to_delete = new ArrayList<Point>();
 		ArrayList<Point> points;
 		ArrayList<Point> neighbours = p.getNeighbours();
 		Group group;
 		boolean rulesOK = false;
+
 
 		// If point has dame return true
 		if (p.getDameNumber() != 0){
@@ -199,30 +200,36 @@ public class Board{
 		if (isKO(p, stoneType)){
 			return false;
 		}
+		
 
 	    // Check. Could we kill neigbour enemy groups with this move.
 	    // So we put a stone to the point position and look for dead enemy groups around
 		tryMove(p, stoneType);
-
+		
 		group = getGroup(p);
+
 		if (group.isGroupDead() == true){
+
 		
 			for (Point neighbour: neighbours){
 				
 				if (getPoint(neighbour) == getOppositeSide(stoneType)){
+					
 					//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 					group = getGroup(neighbour);
+					
 					if (group.isGroupDead() == true){
 						rulesOK = true;
 						break;
 					}
+					
 				}
 				
 			}
+			
 		}
-
+		
 		undoMove();
-
 		return rulesOK;
 	}
 	public void removeDeadStones(int stoneType){
@@ -268,7 +275,8 @@ public class Board{
 			setKO(lastPoint, stoneType);
 		}
 	}
-	public Group getGroup(Point p){
+	// TODO: Return an empty group except null
+	public Group getGroup(final Point p){
 		int i,j;
 		int dame_number;
 		ArrayList<Point> neighbours;
@@ -295,6 +303,7 @@ public class Board{
 			}
 			group = new Group(this, visited);
 		}
+
 
 		
 		return group;
