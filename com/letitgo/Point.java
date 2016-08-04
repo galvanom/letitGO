@@ -1,6 +1,6 @@
 package com.letitgo;
 import java.util.*;
-
+// TODO: try factory method to get instances of the class
 public class Point{
 	public final int i, j;
 	private Board board;

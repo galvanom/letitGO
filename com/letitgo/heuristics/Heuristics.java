@@ -10,5 +10,4 @@ public class Heuristics{
 		this.pattern33 = new Pattern33();
 		this.capture = new Capture();
 	}
-
 }

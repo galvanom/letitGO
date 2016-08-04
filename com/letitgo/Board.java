@@ -155,13 +155,13 @@ public class Board{
 		return size - 2;
 	}
 
-	public void setKO(Point point, int stoneType){
+	private void setKO(Point point, int stoneType){
 		koPoint = point;
 		koStoneType = stoneType;
 		koPointLifeTime = 0;
 
 	}
-	public boolean isKO(Point point, int stoneType){
+	private boolean isKO(Point point, int stoneType){
 		if (koPointLifeTime == 0 && koPoint != null){
 			//System.out.printf("koPointLifeTime: %d KoPoint:[%d,%d] Point: [%d,%d] koStoneType: %d stoneType: %d\n", koPointLifeTime, koPoint.i, koPoint.j, point.i, point.j,koStoneType,stoneType );
 
