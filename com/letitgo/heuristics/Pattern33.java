@@ -5,6 +5,8 @@ import com.letitgo.Playout;
 import com.letitgo.Point;
 
 public  class Pattern33{
+	private final int PATTERN_SIZE = 9;
+	private HashMap<String,String> wildchars = new HashMap<String,String>();
 	private HashSet<String> permutations;
 	private static final String [] patterns = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
 						       "XOX...???",
@@ -18,8 +20,16 @@ public  class Pattern33{
 						    	};
 	public Pattern33(){
 		permutations = new HashSet<String>();
-		//Initializing patterns...
+		// Initializing patterns...
 		getPermutations3x3();
+		// Wildchars initialization
+		wildchars.put("x","O.");
+		wildchars.put("X","X");
+		wildchars.put("O","O");
+		wildchars.put("o","X.");
+		wildchars.put("?","XO.");
+		wildchars.put(".",".");
+
 	}
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(Board board){
@@ -43,22 +53,15 @@ public  class Pattern33{
 		return null;
 			
 	}
-	
-	public boolean isPattern3x3(Board board, Point point){
-		char[] square33 = new char[9];
+	/**
+	* Get 3x3 region around the point
+	* Returns chars wich represent region
+	*/
+	private char[] get3x3Region(Board board, Point point){
 		int i,j,k;
 		int stoneType;
-		HashMap<String,String> map = new HashMap<String,String>();
-		String symbols;
-		map.put("x","O.");
-		map.put("X","X");
-		map.put("O","O");
-		map.put("o","X.");
-		map.put("?","XO.");
-		map.put(".",".");
-		if (point.i <= 0 || point.i >= board.getSize()-1 || point.j <= 0 || point.j >= board.getSize()-1)
-			return false;
-		//Get 3x3 region around the point
+		char[] square33 = new char[PATTERN_SIZE];
+
 		for (i = point.i-1, k = 0;i <= point.i + 1;i++){
 			j = point.j - 1;
 			for (;j <= point.j + 1; j++,k++){
@@ -78,21 +81,33 @@ public  class Pattern33{
 			}
 
 		}
+		return square33;
+	}
+	private  boolean isPattern3x3(Board board, Point point){
+		int i,j;
+		char[] pointsToCheck; 
+		String symbols;
+
+
+		if (point.i <= 0 || point.i >= board.getSize()-1 || point.j <= 0 || point.j >= board.getSize()-1)
+			return false;
+		
+		pointsToCheck = get3x3Region(board, point);
+
 		//Compare to the all patterns and they permutations
 		for (String perm: permutations){
 			//System.out.println(String.valueOf(perm));
 			toNextPoint:
-			for (i = 0; i < 9; i++){
-				//System.out.println(square33[i]);
-				symbols = map.get(String.valueOf(perm.charAt(i)));
+			for (i = 0; i < PATTERN_SIZE; i++){
+				symbols = wildchars.get(String.valueOf(perm.charAt(i)));
 				for (j = 0; j < symbols.length(); j++){
-					if (symbols.charAt(j) == square33[i])
+					if (symbols.charAt(j) == pointsToCheck[i])
 						continue toNextPoint;
 				}
 				break;
 
 			}
-			if (i == 9){
+			if (i == PATTERN_SIZE){
 				return true;
 			}
 		}
