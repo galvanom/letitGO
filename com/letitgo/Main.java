@@ -17,10 +17,10 @@ public class Main{
 
 
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 10000; i--){
-			/*if (i%100 == 0){
+		for (int i = 0; i < 1000; i++){
+			if (i%100 == 0){
 				System.gc();
-			}*/
+			}
 			//System.out.println(i);
 			playout.playRandomGame(board, Board.FRIENDLY);
 

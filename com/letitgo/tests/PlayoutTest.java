@@ -1,4 +1,7 @@
-import java.io.*;
+package com.letitgo.tests;
+import com.letitgo.Board;
+import com.letitgo.Point;
+import com.letitgo.heuristics.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

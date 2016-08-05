@@ -64,6 +64,9 @@ public class Board{
 		}
 
 	}
+	public void setLastPoint(Point p){
+		this.lastPoint = p;
+	}
 	public void printBoard(){
 		int i, j, k;
 		System.out.print("\n  ");
