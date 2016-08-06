@@ -1,5 +1,7 @@
+package com.letitgo;
 import java.util.*;
 import java.io.*;
+import com.letitgo.heuristics.*;
 
 public class Montecarlo{
 	private class Node{
@@ -11,24 +13,27 @@ public class Montecarlo{
 		Playout playout;
 		int wins;
 		int games;
-		ArrayList<Point> allPossibleMoves;
+		//ArrayList<Point> allPossibleMoves;
 
 		Node(Node parent, Board board, Point point, int stoneType){
 			this.point = point;
 			this.stoneType = stoneType;
 			this.parent = parent;
 			this.board = new Board(board);
-			playout = new Playout();
+			//playout = new Playout();
 			wins = 0;
 			games = 0;
-			if (parent != null && point != null) 		//root node
-				this.playout.makeMove(this.board, point, stoneType);
-
+			if (parent != null && point != null){ 		//root node
+				board.makeMove(point, stoneType);
+			}
+			/*
 			allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
 			if (allPossibleMoves.size() == 0){
 				//board.printBoard();
 				System.out.printf("\nallPossibleMoves == 0 %d,%d\n", point.i, point.j);
 			}
+			*/
+
 		}
 		Node addChild(Point p){
 			Node child;
@@ -46,6 +51,12 @@ public class Montecarlo{
 		}
 		void incGames(){
 			games++;
+		}
+		void addWins(int value){
+			wins += value;
+		}
+		void addGames(int value){
+			games += value;
 		}
 		int getGames(){
 			return games;
@@ -100,8 +111,9 @@ public class Montecarlo{
 			bestNode = null;
 			bestValue = -1;
 			t = 0;
-			if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
-				break; ///!!!!
+
+			// if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
+			// 	break; ///!!!!
 			/*if (children == null)
 				System.out.printf("children == null");
 			else
@@ -109,12 +121,12 @@ public class Montecarlo{
 				*/
 			
 			for (Node child: children){
-				t += child.getGames();
+				t += child.getGames()+1;
 			}
 			
 
 			for (Node child: children){
-				n = child.getGames();
+				n = child.getGames()+1;
 				w = child.getWins();
 
 				value = w/n + c * Math.sqrt(Math.log(t)/n);
@@ -138,28 +150,76 @@ public class Montecarlo{
 		ArrayList<Point> notExpanded = new ArrayList<Point>(); 
 		Random random = new Random();
 		int randomPoint;
+		ArrayList<Point> allPossibleMoves;
 		
-		for (int i = 0; i < boardSize; i++)
-			Arrays.fill(childrenBoard[i], 0);
+		// for (int i = 0; i < boardSize; i++)
+		// 	Arrays.fill(childrenBoard[i], 0);
 
-		if (papasChildren != null){
-			for (Node child: papasChildren){
-				childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
+		// if (papasChildren != null){
+		// 	for (Node child: papasChildren){
+		// 		childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
+		// 	}
+		// }
+		// for (Point currentPoint: papa.allPossibleMoves){
+		// 	if (childrenBoard[currentPoint.i][currentPoint.j] != 1){
+		// 		notExpanded.add(currentPoint);
+		// 	}
+		// }
+		allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
+		if (allPossibleMoves.size() > 0){
+			for (Point move : allPossibleMoves){
+				papa.addChild(move);
+				if (children != null){
+					rateChildren(children);
+				}
 			}
+			return selectNode(papa);
 		}
-		for (Point currentPoint: papa.allPossibleMoves){
-			if (childrenBoard[currentPoint.i][currentPoint.j] != 1){
-				notExpanded.add(currentPoint);
-			}
-		}
+		
 
-		if (notExpanded.size() != 0){
-			randomPoint = random.nextInt(notExpanded.size());
-			return papa.addChild(notExpanded.get(randomPoint));
-		}
+
+		// if (notExpanded.size() != 0){
+		// 	randomPoint = random.nextInt(notExpanded.size());
+		// 	return papa.addChild(notExpanded.get(randomPoint));
+		// }
 
 		return null;
 	}
+	private void rateChildren(ArrayList<Node> children){
+		// Constants
+		final int CAPTURE = 20;
+		final int PATTERN33 = 20;
+
+		int boardSize = children.get(0).getBoard().getSize();
+		int[][] markBoard = new int[boardSize][boardSize];
+
+		int i,j;
+		int value;
+		Point childPoint;
+		// At first try to mark all capture moves with positive values
+		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves();
+		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves();
+		// Create the board representation
+		for (i = 0; i < boardSize; i++){
+			Arrays.fill(markBoard[i] = 0);
+		}
+		// Mark good moves with constant values
+		for (Point move : allCaptureMoves){
+			markBoard[move.i][move.j] += CAPTURE; 
+		}
+		for (Point move: allPattern33Moves){
+			markBoard[move.i][move.j] += PATTERN33;
+		}
+		// Add constant values to children
+		for (Node child: cildren){
+			childPoint = child.getPoint();
+			value = markBoard[childPoint.i][childPoint.j];
+			child.addGames(value);
+			child.addWins(value);
+		}
+
+	}
+
 	private int simulation(Node node){
 		return node.startPlayout();
 	}
