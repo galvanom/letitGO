@@ -39,6 +39,23 @@ public  class Pattern33{
 		
 		return getPatternMove(board, points);
 	}
+	public ArrayList<Point> getAllMoves(Board board){
+		int boardSize = board.getSize();
+		int i,j;
+		Point currentPoint;
+		ArrayList<Point> allPattern33Moves = new ArrayList<Point>();
+		for (i = 0; i < boardSize; i++){
+			for (j = 0; j < boardSize; j++){
+				currentPoint = new Point(board, i,j);
+				if (board.getPoint(currentPoint) == Board.EMPTY){
+					if (isPattern3x3(board, currentPoint)){
+						allPattern33Moves.add(currentPoint);
+					}
+				}
+			}
+		}
+		return allPattern33Moves;
+	}
 
 	private Point getPatternMove(Board board, ArrayList<Point> points){
 		if (points != null){
