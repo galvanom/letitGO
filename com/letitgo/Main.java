@@ -2,6 +2,7 @@ package com.letitgo;
 import java.util.*;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
+import com.letitgo.heuristics.*;
 
 public class Main{
 	public static void main(String[] args){
@@ -10,8 +11,12 @@ public class Main{
 		Point p = null;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
-		
-		//board.loadFromFile("patterns_test1.dat");	
+		Heuristics hr = new Heuristics();
+	
+
+
+			
+
 		board.printBoard();
 
 

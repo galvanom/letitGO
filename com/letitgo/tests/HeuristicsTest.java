@@ -118,7 +118,7 @@ public class HeuristicsTest{
 	}
 	//3x3 patterns
 	@Test
-	public void Patterns33Test(){
+	public void patterns33Test(){
 		Board board = new Board(9);
 		Heuristics hr = new Heuristics();
 		Point p;
@@ -133,6 +133,26 @@ public class HeuristicsTest{
 		assertTrue("Patterns test failed\n", hr.pattern33.isPattern3x3(board, new Point(board,4,7)));
 		assertTrue("Patterns test failed\n", !hr.pattern33.isPattern3x3(board, new Point(board,7,1)));
 
+	}
+
+	//isEmptyArea()
+	@Test
+	public void isEmptyAreaTest(){
+		Board board = new Board(9);
+		Heuristics hr = new Heuristics();
+		Point p1, p2, p3;
+
+		board.loadFromFile("HeuristicsTest_g.dat");
+		p1 = new Point(board, 1, 1); // has to detect
+		p2 = new Point(board, 6, 8); // has to detect
+		p3 = new Point(board, 7, 5); // has to not detect
+
+		assertTrue("isEmptyArea failed on point #1\n", !hr.isEmptyArea(board, p1, 3));
+		System.out.println();
+		hr.borodaprint();
+		assertTrue("isEmptyArea failed on point #2\n", !hr.isEmptyArea(board, p2, 3));
+		System.out.println();
+		assertTrue("isEmptyArea failed on point #3\n", hr.isEmptyArea(board, p3, 3));
 	}
 
 

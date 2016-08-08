@@ -12,24 +12,32 @@ public class Heuristics{
 		this.pattern33 = new Pattern33();
 		this.capture = new Capture();
 	}
-	// TODO: Completly not tested
+
+
+	/**
+	* Searches not empty points in the manhatten distance area.
+	* If there is no stones around the given point returns true.
+	* ! Not efficient algorithm. Need to look into the points just once for more speed.
+	*/
 	public boolean isEmptyArea(Board board, Point p, int dist){
 		if (p.i < 0 || p.j < 0 || p.i >= board.getSize() || p.j >= board.getSize()){
 			return true;
 		}
-		if (dist >= 0){
+		if (dist < 0 ){
 			return true;
 		}
-			ArrayList<Point> neighbours = p.getNeighbours();
-			for (Point neighbour: neighbours){
-				if (board.getPoint(neighbour) != Board.EMPTY){
-					return false;
-				}
-				if (isEmptyArea(board,neighbour,dist-1) == false){
-					return false;
-				}
-			}
-		return true;
+		if (board.getPoint(p) != Board.EMPTY && board.getPoint(p) != Board.BORDER){
+				return false;
+		}
 
+		ArrayList<Point> neighbours = p.getNeighbours();
+		for (Point neighbour: neighbours){
+
+			if (isEmptyArea(board,neighbour,dist-1) == false){
+				return false;
+			}
+		}
+		return true;
 	}
+
 }

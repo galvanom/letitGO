@@ -100,7 +100,7 @@ public  class Pattern33{
 		}
 		return square33;
 	}
-	private  boolean isPattern3x3(Board board, Point point){
+	public  boolean isPattern3x3(Board board, Point point){
 		int i,j;
 		char[] pointsToCheck; 
 		String symbols;
