@@ -148,10 +148,7 @@ public class HeuristicsTest{
 		p3 = new Point(board, 7, 5); // has to not detect
 
 		assertTrue("isEmptyArea failed on point #1\n", !hr.isEmptyArea(board, p1, 3));
-		System.out.println();
-		hr.borodaprint();
 		assertTrue("isEmptyArea failed on point #2\n", !hr.isEmptyArea(board, p2, 3));
-		System.out.println();
 		assertTrue("isEmptyArea failed on point #3\n", hr.isEmptyArea(board, p3, 3));
 	}
 
