@@ -84,8 +84,10 @@ public class Montecarlo{
 		}
 	}
 	Node root;
+	Heuristics hr;
 	Montecarlo(Board board, int whoseTurn){
 		root = new Node(null, board, null, whoseTurn);
+		hr = new Heuristics();
 	}
 	public void playOneSequence(){
 		Node node = selectNode(root);
@@ -144,7 +146,6 @@ public class Montecarlo{
 	}
 	
 	private Node expand(Node papa){
-		ArrayList<Node> papasChildren = papa.getChildren();
 		int boardSize = root.getBoard().getSize();
 		int[][] childrenBoard = new int[boardSize][boardSize];
 		ArrayList<Point> notExpanded = new ArrayList<Point>(); 
@@ -152,70 +153,64 @@ public class Montecarlo{
 		int randomPoint;
 		ArrayList<Point> allPossibleMoves;
 		
-		// for (int i = 0; i < boardSize; i++)
-		// 	Arrays.fill(childrenBoard[i], 0);
-
-		// if (papasChildren != null){
-		// 	for (Node child: papasChildren){
-		// 		childrenBoard[child.getPoint().i][child.getPoint().j] = 1;
-		// 	}
-		// }
-		// for (Point currentPoint: papa.allPossibleMoves){
-		// 	if (childrenBoard[currentPoint.i][currentPoint.j] != 1){
-		// 		notExpanded.add(currentPoint);
-		// 	}
-		// }
-		allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
+		allPossibleMoves = Playout.getFreePoints(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
 				papa.addChild(move);
-				if (children != null){
-					rateChildren(children);
+				if (papa.getChildren() != null){
+					rateChildren(papa);
 				}
 			}
 			return selectNode(papa);
 		}
 		
-
-
-		// if (notExpanded.size() != 0){
-		// 	randomPoint = random.nextInt(notExpanded.size());
-		// 	return papa.addChild(notExpanded.get(randomPoint));
-		// }
-
 		return null;
 	}
-	private void rateChildren(ArrayList<Node> children){
+	private void rateChildren(Node papa){
 		// Constants
 		final int CAPTURE = 20;
 		final int PATTERN33 = 20;
+		final int THIRD_LINE = 20;
+		final int FIRST_SECOND_LINE = 20;
 
-		int boardSize = children.get(0).getBoard().getSize();
+		ArrayList<Node> children = papa.getChildren();
+		int boardSize = papa.getBoard().getSize();
 		int[][] markBoard = new int[boardSize][boardSize];
 
 		int i,j;
 		int value;
 		Point childPoint;
 		// At first try to mark all capture moves with positive values
-		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves();
-		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves();
+		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
+		// ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
 		// Create the board representation
 		for (i = 0; i < boardSize; i++){
-			Arrays.fill(markBoard[i] = 0);
+			Arrays.fill(markBoard[i],0);
 		}
 		// Mark good moves with constant values
-		for (Point move : allCaptureMoves){
-			markBoard[move.i][move.j] += CAPTURE; 
-		}
-		for (Point move: allPattern33Moves){
-			markBoard[move.i][move.j] += PATTERN33;
-		}
+		// for (Point move : allCaptureMoves){
+		// 	markBoard[move.i][move.j] += CAPTURE; 
+		// }
+		// for (Point move: allPattern33Moves){
+		// 	markBoard[move.i][move.j] += PATTERN33;
+		// }
+
 		// Add constant values to children
-		for (Node child: cildren){
+		for (Node child: children){
 			childPoint = child.getPoint();
 			value = markBoard[childPoint.i][childPoint.j];
 			child.addGames(value);
 			child.addWins(value);
+			// Set third line priority
+			if (hr.isEmptyArea(papa.getBoard(), child.getPoint(), 3)){
+				if (child.getPoint().i == 2 || child.getPoint().j == 2){
+					child.addGames(THIRD_LINE);
+					child.addWins(THIRD_LINE);
+				}
+				if (child.getPoint().i == 1 || child.getPoint().j == 1 || child.getPoint().i == 0 || child.getPoint().j == 0){
+					child.addGames(FIRST_SECOND_LINE); 
+				}
+			}
 		}
 
 	}

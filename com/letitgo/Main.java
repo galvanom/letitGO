@@ -12,22 +12,18 @@ public class Main{
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		Heuristics hr = new Heuristics();
-	
-
-
-			
+		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);	
 
 		board.printBoard();
 
-
-
 		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1000; i++){
+		for (int i = 0; i < 1; i++){
 			if (i%100 == 0){
 				System.gc();
 			}
-			//System.out.println(i);
-			playout.playRandomGame(board, Board.FRIENDLY);
+			
+			mc.playOneSequence();
+			//playout.playRandomGame(board, Board.FRIENDLY);
 
 
 		}
