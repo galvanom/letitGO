@@ -20,7 +20,7 @@ public class Playout{
 		int random_point,i,j;
 		int stoneType = first_stone;
 		int passTimes = 0;
-		int MAX_MOVES = 200;
+		int MAX_MOVES = boardSize*boardSize*3;
 		Point captureMove = null;
 		Point move, patternMove;
 		//Point heurPoint = new Point();

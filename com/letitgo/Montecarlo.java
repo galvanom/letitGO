@@ -256,7 +256,8 @@ public class Montecarlo{
 	public Point getWinner(){
 		ArrayList<Node> children = root.getChildren();
 		Node bestChild = null;
-		int maxGames = -1, games, wins;
+		double maxGames = -1.0;
+		int games, wins;
 		if (children != null){
 			for (Node child : children){
 				games = child.getGames();
@@ -270,6 +271,13 @@ public class Montecarlo{
 		}
 
 		if (bestChild != null){
+			for (Node child : children){
+				if (child.getGames() == bestChild.getGames()){
+					if (child.getWins() > bestChild.getWins()){
+						bestChild = child;
+					}
+				}
+			}
 			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			return bestChild.getPoint();
 

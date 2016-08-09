@@ -20,7 +20,7 @@ public class Main{
 
 		startTime = System.currentTimeMillis();
 		mc = new Montecarlo(board, Board.FRIENDLY);	
-		for (int i = 0; i < 10000; i++){
+		for (int i = 0; i < 1000; i++){
 			if (i%100 == 0){
 				System.gc();
 			}
