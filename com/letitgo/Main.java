@@ -12,23 +12,33 @@ public class Main{
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		Heuristics hr = new Heuristics();
-		Montecarlo mc = new Montecarlo(board, Board.FRIENDLY);	
+		Montecarlo mc;
+		long startTime;
 
+		board.loadFromFile("board9x9.dat");
 		board.printBoard();
 
-		long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 1; i++){
+		startTime = System.currentTimeMillis();
+		mc = new Montecarlo(board, Board.FRIENDLY);	
+		for (int i = 0; i < 10000; i++){
 			if (i%100 == 0){
 				System.gc();
 			}
-			
 			mc.playOneSequence();
 			//playout.playRandomGame(board, Board.FRIENDLY);
-
-
 		}
 		System.out.println(System.currentTimeMillis() - startTime);
-	
+
+		p = mc.getWinner();
+		
+		if (p == null){
+			System.out.println("Error. Next move is Null\n");
+		}
+		else{
+			p.printPoint();
+			//board.printBoard();
+			//mc.printTree();
+		}		
 
 
 	}

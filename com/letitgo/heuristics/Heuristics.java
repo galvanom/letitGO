@@ -27,7 +27,9 @@ public class Heuristics{
 			return true;
 		}
 		if (board.getPoint(p) != Board.EMPTY && board.getPoint(p) != Board.BORDER){
-				return false;
+			// p.printPoint();
+			// board.printBoard();
+			return false;
 		}
 
 		ArrayList<Point> neighbours = p.getNeighbours();

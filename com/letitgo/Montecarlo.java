@@ -24,7 +24,7 @@ public class Montecarlo{
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
-				board.makeMove(point, stoneType);
+				this.board.makeMove(point, stoneType);
 			}
 			/*
 			allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
@@ -39,7 +39,7 @@ public class Montecarlo{
 			Node child;
 			if (children == null)
 				children = new ArrayList<Node>();
-			child = new Node(this, board, p, Board.getOppositeSide(stoneType));
+			child = new Node(this, this.board, p, Board.getOppositeSide(stoneType));
 			children.add(child);
 			return child;
 		}
@@ -157,9 +157,9 @@ public class Montecarlo{
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
 				papa.addChild(move);
-				if (papa.getChildren() != null){
-					rateChildren(papa);
-				}
+			}
+			if (papa.getChildren() != null){
+				rateChildren(papa);		
 			}
 			return selectNode(papa);
 		}
@@ -170,8 +170,8 @@ public class Montecarlo{
 		// Constants
 		final int CAPTURE = 20;
 		final int PATTERN33 = 20;
-		final int THIRD_LINE = 20;
-		final int FIRST_SECOND_LINE = 20;
+		final int THIRD_LINE = 5;
+		final int FIRST_SECOND_LINE = 5;
 
 		ArrayList<Node> children = papa.getChildren();
 		int boardSize = papa.getBoard().getSize();
@@ -182,34 +182,59 @@ public class Montecarlo{
 		Point childPoint;
 		// At first try to mark all capture moves with positive values
 		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
-		// ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
+		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
 		// Create the board representation
 		for (i = 0; i < boardSize; i++){
 			Arrays.fill(markBoard[i],0);
 		}
 		// Mark good moves with constant values
-		// for (Point move : allCaptureMoves){
-		// 	markBoard[move.i][move.j] += CAPTURE; 
-		// }
-		// for (Point move: allPattern33Moves){
-		// 	markBoard[move.i][move.j] += PATTERN33;
-		// }
-
+		for (Point move : allCaptureMoves){
+			markBoard[move.i][move.j] += CAPTURE; 
+		}
+		for (Point move: allPattern33Moves){
+			markBoard[move.i][move.j] += PATTERN33;
+		}
 		// Add constant values to children
 		for (Node child: children){
 			childPoint = child.getPoint();
 			value = markBoard[childPoint.i][childPoint.j];
 			child.addGames(value);
 			child.addWins(value);
+
 			// Set third line priority
 			if (hr.isEmptyArea(papa.getBoard(), child.getPoint(), 3)){
-				if (child.getPoint().i == 2 || child.getPoint().j == 2){
-					child.addGames(THIRD_LINE);
-					child.addWins(THIRD_LINE);
+
+				switch(child.getPoint().i){
+					case 2:
+						child.addGames(THIRD_LINE);
+						child.addWins(THIRD_LINE);
+						break;
+					case 1:
+						child.addGames(THIRD_LINE);
+						break;
+					case 0:
+						child.addGames(THIRD_LINE);
+						break;
 				}
-				if (child.getPoint().i == 1 || child.getPoint().j == 1 || child.getPoint().i == 0 || child.getPoint().j == 0){
-					child.addGames(FIRST_SECOND_LINE); 
+				switch(child.getPoint().j){
+					case 2:
+						child.addGames(THIRD_LINE);
+						child.addWins(THIRD_LINE);
+						break;
+					case 1:
+						child.addGames(THIRD_LINE);
+						break;
+					case 0:
+						child.addGames(THIRD_LINE);
+						break;
 				}
+				// if (child.getPoint().i == 2 || child.getPoint().j == 2){
+				// 	child.addGames(THIRD_LINE);
+				// 	child.addWins(THIRD_LINE);
+				// }
+				// if (child.getPoint().i == 1 || child.getPoint().j == 1 || child.getPoint().i == 0 || child.getPoint().j == 0){
+				// 	child.addGames(FIRST_SECOND_LINE); 
+				// }
 			}
 		}
 
@@ -231,10 +256,11 @@ public class Montecarlo{
 	public Point getWinner(){
 		ArrayList<Node> children = root.getChildren();
 		Node bestChild = null;
-		int maxGames = -1, games;
+		int maxGames = -1, games, wins;
 		if (children != null){
 			for (Node child : children){
 				games = child.getGames();
+				wins = child.getWins();
 				if (games > maxGames){
 					maxGames = games;
 					bestChild = child;
@@ -244,7 +270,9 @@ public class Montecarlo{
 		}
 
 		if (bestChild != null){
+			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			return bestChild.getPoint();
+
 		}
 		else {
 			return null;

@@ -26,10 +26,15 @@ public class Capture{
 	public ArrayList<Point> getAllMoves(final Board board, int ownStoneType){
 		int boardSize = board.getSize();
 		ArrayList<Point> points = new ArrayList<Point>();
+		Point point;
 
 		for (int i = 0; i < boardSize; i++){
 			for (int j = 0; j < boardSize; j++){
-				points.add(new Point(board,i,j));
+				point = new Point(board,i,j);
+				if (board.getPoint(point) == Board.FRIENDLY || board.getPoint(point) == Board.ENEMY){
+					points.add(point);
+				}
+				
 			}
 		}
 		return getCaptureMoves(board, points, ownStoneType, false);
@@ -64,6 +69,9 @@ public class Capture{
 			pointType = board.getPoint(xpoint);
 
 			if (pointType != Board.ENEMY && pointType != Board.FRIENDLY){
+				continue;
+			}
+			if (visitedGroups[point.i][point.j] == 1){
 				continue;
 			}
 						
