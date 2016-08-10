@@ -92,25 +92,24 @@ public class Playout{
 		//System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
+	// TODO: Make a test for this
 	private int[] getScore(Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
-		int surroundedStones[] = new int[4];
+		// int surroundedStones[] = new int[4];
+		ArrayList<Point> surroundedStones;
 		Point p;
 		boolean isFriendly;
+		int pointType;
 
 
 		for (i = 0; i < board.getSize(); i++){
 			for (j = 0; j < board.getSize(); j++){
 				p = new Point(board, i, j);
 				if (board.getPoint(p) == Board.EMPTY){
-					//TODO: Change to p.getNeighbours()
-					surroundedStones[0] = board.getPoint(i-1,j);
-					surroundedStones[1] = board.getPoint(i+1,j);
-					surroundedStones[2] = board.getPoint(i,j-1);
-					surroundedStones[3] = board.getPoint(i,j+1);
-
+					surroundedStones = p.getNeighbours();
 					isFriendly = true;
-					for (int pointType: surroundedStones){
+					for (Point stone: surroundedStones){
+						pointType = board.getPoint(stone);
 						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){
 							isFriendly = false;
 							break;
