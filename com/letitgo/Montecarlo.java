@@ -168,18 +168,21 @@ public class Montecarlo{
 	}
 	private void rateChildren(Node papa){
 		// Constants
+		final int boardSize = papa.getBoard().getSize();
 		final int CAPTURE = 20;
 		final int PATTERN33 = 20;
 		final int THIRD_LINE = 5;
 		final int FIRST_SECOND_LINE = 5;
 
 		ArrayList<Node> children = papa.getChildren();
-		int boardSize = papa.getBoard().getSize();
+		
 		int[][] markBoard = new int[boardSize][boardSize];
 
 		int i,j;
 		int value;
 		Point childPoint;
+		int child_i, child_j;
+
 		// At first try to mark all capture moves with positive values
 		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
@@ -203,31 +206,31 @@ public class Montecarlo{
 
 			// Set third line priority
 			if (hr.isEmptyArea(papa.getBoard(), child.getPoint(), 3)){
+				child_i = child.getPoint().i;
+				child_j = child.getPoint().j;
+				
+				if (child_i == 2 || child_i == boardSize-3){
+					if (child_j >= 2 && child_j < boardSize - 2){
+						child.addGames(THIRD_LINE);
+						child.addWins(THIRD_LINE);
+					}
+				}
+				else if (child_i == 0 || child_i == 1 || child_i == boardSize-2 || child_i == boardSize-3){
+					child.addGames(THIRD_LINE);
+				}
 
-				switch(child.getPoint().i){
-					case 2:
+				if (child_j == 2 || child_j == boardSize-3){
+					if (child_i >= 2 && child_i < boardSize - 2){
 						child.addGames(THIRD_LINE);
 						child.addWins(THIRD_LINE);
-						break;
-					case 1:
-						child.addGames(THIRD_LINE);
-						break;
-					case 0:
-						child.addGames(THIRD_LINE);
-						break;
+					}
 				}
-				switch(child.getPoint().j){
-					case 2:
-						child.addGames(THIRD_LINE);
-						child.addWins(THIRD_LINE);
-						break;
-					case 1:
-						child.addGames(THIRD_LINE);
-						break;
-					case 0:
-						child.addGames(THIRD_LINE);
-						break;
+				else if (child_j == 0 || child_j == 1 || child_j == boardSize-2 || child_j == boardSize-3){
+					child.addGames(THIRD_LINE);
 				}
+
+
+
 				// if (child.getPoint().i == 2 || child.getPoint().j == 2){
 				// 	child.addGames(THIRD_LINE);
 				// 	child.addWins(THIRD_LINE);
