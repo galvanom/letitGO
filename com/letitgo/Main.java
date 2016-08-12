@@ -6,7 +6,7 @@ import com.letitgo.heuristics.*;
 
 public class Main{
 	public static void main(String[] args){
-		
+		/*
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
@@ -39,7 +39,8 @@ public class Main{
 			//board.printBoard();
 			//mc.printTree();
 		}		
-
+	*/
+		Pattern33.stringToNumber("XO.#");
 
 	}
 	

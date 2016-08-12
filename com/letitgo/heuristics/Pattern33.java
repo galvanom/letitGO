@@ -29,7 +29,6 @@ public  class Pattern33{
 		wildchars.put("o","X.");
 		wildchars.put("?","XO.");
 		wildchars.put(".",".");
-
 	}
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(Board board){
@@ -138,6 +137,7 @@ public  class Pattern33{
 		//int next = 0;
 		for (String pattern : patterns){
 			currentPattern = pattern;
+
 			for (int i = 0; i < 2; i++){ // 2 different colors 
 				for (int j = 0; j < 4; j++){ // 4 90 degree permutations 
 					permutations.add(currentPattern);
@@ -218,5 +218,32 @@ public  class Pattern33{
 			
 		}
 		return String.valueOf(newPattern);
+	}
+	public static String[] getAllPatternsWildchars(String str){
+		String[] allStrings;
+	}
+	public static int stringToNumber(String str){
+		char point;
+		int number = 0;
+		for (int i = 0; i < str.length(); i++){
+			point = str.charAt(i);
+			number = number << 2;
+			switch(point){
+				case 'X':
+					number |= 0b10;
+					break;
+				case 'O':
+					number |= 0b01;
+					break;
+				case '.':
+					//number |= 0b00;
+					break;
+				case '#':
+					number |= 0b11;
+					break;
+			}
+		}
+		System.out.println(Integer.toBinaryString(number));
+		return number;
 	}
 }
