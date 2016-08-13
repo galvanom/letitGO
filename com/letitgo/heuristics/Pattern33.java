@@ -20,8 +20,7 @@ public  class Pattern33{
 						    	};
 	public Pattern33(){
 		permutations = new HashSet<String>();
-		// Initializing patterns...
-		getPermutations3x3();
+
 		// Wildchars initialization
 		wildchars.put("x","O.");
 		wildchars.put("X","X");
@@ -29,6 +28,8 @@ public  class Pattern33{
 		wildchars.put("o","X.");
 		wildchars.put("?","XO.");
 		wildchars.put(".",".");
+				// Initializing patterns...
+		getPermutations3x3();
 	}
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(Board board){
@@ -101,31 +102,22 @@ public  class Pattern33{
 	}
 	public  boolean isPattern3x3(Board board, Point point){
 		int i,j;
-		char[] pointsToCheck; 
-		String symbols;
-
+		String pointsToCheck; 
 
 		if (point.i <= 0 || point.i >= board.getSize()-1 || point.j <= 0 || point.j >= board.getSize()-1)
 			return false;
 		
-		pointsToCheck = get3x3Region(board, point);
+		pointsToCheck = String.valueOf(get3x3Region(board, point));
 
 		//Compare to the all patterns and they permutations
 		for (String perm: permutations){
 			//System.out.println(String.valueOf(perm));
-			toNextPoint:
-			for (i = 0; i < PATTERN_SIZE; i++){
-				symbols = wildchars.get(String.valueOf(perm.charAt(i)));
-				for (j = 0; j < symbols.length(); j++){
-					if (symbols.charAt(j) == pointsToCheck[i])
-						continue toNextPoint;
-				}
-				break;
-
-			}
-			if (i == PATTERN_SIZE){
+			if (pointsToCheck.equals(perm)){
 				return true;
 			}
+
+			
+
 		}
 		return false;
 	}
@@ -134,18 +126,27 @@ public  class Pattern33{
 		/*int length = patterns.length*24;
 		char[][] permutations = new char[length][];*/
 		String currentPattern;
+		ArrayList<String> allVariations;
 		//int next = 0;
 		for (String pattern : patterns){
 			currentPattern = pattern;
+			allVariations = new ArrayList<String>();
+			
+			if(!getAllVariations(pattern.toCharArray(),0,allVariations)){
+				allVariations.add(pattern);
+			}
 
-			for (int i = 0; i < 2; i++){ // 2 different colors 
-				for (int j = 0; j < 4; j++){ // 4 90 degree permutations 
-					permutations.add(currentPattern);
-					permutations.add(getHorizPermutation(currentPattern));
-					permutations.add(getVertPermutation(currentPattern));
-					currentPattern = get90degPermutation(currentPattern);
+			for (String variation : allVariations){
+					
+				for (int i = 0; i < 2; i++){ // 2 different colors 
+					for (int j = 0; j < 4; j++){ // 4 90 degree permutations 
+						permutations.add(currentPattern);
+						permutations.add(getHorizPermutation(currentPattern));
+						permutations.add(getVertPermutation(currentPattern));
+						currentPattern = get90degPermutation(currentPattern);
+					}
+					currentPattern = changeColors(currentPattern);
 				}
-				currentPattern = changeColors(currentPattern);
 			}
 		}
 
@@ -219,7 +220,7 @@ public  class Pattern33{
 		}
 		return String.valueOf(newPattern);
 	}
-	public boolean getAllVariations(char[] pattern, int pos){
+	public boolean getAllVariations(char[] pattern, int pos, ArrayList<String> allVariations){
 		int i, j;
 		for (i = pos; i < PATTERN_SIZE;i++){
 			switch(pattern[i]){
@@ -228,12 +229,13 @@ public  class Pattern33{
 				case 'x':
 					String symbols = wildchars.get(String.valueOf(pattern[i]));
 					char[] newPattern = Arrays.copyOf(pattern, PATTERN_SIZE);
-					
+
 					for (j = 0; j < symbols.length(); j++){
 						newPattern[i] = symbols.charAt(j);
 							
-						if (!getAllVariations(newPattern, i+1)){
-							System.out.println(String.valueOf(newPattern));
+						if (!getAllVariations(newPattern, i+1, allVariations)){
+							// System.out.println(String.valueOf(newPattern));
+							allVariations.add(String.valueOf(newPattern));
 						}
 						
 					}

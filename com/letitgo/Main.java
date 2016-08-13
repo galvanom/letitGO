@@ -6,6 +6,7 @@ import com.letitgo.heuristics.*;
 
 public class Main{
 	public static void main(String[] args){
+		
 		/*
 		Board board = new Board(9);
 		Point p = null;
@@ -41,10 +42,18 @@ public class Main{
 		}		
 	*/
 		Pattern33 pat = new Pattern33();
-		Pattern33.stringToNumber("XO.#");
-		char[] pattern = {'X','O','?','X','.','.','x','.','?'};
-		char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};
-		pat.getAllVariations(pattern,0);
+		// Pattern33.stringToNumber("XO.#");
+		// char[] pattern = {'X','O','?','X','.','.','x','.','?'};
+		// char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};
+		// ArrayList<String> allVariations = new ArrayList<String>();
+		// if(!pat.getAllVariations(pattern_,0,allVariations)){
+		// 	allVariations.add(String.valueOf(pattern_));
+		// }
+		// for (String variation : allVariations){
+		// 	System.out.println(variation);
+		// }
+
+
 
 	}
 	
