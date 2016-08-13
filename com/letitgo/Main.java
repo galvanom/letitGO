@@ -40,7 +40,11 @@ public class Main{
 			//mc.printTree();
 		}		
 	*/
+		Pattern33 pat = new Pattern33();
 		Pattern33.stringToNumber("XO.#");
+		char[] pattern = {'X','O','?','X','.','.','x','.','?'};
+		char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};
+		pat.getAllVariations(pattern,0);
 
 	}
 	

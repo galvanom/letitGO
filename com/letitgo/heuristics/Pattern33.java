@@ -219,8 +219,29 @@ public  class Pattern33{
 		}
 		return String.valueOf(newPattern);
 	}
-	public static String[] getAllPatternsWildchars(String str){
-		String[] allStrings;
+	public boolean getAllVariations(char[] pattern, int pos){
+		int i, j;
+		for (i = pos; i < PATTERN_SIZE;i++){
+			switch(pattern[i]){
+				case '?':
+				case 'o':
+				case 'x':
+					String symbols = wildchars.get(String.valueOf(pattern[i]));
+					char[] newPattern = Arrays.copyOf(pattern, PATTERN_SIZE);
+					
+					for (j = 0; j < symbols.length(); j++){
+						newPattern[i] = symbols.charAt(j);
+							
+						if (!getAllVariations(newPattern, i+1)){
+							System.out.println(String.valueOf(newPattern));
+						}
+						
+					}
+					return true;
+			}
+		}
+		return false;
+		
 	}
 	public static int stringToNumber(String str){
 		char point;
