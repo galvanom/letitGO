@@ -42,6 +42,7 @@ public class Main{
 		}		
 	*/
 		Pattern33 pat = new Pattern33();
+		pat.createPatternsFile("patterns33.dat");
 		// Pattern33.stringToNumber("XO.#");
 		// char[] pattern = {'X','O','?','X','.','.','x','.','?'};
 		// char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};
