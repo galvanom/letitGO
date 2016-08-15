@@ -7,7 +7,7 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		/*
+		
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
@@ -18,10 +18,11 @@ public class Main{
 
 		board.loadFromFile("board9x9.dat");
 		board.printBoard();
+		
 
 		startTime = System.currentTimeMillis();
 		mc = new Montecarlo(board, Board.FRIENDLY);	
-		for (int i = 0; i < 1000; i++){
+		for (int i = 0; i < 10000; i++){
 			if (i%100 == 0){
 				System.gc();
 			}
@@ -40,9 +41,17 @@ public class Main{
 			//board.printBoard();
 			//mc.printTree();
 		}		
-	*/
-		Pattern33 pat = new Pattern33();
-		pat.createPatternsFile("patterns33.dat");
+	
+		// Pattern33 pat = new Pattern33("patterns33.dat");
+		// pat.createPatternsFile("patterns33.dat");
+		// int[] patterns = pat.readPatternsFile("patterns33.dat");
+
+		// if (patterns != null){
+		// 	for (int pattern : patterns){
+		// 		System.out.printf("%d ",pattern);
+		// 	}
+		// }
+
 		// Pattern33.stringToNumber("XO.#");
 		// char[] pattern = {'X','O','?','X','.','.','x','.','?'};
 		// char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};

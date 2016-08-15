@@ -1,12 +1,13 @@
 package com.letitgo.heuristics;
 import java.util.*;
+import java.io.*;
 import com.letitgo.Board;
 import com.letitgo.Playout;
 import com.letitgo.Point;
 
 public  class Pattern33{
 	private final int PATTERN_SIZE = 9;
-
+	private static int[] patternsBase;
 	private static final String [] patterns = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
 						       "XOX...???",
 						       "XO....?.?",
@@ -18,7 +19,31 @@ public  class Pattern33{
 						       "OX?o.O???"
 						    	};
 	public Pattern33(){
+	}
+	public static void init(){
+		patternsBase = readPatternsFile("patterns33.dat");
+	}
+	public static int[] readPatternsFile(String fileName){
+		FileInputStream in = null;
+		DataInputStream din = null;
+		final int patternsNumber;
+		int[] patterns = null;
+		try{
+			in = new FileInputStream(fileName);
+			din = new DataInputStream(in);
+			patternsNumber = din.readInt();
+			patterns = new int[patternsNumber];
+			
+			for (int i = 0; i < patternsNumber; i++){
+				patterns[i] = din.readInt();
+			}
+			in.close();
+		}
+		catch (IOException e){
+			System.out.printf("File %s IO error: %s",fileName, e);
+		}
 
+		return patterns;		
 	}
 	public void createPatternsFile(String fileName){
 		HashSet<String> permutations;
@@ -33,13 +58,50 @@ public  class Pattern33{
 		wildchars.put(".",".");
 				// Initializing patterns...
 		permutations = getPermutations3x3(wildchars);
-		int i = 0;
+		
+		LinkedList<Integer> digitalPermutations = new LinkedList<Integer>();
+		int digitalPermutation;
+		int i;
 		for (String permutation: permutations){
-			i++;
-			System.out.println(permutation);
-			System.out.println(stringToNumber(permutation));
+			digitalPermutation = stringToNumber(permutation);
+			
+			if (digitalPermutations.size() == 0){
+				digitalPermutations.add(digitalPermutation);
+				continue;
+			}
+			i = 0;
+			for (int element : digitalPermutations){
+				if (digitalPermutation < element){
+					digitalPermutations.add(i, digitalPermutation);
+					break;
+				}
+				i++;
+			}
+			if (i >= digitalPermutations.size()){
+				digitalPermutations.addLast(digitalPermutation);
+			}
 		}
-		System.out.println(i);
+		FileOutputStream out = null;
+		DataOutputStream dout = null;
+		try{
+			out = new FileOutputStream(fileName);
+			dout = new DataOutputStream(out);
+			
+			dout.writeInt(digitalPermutations.size());
+
+			if (dout != null){
+				for (int element : digitalPermutations){
+					// System.out.println(element);
+					dout.writeInt(element);
+				}
+
+				out.close();
+			}
+		}
+		catch(IOException e){
+			System.out.printf("File %s IO error: %s",fileName, e);
+		}
+
 	}
 	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(Board board){
@@ -112,20 +174,19 @@ public  class Pattern33{
 	}
 	public  boolean isPattern3x3(Board board, Point point){
 		int i,j;
-		String pointsToCheck; 
+		int boardPoints; 
 
 		if (point.i <= 0 || point.i >= board.getSize()-1 || point.j <= 0 || point.j >= board.getSize()-1)
 			return false;
 		
-		pointsToCheck = String.valueOf(get3x3Region(board, point));
+		boardPoints = stringToNumber(String.valueOf(get3x3Region(board, point)));
 
-		// //Compare to the all patterns and they permutations
-		// for (String perm: permutations){
-		// 	//System.out.println(String.valueOf(perm));
-		// 	if (pointsToCheck.equals(perm)){
-		// 		return true;
-		// 	}
-		// }
+		for (int pattern : patternsBase){
+			if (boardPoints == pattern){
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -272,7 +333,7 @@ public  class Pattern33{
 					break;
 			}
 		}
-		System.out.println(Integer.toBinaryString(number));
+		// System.out.println(Integer.toBinaryString(number));
 		return number;
 	}
 }

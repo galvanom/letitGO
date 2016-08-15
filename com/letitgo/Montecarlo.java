@@ -86,6 +86,7 @@ public class Montecarlo{
 	Node root;
 	Heuristics hr;
 	Montecarlo(Board board, int whoseTurn){
+		Pattern33.init();
 		root = new Node(null, board, null, whoseTurn);
 		hr = new Heuristics();
 	}

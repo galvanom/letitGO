@@ -122,6 +122,7 @@ public class HeuristicsTest{
 		Board board = new Board(9);
 		Heuristics hr = new Heuristics();
 		Point p;
+		Pattern33.init();
 
 		board.loadFromFile("HeuristicsTest_f.dat");
 				

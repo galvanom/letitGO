@@ -22,7 +22,7 @@ public class Playout{
 		int passTimes = 0;
 		int MAX_MOVES = boardSize*boardSize*3;
 		Point captureMove = null;
-		Point move, patternMove;
+		Point move, patternMove = null;
 		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
 		ArrayList<Point> points = null;
