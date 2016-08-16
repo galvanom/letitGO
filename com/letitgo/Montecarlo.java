@@ -293,6 +293,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 			for (Node child : children){
+				System.out.printf("[%d %d] Child wins: %d, games: %d\n",child.getPoint().i,child.getPoint().j, child.getWins(), bestChild.getGames());
 				if (child.getGames() == bestChild.getGames()){
 					if (child.getWins() > bestChild.getWins()){
 						bestChild = child;
