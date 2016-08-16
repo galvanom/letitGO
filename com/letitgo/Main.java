@@ -16,30 +16,37 @@ public class Main{
 		Montecarlo mc;
 		long startTime;
 
-		board.loadFromFile("board9x9.dat");
-		board.printBoard();
-		
-
-		startTime = System.currentTimeMillis();
-		mc = new Montecarlo(board, Board.FRIENDLY);	
-		for (int i = 0; i < 10000; i++){
-			if (i%100 == 0){
-				System.gc();
+		//board.loadFromFile("board9x9.dat");
+		while (true){
+			
+			
+			startTime = System.currentTimeMillis();
+			mc = new Montecarlo(board, Board.FRIENDLY);	
+			for (int i = 0; i < 10000; i++){
+				// if (i%10000 == 0){
+				// 	System.gc();
+				// }
+				mc.playOneSequence();
+				//playout.playRandomGame(board, Board.FRIENDLY);
 			}
-			mc.playOneSequence();
-			//playout.playRandomGame(board, Board.FRIENDLY);
-		}
-		System.out.println(System.currentTimeMillis() - startTime);
+			System.out.println(System.currentTimeMillis() - startTime);
 
-		p = mc.getWinner();
-		
-		if (p == null){
-			System.out.println("Error. Next move is Null\n");
-		}
-		else{
-			p.printPoint();
-			//board.printBoard();
-			//mc.printTree();
+			p = mc.getWinner();
+			
+			if (p == null){
+				System.out.println("Error. Next move is Null\n");
+			}
+			else{
+				p.printPoint();
+				board.makeMove(p, Board.ENEMY);
+				board.printBoard();
+				//board.printBoard();
+				//mc.printTree();
+			}
+			System.out.println("Set next Move for O:");
+			board.makeMove(readNextMove(board),Board.FRIENDLY);
+			board.printBoard();
+
 		}		
 	
 		// Pattern33 pat = new Pattern33("patterns33.dat");
@@ -63,8 +70,13 @@ public class Main{
 		// 	System.out.println(variation);
 		// }
 
-
-
+	}
+	public static Point readNextMove(Board board){
+		int i,j;
+		Scanner sc = new Scanner(System.in);
+		i = sc.nextInt(); j = sc.nextInt();
+		
+		return new Point(board, i,j);
 	}
 	
 	

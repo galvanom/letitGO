@@ -9,7 +9,7 @@ public class Playout{
 
     public Playout(){
 		heuristics = new Heuristics();
-		}
+	}
 
 	public int playRandomGame(final Board board, int first_stone){
 		ArrayList<Point> free_points;
@@ -42,25 +42,26 @@ public class Playout{
 			
 			if (playBoard.getLastPoint() != null){
 
+				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
+				if (captureMove != null) {
+					//playBoard.printBoard();
+					playBoard.makeMove(captureMove, stoneType);
+					// System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
+					// playBoard.printBoard();
+					continue;
+				}
 				
 				patternMove = heuristics.pattern33.getFirstMove(playBoard);
 
 				if (patternMove != null){
 					//playBoard.printBoard();
 					playBoard.makeMove(patternMove, stoneType);
-					//System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					//playBoard.printBoard();
+					// System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
+					// playBoard.printBoard();
 					continue;
 				}
 				
-				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
-				if (captureMove != null) {
-					//playBoard.printBoard();
-					playBoard.makeMove(captureMove, stoneType);
-					//System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					//playBoard.printBoard();
-					continue;
-				}
+
 				
 			}
 			
