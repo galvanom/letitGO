@@ -6,9 +6,9 @@ public class Board{
 	private int[][] board, boardState;
 	private final int size;
 
-	private Point koPoint = null;
-	private int koPointLifeTime = 0;
-	private int koStoneType = EMPTY;
+	public Point koPoint = null;
+	public int koPointLifeTime = 0;
+	public int koStoneType = EMPTY;
 	private Point lastPoint = null;
 	public Point tryPoint = null;
 
@@ -51,6 +51,11 @@ public class Board{
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
+			
+		// TODO: Rewrite it for incapsulation!!!
+		this.koPoint = otherBoard.koPoint;
+		this.koPointLifeTime = otherBoard.koPointLifeTime;
+		this.koStoneType = otherBoard.koStoneType;
 
 	}
 	public void tryMove(final Point p, int pointType){
@@ -164,7 +169,7 @@ public class Board{
 		koPointLifeTime = 0;
 
 	}
-	private boolean isKO(Point point, int stoneType){
+	public boolean isKO(Point point, int stoneType){
 		if (koPointLifeTime == 0 && koPoint != null){
 			//System.out.printf("koPointLifeTime: %d KoPoint:[%d,%d] Point: [%d,%d] koStoneType: %d stoneType: %d\n", koPointLifeTime, koPoint.i, koPoint.j, point.i, point.j,koStoneType,stoneType );
 

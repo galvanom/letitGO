@@ -89,6 +89,13 @@ public class Montecarlo{
 		Pattern33.init();
 		root = new Node(null, board, null, whoseTurn);
 		hr = new Heuristics();
+		if (root.getBoard().koPoint != null){
+			root.getBoard().koPoint.printPoint();
+		}
+		else{
+			System.out.println("NO KO");
+		}
+				
 	}
 	public void playOneSequence(){
 		Node node = selectNode(root);
@@ -205,6 +212,7 @@ public class Montecarlo{
 				if (point.i <= 0 || point.i >=boardSize-1 || point.j <= 0 || point.j >= boardSize-1){
 					continue;
 				}
+
 				markBoard[point.i][point.j] += LAST_POINT_AREA;
 			}
 		}
@@ -247,15 +255,6 @@ public class Montecarlo{
 					child.addGames(THIRD_LINE);
 				}
 
-
-
-				// if (child.getPoint().i == 2 || child.getPoint().j == 2){
-				// 	child.addGames(THIRD_LINE);
-				// 	child.addWins(THIRD_LINE);
-				// }
-				// if (child.getPoint().i == 1 || child.getPoint().j == 1 || child.getPoint().i == 0 || child.getPoint().j == 0){
-				// 	child.addGames(FIRST_SECOND_LINE); 
-				// }
 			}
 		}
 
@@ -291,7 +290,9 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				System.out.printf("[%d %d] Child wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.getWins(), child.getGames(), childValue);
+				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+
+
 				if (max < childValue ){
 					max = childValue;
 					bestChild = child;

@@ -37,15 +37,23 @@ public class Main{
 				System.out.println("Error. Next move is Null\n");
 			}
 			else{
+				if (board.isKO(p, Board.ENEMY)){
+					System.out.println("KO accured");
+				}
 				p.printPoint();
 				board.makeMove(p, Board.ENEMY);
 				board.printBoard();
+	
 				//board.printBoard();
 				//mc.printTree();
 			}
 			System.out.println("Set next Move for O:");
 			board.makeMove(readNextMove(board),Board.FRIENDLY);
 			board.printBoard();
+			if (board.koPoint != null){
+				System.out.println("KO point:");
+				board.koPoint.printPoint();
+			}
 
 		}		
 	
