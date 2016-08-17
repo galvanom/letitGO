@@ -44,7 +44,7 @@ public class Playout{
 
 				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
 				if (captureMove != null) {
-					//playBoard.printBoard();
+					// playBoard.printBoard();
 					playBoard.makeMove(captureMove, stoneType);
 					// System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
 					// playBoard.printBoard();
@@ -54,7 +54,7 @@ public class Playout{
 				patternMove = heuristics.pattern33.getFirstMove(playBoard);
 
 				if (patternMove != null){
-					//playBoard.printBoard();
+					// playBoard.printBoard();
 					playBoard.makeMove(patternMove, stoneType);
 					// System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
 					// playBoard.printBoard();
@@ -82,15 +82,15 @@ public class Playout{
 			//p = getBestMove(playBoard, free_points);
 
 			playBoard.makeMove(move, stoneType);
-			//playBoard.printBoard();
+			// playBoard.printBoard();
 
 			
 		}
-		//playBoard.printBoard();
+		// playBoard.printBoard();
 
 		int[] score = getScore(playBoard);
 
-		//System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
+		// System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
 	// TODO: Make a test for this
@@ -145,6 +145,7 @@ public class Playout{
 		int[] score = {friendScore, enemyScore};
 		return score;
 	}
+	// TODO: Make test for this
 	public static ArrayList<Point> getFreePoints(Board board, int stoneType){
 		int i,j;
 		int boardSize = board.getSize();
@@ -156,10 +157,11 @@ public class Playout{
 				p = new Point(board, i, j);
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
-						// If point doesnt have dame but there is a friendly single eye return false
-						if (!p.isFriendlySingleEyePoint(stoneType)){
-							freePoints.add(p);
+						// If point doesnt have dame but there is a friendly single eye
+						if (p.getDameNumber() == 0  && p.isFriendlySingleEyePoint(stoneType)){
+							continue;
 						}
+						freePoints.add(p);
 						
 
 					}

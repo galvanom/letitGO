@@ -197,7 +197,9 @@ public class Board{
 		if (p.getValue() != Board.EMPTY){
 			return false;
 		}
-
+		// if (!p.isFriendlySingleEyePoint(stoneType)){
+		// 	return false;
+		// }
 		// If point has dame return true
 		if (p.getDameNumber() != 0){
 			return true;

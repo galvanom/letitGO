@@ -17,14 +17,18 @@ public class Main{
 		Montecarlo mc;
 		long startTime;
 
-
-		board.loadFromFile("board9x9.dat");
+		// playout.playRandomGame(board, Board.FRIENDLY);
+		// ArrayList<Point> freePoints = Playout.getFreePoints(board, Board.FRIENDLY);
+		// for (Point freePoint : freePoints){
+		// 	freePoint.printPoint();
+		// }
+		//board.loadFromFile("board9x9.dat");
 
 		while (true){
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 10000; i++){
+			for (int i = 0; i < 5000; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }

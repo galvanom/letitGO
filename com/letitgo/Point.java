@@ -54,7 +54,7 @@ public class Point{
 		if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
 			return false;
 		if (board.getPoint(this.i, this.j+1) == Board.getOppositeSide(stoneType))
-			return false;;
+			return false;
 		if (board.getPoint(this.i, this.j-1) == Board.getOppositeSide(stoneType))
 			return false;
 
