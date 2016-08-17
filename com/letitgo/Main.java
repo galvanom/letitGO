@@ -16,10 +16,10 @@ public class Main{
 		Montecarlo mc;
 		long startTime;
 
-		//board.loadFromFile("board9x9.dat");
+		board.loadFromFile("board9x9.dat");
+
 		while (true){
-			
-			
+		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, Board.FRIENDLY);	
 			for (int i = 0; i < 10000; i++){

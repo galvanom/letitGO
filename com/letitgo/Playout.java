@@ -99,7 +99,7 @@ public class Playout{
 		// int surroundedStones[] = new int[4];
 		ArrayList<Point> surroundedStones;
 		Point p;
-		boolean isFriendly;
+		boolean isFriendly, isEnemy;
 		int pointType;
 
 
@@ -108,7 +108,7 @@ public class Playout{
 				p = new Point(board, i, j);
 				if (board.getPoint(p) == Board.EMPTY){
 					surroundedStones = p.getNeighbours();
-					isFriendly = true;
+					isFriendly = true; isEnemy = true;
 					for (Point stone: surroundedStones){
 						pointType = board.getPoint(stone);
 						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){
@@ -116,10 +116,17 @@ public class Playout{
 							break;
 						}
 					}
+					for (Point stone: surroundedStones){
+						pointType = board.getPoint(stone);
+						if (pointType != Board.ENEMY && pointType != Board.BORDER){
+							isEnemy = false;
+							break;
+						}
+					}
 
 					if (isFriendly)
 						friendScore++;
-					else
+					if (isEnemy)
 						enemyScore++;
 				}
 				else {
