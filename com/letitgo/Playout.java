@@ -109,6 +109,7 @@ public class Playout{
 				if (board.getPoint(p) == Board.EMPTY){
 					surroundedStones = p.getNeighbours();
 					isFriendly = true; isEnemy = true;
+					// TODO: Change for stone.isFriendlySinglePoint()
 					for (Point stone: surroundedStones){
 						pointType = board.getPoint(stone);
 						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){
@@ -155,7 +156,11 @@ public class Playout{
 				p = new Point(board, i, j);
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
-						freePoints.add(p);
+						// If point doesnt have dame but there is a friendly single eye return false
+						if (!p.isFriendlySingleEyePoint(stoneType)){
+							freePoints.add(p);
+						}
+						
 
 					}
 				}

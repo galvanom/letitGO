@@ -10,11 +10,13 @@ public class Main{
 		
 		Board board = new Board(9);
 		Point p = null;
+		Point humanMove;
 		Playout playout = new Playout();
 		int stoneType = Board.ENEMY;
 		Heuristics hr = new Heuristics();
 		Montecarlo mc;
 		long startTime;
+
 
 		board.loadFromFile("board9x9.dat");
 
@@ -37,9 +39,6 @@ public class Main{
 				System.out.println("Error. Next move is Null\n");
 			}
 			else{
-				if (board.isKO(p, Board.ENEMY)){
-					System.out.println("KO accured");
-				}
 				p.printPoint();
 				board.makeMove(p, Board.ENEMY);
 				board.printBoard();
@@ -47,13 +46,21 @@ public class Main{
 				//board.printBoard();
 				//mc.printTree();
 			}
-			System.out.println("Set next Move for O:");
-			board.makeMove(readNextMove(board),Board.FRIENDLY);
-			board.printBoard();
-			if (board.koPoint != null){
-				System.out.println("KO point:");
-				board.koPoint.printPoint();
+			while (true){
+				System.out.println("Set next Move for O:");
+				humanMove = readNextMove(board);
+				if (!board.checkRules(humanMove, Board.FRIENDLY)){
+					System.out.println("Your move is illegal!");
+
+				}
+				else{
+					break;
+				}
 			}
+
+			board.makeMove(humanMove,Board.FRIENDLY);
+			board.printBoard();
+
 
 		}		
 	

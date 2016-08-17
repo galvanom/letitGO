@@ -56,8 +56,13 @@ public class Group implements Iterable<Point>{
 				return false;
 			}
 		}
-
+		
 		return true;
+	}
+	public void printGroup(){
+		for (Point stone : this.group){
+			stone.printPoint();
+		}
 	}
 
 }

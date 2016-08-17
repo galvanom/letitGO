@@ -61,7 +61,11 @@ public class Point{
 		return true;
 	}
 	public void printPoint(){
+
 		System.out.printf("[%d %d]\n", this.i, this.j);
+	}
+	public int getValue(){
+		return this.board.getPoint(this);
 	}
 
 }

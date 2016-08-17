@@ -89,13 +89,6 @@ public class Montecarlo{
 		Pattern33.init();
 		root = new Node(null, board, null, whoseTurn);
 		hr = new Heuristics();
-		if (root.getBoard().koPoint != null){
-			root.getBoard().koPoint.printPoint();
-		}
-		else{
-			System.out.println("NO KO");
-		}
-				
 	}
 	public void playOneSequence(){
 		Node node = selectNode(root);

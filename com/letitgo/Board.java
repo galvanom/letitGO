@@ -51,7 +51,7 @@ public class Board{
 		for (i = 0; i < this.size-2; i++)
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
-			
+
 		// TODO: Rewrite it for incapsulation!!!
 		this.koPoint = otherBoard.koPoint;
 		this.koPointLifeTime = otherBoard.koPointLifeTime;
@@ -193,16 +193,14 @@ public class Board{
 		ArrayList<Point> points;
 		ArrayList<Point> neighbours = p.getNeighbours();
 		Group group;
-		boolean rulesOK = false;
 
+		if (p.getValue() != Board.EMPTY){
+			return false;
+		}
 
 		// If point has dame return true
 		if (p.getDameNumber() != 0){
 			return true;
-		}
-		// If point doesnt have dame but there is a friendly single eye return false
-		if (p.isFriendlySingleEyePoint(stoneType)){
-			return false;
 		}
 		// If there is a Ko return false
 		if (isKO(p, stoneType)){
@@ -218,7 +216,6 @@ public class Board{
 
 		if (group.isGroupDead() == true){
 
-		
 			for (Point neighbour: neighbours){
 				
 				if (getPoint(neighbour) == getOppositeSide(stoneType)){
@@ -227,18 +224,22 @@ public class Board{
 					group = getGroup(neighbour);
 					
 					if (group.isGroupDead() == true){
-						rulesOK = true;
-						break;
+						undoMove();
+						return true;
 					}
 					
 				}
-				
+								
 			}
-			
+
+		}
+		else {
+			undoMove();
+			return true;
 		}
 		
 		undoMove();
-		return rulesOK;
+		return false;
 	}
 	public void removeDeadStones(int stoneType){
 		int i,j, deletedStonesNumber = 0;
