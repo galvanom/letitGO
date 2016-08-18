@@ -3,7 +3,6 @@ import java.util.*;
 import java.io.*;
 import com.letitgo.heuristics.*;
 
-//TODO: Save Go specific functions to GameLogic class
 public class Playout{
 	private final Heuristics heuristics;
 
