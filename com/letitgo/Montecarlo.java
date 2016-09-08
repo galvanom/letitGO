@@ -170,8 +170,8 @@ public class Montecarlo{
 	private void rateChildren(Node papa){
 		// Constants
 		final int boardSize = papa.getBoard().getSize();
-		final int CAPTURE = 20;
-		final int PATTERN33 = 20;
+		final int CAPTURE = 5;
+		final int PATTERN33 = 5;
 		final int THIRD_LINE = 5;
 		final int FIRST_SECOND_LINE = 5;
 		final int LAST_POINT_AREA = 1000;

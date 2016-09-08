@@ -157,6 +157,7 @@ public class Playout{
 				p = new Point(board, i, j);
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
+						// TODO: Dont like it. Try to move getDame check
 						// If point doesnt have dame but there is a friendly single eye
 						if (p.getDameNumber() == 0  && p.isFriendlySingleEyePoint(stoneType)){
 							continue;

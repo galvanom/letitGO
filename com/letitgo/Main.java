@@ -28,7 +28,7 @@ public class Main{
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 5000; i++){
+			for (int i = 0; i < 100; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }
@@ -36,7 +36,7 @@ public class Main{
 				//playout.playRandomGame(board, Board.FRIENDLY);
 			}
 			System.out.println(System.currentTimeMillis() - startTime);
-
+			/*
 			p = mc.getWinner();
 			
 			if (p == null){
@@ -64,7 +64,7 @@ public class Main{
 
 			board.makeMove(humanMove,Board.FRIENDLY);
 			board.printBoard();
-
+		*/
 
 		}		
 	

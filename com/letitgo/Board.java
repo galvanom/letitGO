@@ -184,7 +184,7 @@ public class Board{
 	}
 	public void makeMove(Point p, int stoneType){
 		setPoint(p, stoneType);
-		removeDeadStones(getOppositeSide(stoneType));
+		removeDeadStones(p);
 	}
 
 	public  boolean checkRules(final Point p, int stoneType){
@@ -243,50 +243,41 @@ public class Board{
 		undoMove();
 		return false;
 	}
-	public void removeDeadStones(int stoneType){
+	/*
+	* Убираем мертвые камни с доски
+	* Параметр lastMove содержит последний ход, вокруг которого
+	* мы будем искать мертвые камни
+	*/
+	public void removeDeadStones(Point lastMove){
+		int stoneType = getOppositeSide(getPoint(lastMove));
 		int i,j, deletedStonesNumber = 0;
 		Point point, lastPoint = null; //change lastPoint name
 		Group group;
 		boolean[][] visited = new boolean[getSize()][getSize()];
-		
-		for(i = 0; i < getSize(); i++)
-			for(j = 0; j < getSize(); j++)
-				visited[i][j] = false;
+		ArrayList<Point> lastMoveNeighbours = lastMove.getNeighbours();
 
-		for(i = 0; i < getSize(); i++){
-			for(j = 0; j < getSize(); j++){
-				point = new Point(this, i, j);
-				if (visited[point.i][point.j] == true){
-					continue;
-				}
+		for (Point neighbour: lastMoveNeighbours){
 				
-				if (getPoint(point) == stoneType){
-
-					group = getGroup(point);
-					
-					if (group.isGroupDead() == true){
-						deletedStonesNumber += group.getSize();
-						lastPoint = point; //possible ko point
-							    
-
-						for (Point stone: group){
-							setPoint(stone, Board.EMPTY);
-						}
-					}
-					else{
-						for (Point stone: group){
-							visited[stone.i][stone.j] = true;
-						}
+			if (getPoint(neighbour) == stoneType){
+				group = getGroup(neighbour);
+				
+				if (group.isGroupDead() == true){
+					deletedStonesNumber += group.getSize();
+					lastPoint = neighbour; //possible ko point
+						    
+					for (Point stone: group){
+						setPoint(stone, Board.EMPTY);
 					}
 				}
-			
+
 			}
 		}
 		if (deletedStonesNumber == 1 && lastPoint != null){
 			setKO(lastPoint, stoneType);
 		}
 	}
-	// TODO: Return an empty group except null
+
+	// TODO: Return an empty group, not null
 	public Group getGroup(final Point p){
 		int i,j;
 		int dame_number;
@@ -319,7 +310,7 @@ public class Board{
 		
 		return group;
 	}
-	private static boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
+	private boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
 		Iterator<Point> it_v = visited.iterator();
 		Iterator<Point> it_q = queue.iterator();
 		while(it_v.hasNext()){

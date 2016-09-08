@@ -14,7 +14,7 @@ public class BoardTest{
 		int secondPoint;
 		
 		board.loadFromFile("BoardTest_a.dat");
-		board.removeDeadStones(Board.ENEMY);
+		board.removeDeadStones(new Point(board, 1, 6));
 
 		firstPoint =  board.getPoint(2, 6);
 		secondPoint = board.getPoint(3, 6);
@@ -27,7 +27,7 @@ public class BoardTest{
 		board.loadFromFile("BoardTest_a.dat");
 		int point;
 		
-		board.removeDeadStones(Board.FRIENDLY);
+		board.removeDeadStones(new Point(board, 1, 0));
 		point = board.getPoint(0,0);
 		assertTrue("removeDeadStonesTest2 failed", point == Board.EMPTY);
 	}
@@ -35,11 +35,12 @@ public class BoardTest{
 	public void koTest(){
 		Board board = new Board(9);
 		board.loadFromFile("BoardTest_a.dat");
-		board.removeDeadStones(Board.FRIENDLY);
-		board.removeDeadStones(Board.ENEMY);
+		// board.removeDeadStones(Board.FRIENDLY);
+		// board.removeDeadStones(Board.ENEMY);
 
 		board.setPoint(8,6, Board.ENEMY);
-		board.removeDeadStones(Board.FRIENDLY);
+		board.removeDeadStones(new Point(board,8,6));
+		// board.printBoard();
 		
 		//board.setKO(new Point(8,7));
 		//System.out.printf("[%d %d]", board.koPoint.i, board.koPoint.j);
