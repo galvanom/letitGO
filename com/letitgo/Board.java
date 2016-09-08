@@ -111,7 +111,8 @@ public class Board{
 		int c;
 		try{
 			InputStream in = new FileInputStream(new File(filename));
-			for (i = 0, j = 0, c = in.read(); c != -1 && i < this.size -2; c = in.read()){ 
+			for (i = 0, j = 0, c = in.read(); c != -1 &&
+			 i < this.size -2; c = in.read()){ 
 				if ((char)c == ' ')
 					continue;
 
@@ -171,9 +172,9 @@ public class Board{
 	}
 	public boolean isKO(Point point, int stoneType){
 		if (koPointLifeTime == 0 && koPoint != null){
-			//System.out.printf("koPointLifeTime: %d KoPoint:[%d,%d] Point: [%d,%d] koStoneType: %d stoneType: %d\n", koPointLifeTime, koPoint.i, koPoint.j, point.i, point.j,koStoneType,stoneType );
 
-			if (koPoint.i == point.i && koPoint.j == point.j && koStoneType == stoneType){
+			if (koPoint.i == point.i && koPoint.j == point.j &&
+			 koStoneType == stoneType){
 				return true;
 			}
 		}
@@ -211,7 +212,8 @@ public class Board{
 		
 
 	    // Check. Could we kill neigbour enemy groups with this move.
-	    // So we put a stone to the point position and look for dead enemy groups around
+	    // So we put a stone to the point position 
+	    // and look for dead enemy groups around
 		tryMove(p, stoneType);
 		
 		group = getGroup(p);
@@ -270,11 +272,51 @@ public class Board{
 					}
 				}
 
+
 			}
 		}
+		//Если удалили 1 камень, то возможно, что это Ко
 		if (deletedStonesNumber == 1 && lastPoint != null){
 			setKO(lastPoint, stoneType);
 		}
+	}
+
+	public int deleteGroupIfItsDead(final Point p){
+		int i,j;
+		int dame_number;
+		ArrayList<Point> neighbours;
+		LinkedList<Point> queue = new LinkedList<Point>();
+		ArrayList<Point> visited = new ArrayList<Point>();
+		int boardSize = getSize();
+		Group group = null;
+		Point currentPoint;
+
+		if (getPoint(p) == Board.FRIENDLY || getPoint(p) == Board.ENEMY){
+
+			queue.add(p);
+			while (queue.size() > 0){
+				currentPoint = queue.poll();
+				if (currentPoint.getDameNumber() > 0){
+					return 0;
+				}
+				neighbours = currentPoint.getNeighbours();
+				visited.add(currentPoint);
+			
+				for (Point neighbour: neighbours){
+					if ((getPoint(currentPoint) == getPoint(neighbour)) && 
+						!isPointVisited(visited, queue, neighbour)){
+						queue.add(neighbour);
+					}
+				}
+								
+			}
+			//group = new Group(this, visited);
+		}
+		
+		for (Point point: visited){
+			setPoint(point, Board.EMPTY);
+		}
+		return visited.size();
 	}
 
 	// TODO: Return an empty group, not null
@@ -297,7 +339,8 @@ public class Board{
 				visited.add(currentPoint);
 			
 				for (Point neighbour: neighbours){
-					if ((getPoint(currentPoint) == getPoint(neighbour)) && !isPointVisited(visited, queue, neighbour)){
+					if ((getPoint(currentPoint) == getPoint(neighbour)) && 
+						!isPointVisited(visited, queue, neighbour)){
 						queue.add(neighbour);
 					}
 				}
@@ -305,12 +348,12 @@ public class Board{
 			}
 			group = new Group(this, visited);
 		}
-
-
 		
 		return group;
 	}
-	private boolean isPointVisited(ArrayList<Point> visited, LinkedList<Point> queue, Point p){
+	private boolean isPointVisited(	ArrayList<Point> visited, 
+									LinkedList<Point> queue, 
+									Point p){
 		Iterator<Point> it_v = visited.iterator();
 		Iterator<Point> it_q = queue.iterator();
 		while(it_v.hasNext()){
