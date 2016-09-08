@@ -10,9 +10,9 @@ public class Main{
 		
 		Board board = new Board(9);
 		Point p = null;
-		Point humanMove;
 		Playout playout = new Playout();
-		int stoneType = Board.ENEMY;
+		int aiStone;
+		int humanStone;
 		Heuristics hr = new Heuristics();
 		Montecarlo mc;
 		long startTime;
@@ -23,6 +23,22 @@ public class Main{
 		// 	freePoint.printPoint();
 		// }
 		//board.loadFromFile("board9x9.dat");
+
+		System.out.println("Please choose your side. Type X for black or O for white:");
+		char side = System.in.read();
+		if (side != 'X' && side != 'O'){
+			System.out.println("Wrong choice. Type X for black or O for white:");
+			return;
+		}
+		if (side == 'X'){
+			humanStone = Board.ENEMY;
+			aiStone = Board.FRIENDLY;
+			humanMove(board, humanStone);
+		}
+		if (side == 'O`'){
+			humanStone = Board.FRIENDLY;
+			aiStone = Board.ENEMY;
+		}
 
 		while (true){
 		
@@ -35,6 +51,7 @@ public class Main{
 				mc.playOneSequence();
 				//playout.playRandomGame(board, Board.FRIENDLY);
 			}
+
 			System.out.println(System.currentTimeMillis() - startTime);
 			/*
 			p = mc.getWinner();
@@ -50,6 +67,7 @@ public class Main{
 				//board.printBoard();
 				//mc.printTree();
 			}
+<<<<<<< HEAD
 			while (true){
 				System.out.println("Set next Move for O:");
 				humanMove = readNextMove(board);
@@ -65,6 +83,11 @@ public class Main{
 			board.makeMove(humanMove,Board.FRIENDLY);
 			board.printBoard();
 		*/
+=======
+
+			
+			humanMove(board, humanStone);
+>>>>>>> origin/master
 
 		}		
 	
@@ -96,6 +119,23 @@ public class Main{
 		i = sc.nextInt(); j = sc.nextInt();
 		
 		return new Point(board, i,j);
+	}
+	public static void humanMove(Board board, int humanStoneType){
+		Point move;
+		while (true){
+				System.out.println("Set next Move for O:");
+				move = readNextMove(board);
+				if (!board.checkRules(move, Board.FRIENDLY)){
+					System.out.println("Your move is illegal!");
+
+				}
+				else{
+					break;
+				}
+			}
+
+			board.makeMove(move,Board.FRIENDLY);
+			board.printBoard();
 	}
 	
 	
