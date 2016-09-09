@@ -32,7 +32,7 @@ public class BoardTest{
 		assertTrue("removeDeadStonesTest2 failed", point == Board.EMPTY);
 	}
 	@Test
-	public void koTest(){
+	public void koTest1(){
 		Board board = new Board(9);
 		board.loadFromFile("BoardTest_a.dat");
 		// board.removeDeadStones(Board.FRIENDLY);
@@ -40,12 +40,32 @@ public class BoardTest{
 
 		board.setPoint(8,6, Board.ENEMY);
 		board.removeDeadStones(new Point(board,8,6));
+
 		// board.printBoard();
+		// board.koPoint.printPoint();
 		
 		//board.setKO(new Point(8,7));
 		//System.out.printf("[%d %d]", board.koPoint.i, board.koPoint.j);
 
 		assertTrue("KO test failed", board.checkRules(new Point(board, 8, 7), Board.FRIENDLY) == false);
+		//board.printBoard();
+	}
+	@Test
+	public void koTest2(){
+		Board board = new Board(9);
+		board.loadFromFile("BoardTest_b.dat");
+		// board.removeDeadStones(Board.FRIENDLY);
+		// board.removeDeadStones(Board.ENEMY);
+
+		board.makeMove(new Point(board,3,1), Board.FRIENDLY);
+
+		board.printBoard();
+		// board.koPoint.printPoint();
+		
+		//board.setKO(new Point(8,7));
+		//System.out.printf("[%d %d]", board.koPoint.i, board.koPoint.j);
+
+		assertTrue("KO test failed", board.checkRules(new Point(board, 2, 1), Board.ENEMY) == true);
 		//board.printBoard();
 	}
 	@Test

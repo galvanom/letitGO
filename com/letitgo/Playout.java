@@ -19,7 +19,7 @@ public class Playout{
 		int random_point,i,j;
 		int stoneType = first_stone;
 		int passTimes = 0;
-		int MAX_MOVES = boardSize*boardSize*3;
+		int MAX_MOVES = boardSize*boardSize*2;
 		Point captureMove = null;
 		Point move, patternMove = null;
 		//Point heurPoint = new Point();
@@ -158,7 +158,7 @@ public class Playout{
 					if (board.checkRules(p, stoneType)){
 						// TODO: Dont like it. Try to move getDame check
 						// If point doesnt have dame but there is a friendly single eye
-						if (p.getDameNumber() == 0  && p.isFriendlySingleEyePoint(stoneType)){
+						if (p.getDameNumber() == 0  && p.isSingleEyePoint(stoneType)){
 							continue;
 						}
 						freePoints.add(p);

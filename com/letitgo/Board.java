@@ -216,7 +216,7 @@ public class Board{
 	    // and look for dead enemy groups around
 		tryMove(p, stoneType);
 		
-		group = getGroup(p);
+		/*group = getGroup(p);
 
 		if (group.isGroupDead() == true){
 
@@ -224,7 +224,6 @@ public class Board{
 				
 				if (getPoint(neighbour) == getOppositeSide(stoneType)){
 					
-					//System.out.printf("\nNeigbour [%d:%d]\n", next.i, next.j);
 					group = getGroup(neighbour);
 					
 					if (group.isGroupDead() == true){
@@ -241,7 +240,34 @@ public class Board{
 			undoMove();
 			return true;
 		}
-		
+		*/
+		/*
+		* Test
+		*/
+		if (isDead(p)){
+			for (Point neighbour: neighbours){
+				
+				if (getPoint(neighbour) == getOppositeSide(stoneType)){
+					
+										
+					if (isDead(neighbour)){
+						undoMove();
+						return true;
+					}
+					
+				}
+								
+			}
+
+		}
+		else {
+			undoMove();
+			return true;
+		}
+		/*     ^		
+		* Test |
+		*/
+
 		undoMove();
 		return false;
 	}
@@ -250,33 +276,71 @@ public class Board{
 	* Параметр lastMove содержит последний ход, вокруг которого
 	* мы будем искать мертвые камни
 	*/
+	private boolean isDead(Point initialPoint){
+		int i,j;
+		int dame_number;
+		ArrayList<Point> neighbours;
+		LinkedList<Point> queue = new LinkedList<Point>();
+		ArrayList<Point> visited = new ArrayList<Point>();
+		int boardSize = getSize();
+		Group group = null;
+		Point currentPoint;
+
+		if (getPoint(initialPoint) == Board.FRIENDLY || getPoint(initialPoint) == Board.ENEMY){
+
+			queue.add(initialPoint);
+			while (queue.size() > 0){
+				currentPoint = queue.poll();
+				if (currentPoint.getDameNumber() > 0){
+					return false;
+				}
+				neighbours = currentPoint.getNeighbours();
+				visited.add(currentPoint);
+			
+				for (Point neighbour: neighbours){
+					if ( (getPoint(currentPoint) == getPoint(neighbour)) && 
+						!isPointVisited(visited, queue, neighbour) ){
+						queue.add(neighbour);
+					}
+				}
+								
+			}
+		}
+		return true;
+
+	}
 	public void removeDeadStones(Point lastMove){
 		int stoneType = getOppositeSide(getPoint(lastMove));
-		int i,j, deletedStonesNumber = 0;
+		int i,j, allDeleted = 0, deleted;
 		Point point, lastPoint = null; //change lastPoint name
 		Group group;
 		boolean[][] visited = new boolean[getSize()][getSize()];
 		ArrayList<Point> lastMoveNeighbours = lastMove.getNeighbours();
-
+		
 		for (Point neighbour: lastMoveNeighbours){
 				
 			if (getPoint(neighbour) == stoneType){
-				group = getGroup(neighbour);
+				// group = getGroup(neighbour);
 				
-				if (group.isGroupDead() == true){
-					deletedStonesNumber += group.getSize();
-					lastPoint = neighbour; //possible ko point
-						    
-					for (Point stone: group){
-						setPoint(stone, Board.EMPTY);
+				//if (group.isGroupDead() == true){
+					deleted = deleteGroupIfItsDead(neighbour);
+					allDeleted += deleted;  //group.getSize();
+					if (deleted == 1){
+						lastPoint = neighbour;
 					}
-				}
-
+					//possible ko point
+					
+					// for (Point stone: group){
+					// 	setPoint(stone, Board.EMPTY);
+					// }
+				//}
 
 			}
+			
 		}
 		//Если удалили 1 камень, то возможно, что это Ко
-		if (deletedStonesNumber == 1 && lastPoint != null){
+		if (allDeleted == 1 && lastPoint != null && lastMove.isSingleEyePoint(stoneType)){
+
 			setKO(lastPoint, stoneType);
 		}
 	}
@@ -303,8 +367,8 @@ public class Board{
 				visited.add(currentPoint);
 			
 				for (Point neighbour: neighbours){
-					if ((getPoint(currentPoint) == getPoint(neighbour)) && 
-						!isPointVisited(visited, queue, neighbour)){
+					if ( (getPoint(currentPoint) == getPoint(neighbour)) && 
+						!isPointVisited(visited, queue, neighbour) ){
 						queue.add(neighbour);
 					}
 				}

@@ -47,7 +47,7 @@ public class Point{
 
 		return dame_count;
 	}
-	public boolean isFriendlySingleEyePoint(int stoneType){ 
+	public boolean isSingleEyePoint(int stoneType){ 
 		boolean is_friendly = true;
 		if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
 			return false;
