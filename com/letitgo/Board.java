@@ -271,11 +271,7 @@ public class Board{
 		undoMove();
 		return false;
 	}
-	/*
-	* Убираем мертвые камни с доски
-	* Параметр lastMove содержит последний ход, вокруг которого
-	* мы будем искать мертвые камни
-	*/
+	//TODO: Объеденеить с deleteGroupIfItsDead()
 	private boolean isDead(Point initialPoint){
 		int i,j;
 		int dame_number;
@@ -309,6 +305,11 @@ public class Board{
 		return true;
 
 	}
+	/*
+	* Убираем мертвые камни с доски
+	* Параметр lastMove содержит последний ход, вокруг которого
+	* мы будем искать мертвые камни
+	*/
 	public void removeDeadStones(Point lastMove){
 		int stoneType = getOppositeSide(getPoint(lastMove));
 		int i,j, allDeleted = 0, deleted;
@@ -316,7 +317,8 @@ public class Board{
 		Group group;
 		boolean[][] visited = new boolean[getSize()][getSize()];
 		ArrayList<Point> lastMoveNeighbours = lastMove.getNeighbours();
-		
+		boolean isSingleEye = lastMove.isSingleEyePoint(stoneType);
+
 		for (Point neighbour: lastMoveNeighbours){
 				
 			if (getPoint(neighbour) == stoneType){
@@ -338,8 +340,9 @@ public class Board{
 			}
 			
 		}
-		//Если удалили 1 камень, то возможно, что это Ко
-		if (allDeleted == 1 && lastPoint != null && lastMove.isSingleEyePoint(stoneType)){
+		// Если удалили 1 камень и ход сделан в глаз противника,
+		// то возможно, что это Ко
+		if (allDeleted == 1 && lastPoint != null && isSingleEye){
 
 			setKO(lastPoint, stoneType);
 		}
