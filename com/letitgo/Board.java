@@ -53,9 +53,10 @@ public class Board{
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
 
 		// TODO: Rewrite it for incapsulation!!!
-		this.koPoint = otherBoard.koPoint;
+		this.koPoint = otherBoard.koPoint; //FIX: инстанс доски другой!
 		this.koPointLifeTime = otherBoard.koPointLifeTime;
 		this.koStoneType = otherBoard.koStoneType;
+		this.lastPoint = otherBoard.getLastPoint(); //FIX: инстанс доски другой
 
 	}
 	public void tryMove(final Point p, int pointType){

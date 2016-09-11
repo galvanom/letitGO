@@ -24,34 +24,34 @@ public class Main{
 		// }
 		//board.loadFromFile("board9x9.dat");
 
-		// System.out.println("Please choose your side. Type X for black or O for white:");
-		// char side = 'X';
-		// try{
-		// 	side = (char) System.in.read();
-		// }
-		// catch(IOException e){
+		System.out.println("Please choose your side. Type X for black or O for white:");
+		char side = 'X';
+		try{
+			side = (char) System.in.read();
+		}
+		catch(IOException e){
 
-		// }
+		}
 
-		// if (side != 'X' && side != 'O'){
-		// 	System.out.println("Wrong choice. Type X for black or O for white:");
-		// 	return;
-		// }
-		// if (side == 'X'){
-		// 	humanStone = Board.ENEMY;
-		// 	aiStone = Board.FRIENDLY;
-		// 	humanMove(board, humanStone);
-		// }
-		// if (side == 'O'){
-		// 	humanStone = Board.FRIENDLY;
-		// 	aiStone = Board.ENEMY;
-		// }
+		if (side != 'X' && side != 'O'){
+			System.out.println("Wrong choice. Type X for black or O for white:");
+			return;
+		}
+		if (side == 'X'){
+			humanStone = Board.ENEMY;
+			aiStone = Board.FRIENDLY;
+			humanMove(board, humanStone);
+		}
+		if (side == 'O'){
+			humanStone = Board.FRIENDLY;
+			aiStone = Board.ENEMY;
+		}
 
 		while (true){
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 100; i++){
+			for (int i = 0; i < 5000; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }
@@ -59,24 +59,25 @@ public class Main{
 				//playout.playRandomGame(board, Board.FRIENDLY);
 			}
 
+
 			System.out.println(System.currentTimeMillis() - startTime);
 
-			// p = mc.getWinner();
+			p = mc.getWinner();
 			
-			// if (p == null){
-			// 	System.out.println("Error. Next move is Null\n");
-			// }
-			// else{
-			// 	p.printPoint();
-			// 	board.makeMove(p, Board.ENEMY);
-			// 	board.printBoard();
+			if (p == null){
+				System.out.println("Error. Next move is Null\n");
+			}
+			else{
+				p.printPoint();
+				board.makeMove(p, Board.ENEMY);
+				board.printBoard();
 	
-			// 	//board.printBoard();
-			// 	//mc.printTree();
-			// }
+				//board.printBoard();
+				//mc.printTree();
+			}
 
 			
-			// humanMove(board, humanStone);
+			humanMove(board, humanStone);
 
 		}		
 	

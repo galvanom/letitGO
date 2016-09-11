@@ -33,6 +33,12 @@ public class Point{
 
 		return neighbours;
 	}
+	public ArrayList<Point> getAllNeighbours(){
+		ArrayList<Point> allNeighbours = getNeighbours();
+		allNeighbours.addAll(getDiagonalNeighbours());
+
+		return allNeighbours;
+	}
 	// TODO: Maybe change to boolean hasDame()
 	public int getDameNumber(){
 		int dame_count = 0;

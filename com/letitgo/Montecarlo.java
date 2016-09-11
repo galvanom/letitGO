@@ -174,7 +174,7 @@ public class Montecarlo{
 		final int PATTERN33 = 5;
 		final int THIRD_LINE = 5;
 		final int FIRST_SECOND_LINE = 5;
-		final int LAST_POINT_AREA = 1000;
+		final int LAST_POINT_AREA = 10;
 
 		ArrayList<Node> children = papa.getChildren();
 		
@@ -190,16 +190,16 @@ public class Montecarlo{
 		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
 		Point lastPoint = papa.getBoard().getLastPoint();
 		ArrayList<Point> lastPointArea = null;
-		if (lastPoint != null){
-			lastPointArea = lastPoint.getNeighbours();
-			lastPointArea.addAll(lastPoint.getDiagonalNeighbours());
-		}
+
 		// Create the board representation
 		for (i = 0; i < boardSize; i++){
 			Arrays.fill(markBoard[i],0);
 		}
-		if (lastPointArea != null){
-
+		if (lastPoint != null){
+			lastPointArea = lastPoint.getAllNeighbours();
+			if (papa.getParent() == null){
+				lastPoint.printPoint();
+			}
 			// Mark last move neighbourhood
 			for (Point point : lastPointArea){
 				if (point.i <= 0 || point.i >=boardSize-1 || point.j <= 0 || point.j >= boardSize-1){
@@ -207,6 +207,8 @@ public class Montecarlo{
 				}
 
 				markBoard[point.i][point.j] += LAST_POINT_AREA;
+
+				
 			}
 		}
 		// Mark good moves with constant values
@@ -290,7 +292,6 @@ public class Montecarlo{
 					max = childValue;
 					bestChild = child;
 				}
-
 
 			}
 		}
