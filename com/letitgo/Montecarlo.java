@@ -157,7 +157,11 @@ public class Montecarlo{
 		allPossibleMoves = Playout.getFreePoints(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
-				papa.addChild(move);
+				// Проверяем не находится ли ход под атари
+				if (!move.isAtari(Board.getOppositeSide(papa.getStoneType()))){
+					papa.addChild(move);
+				}
+				
 			}
 			if (papa.getChildren() != null){
 				rateChildren(papa);		
@@ -195,6 +199,8 @@ public class Montecarlo{
 		for (i = 0; i < boardSize; i++){
 			Arrays.fill(markBoard[i],0);
 		}
+
+		// Помечаем ходы в окрестностях последнего хода как хорошие
 		if (lastPoint != null){
 			lastPointArea = lastPoint.getAllNeighbours();
 			if (papa.getParent() == null){

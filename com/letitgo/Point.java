@@ -54,7 +54,7 @@ public class Point{
 		return dame_count;
 	}
 	public boolean isSingleEyePoint(int stoneType){ 
-		boolean is_friendly = true;
+		// boolean is_friendly = true;
 		if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
 			return false;
 		if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
@@ -73,5 +73,26 @@ public class Point{
 	public int getValue(){
 		return this.board.getPoint(this);
 	}
+	// Проверяем не находится ли текущая позиция под атари
+	// ownStoneType это цвет камня который находится под атари
+	public boolean isAtari(int ownStoneType){
+		int emptyPoints = 0;
+		int notFriendlyStones = 0;
+		ArrayList<Point> neighbours = getNeighbours();
+		for (Point neighbour: neighbours){
+			// Т.к. эта функция не проверяет группы под атари, встретив свой камень выходим
+			if (board.getPoint(neighbour) == ownStoneType){
+				return false;
+			}
+			else if (board.getPoint(neighbour) == Board.EMPTY){
+				emptyPoints++;
+			}
+		}
+		// Если только одно дыхание возвращаем true
+		if (emptyPoints == 1){
+			return true;
+		}
 
+		return false;
+	}
 }

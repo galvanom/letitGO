@@ -53,10 +53,17 @@ public class Board{
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
 
 		// TODO: Rewrite it for incapsulation!!!
-		this.koPoint = otherBoard.koPoint; //FIX: инстанс доски другой!
-		this.koPointLifeTime = otherBoard.koPointLifeTime;
-		this.koStoneType = otherBoard.koStoneType;
-		this.lastPoint = otherBoard.getLastPoint(); //FIX: инстанс доски другой
+		if (otherBoard.koPoint != null){
+			this.koPoint = new Point(this, otherBoard.koPoint.i,
+				otherBoard.koPoint.j) ;
+			this.koPointLifeTime = otherBoard.koPointLifeTime;
+			this.koStoneType = otherBoard.koStoneType;
+		}
+		if (otherBoard.getLastPoint() != null){
+			this.lastPoint = new Point(this, otherBoard.getLastPoint().i, 
+				otherBoard.getLastPoint().j);
+		}
+		
 
 	}
 	public void tryMove(final Point p, int pointType){
@@ -217,41 +224,13 @@ public class Board{
 	    // and look for dead enemy groups around
 		tryMove(p, stoneType);
 		
-		/*group = getGroup(p);
-
-		if (group.isGroupDead() == true){
-
+		if (!isDead(p).isEmpty()){
 			for (Point neighbour: neighbours){
 				
 				if (getPoint(neighbour) == getOppositeSide(stoneType)){
-					
-					group = getGroup(neighbour);
-					
-					if (group.isGroupDead() == true){
-						undoMove();
-						return true;
-					}
-					
-				}
-								
-			}
-
-		}
-		else {
-			undoMove();
-			return true;
-		}
-		*/
-		/*
-		* Test
-		*/
-		if (isDead(p)){
-			for (Point neighbour: neighbours){
-				
-				if (getPoint(neighbour) == getOppositeSide(stoneType)){
-					
 										
-					if (isDead(neighbour)){
+					if (!isDead(neighbour).isEmpty()){
+
 						undoMove();
 						return true;
 					}
@@ -265,20 +244,17 @@ public class Board{
 			undoMove();
 			return true;
 		}
-		/*     ^		
-		* Test |
-		*/
 
 		undoMove();
 		return false;
 	}
-	//TODO: Объеденеить с deleteGroupIfItsDead()
-	private boolean isDead(Point initialPoint){
+	private ArrayList<Point> isDead(Point initialPoint){
 		int i,j;
 		int dame_number;
 		ArrayList<Point> neighbours;
 		LinkedList<Point> queue = new LinkedList<Point>();
 		ArrayList<Point> visited = new ArrayList<Point>();
+
 		int boardSize = getSize();
 		Group group = null;
 		Point currentPoint;
@@ -289,7 +265,7 @@ public class Board{
 			while (queue.size() > 0){
 				currentPoint = queue.poll();
 				if (currentPoint.getDameNumber() > 0){
-					return false;
+					return new ArrayList<Point>();
 				}
 				neighbours = currentPoint.getNeighbours();
 				visited.add(currentPoint);
@@ -303,7 +279,7 @@ public class Board{
 								
 			}
 		}
-		return true;
+		return visited;
 
 	}
 	/*
@@ -323,21 +299,12 @@ public class Board{
 		for (Point neighbour: lastMoveNeighbours){
 				
 			if (getPoint(neighbour) == stoneType){
-				// group = getGroup(neighbour);
-				
-				//if (group.isGroupDead() == true){
-					deleted = deleteGroupIfItsDead(neighbour);
-					allDeleted += deleted;  //group.getSize();
-					if (deleted == 1){
-						lastPoint = neighbour;
-					}
-					//possible ko point
-					
-					// for (Point stone: group){
-					// 	setPoint(stone, Board.EMPTY);
-					// }
-				//}
 
+				deleted = deleteGroupIfItsDead(neighbour);
+				allDeleted += deleted; 
+				if (deleted == 1){
+					lastPoint = neighbour;
+				}
 			}
 			
 		}
@@ -350,41 +317,11 @@ public class Board{
 	}
 
 	public int deleteGroupIfItsDead(final Point p){
-		int i,j;
-		int dame_number;
-		ArrayList<Point> neighbours;
-		LinkedList<Point> queue = new LinkedList<Point>();
-		ArrayList<Point> visited = new ArrayList<Point>();
-		int boardSize = getSize();
-		Group group = null;
-		Point currentPoint;
-
-		if (getPoint(p) == Board.FRIENDLY || getPoint(p) == Board.ENEMY){
-
-			queue.add(p);
-			while (queue.size() > 0){
-				currentPoint = queue.poll();
-				if (currentPoint.getDameNumber() > 0){
-					return 0;
-				}
-				neighbours = currentPoint.getNeighbours();
-				visited.add(currentPoint);
-			
-				for (Point neighbour: neighbours){
-					if ( (getPoint(currentPoint) == getPoint(neighbour)) && 
-						!isPointVisited(visited, queue, neighbour) ){
-						queue.add(neighbour);
-					}
-				}
-								
-			}
-			//group = new Group(this, visited);
-		}
-		
-		for (Point point: visited){
+		ArrayList<Point> group = isDead(p);
+		for (Point point: group){
 			setPoint(point, Board.EMPTY);
 		}
-		return visited.size();
+		return group.size();
 	}
 
 	// TODO: Return an empty group, not null

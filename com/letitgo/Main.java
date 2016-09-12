@@ -17,13 +17,6 @@ public class Main{
 		Montecarlo mc;
 		long startTime;
 
-		// playout.playRandomGame(board, Board.FRIENDLY);
-		// ArrayList<Point> freePoints = Playout.getFreePoints(board, Board.FRIENDLY);
-		// for (Point freePoint : freePoints){
-		// 	freePoint.printPoint();
-		// }
-		//board.loadFromFile("board9x9.dat");
-
 		System.out.println("Please choose your side. Type X for black or O for white:");
 		char side = 'X';
 		try{
@@ -51,7 +44,7 @@ public class Main{
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 5000; i++){
+			for (int i = 0; i < 100; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }
@@ -81,26 +74,7 @@ public class Main{
 
 		}		
 	
-		// Pattern33 pat = new Pattern33("patterns33.dat");
-		// pat.createPatternsFile("patterns33.dat");
-		// int[] patterns = pat.readPatternsFile("patterns33.dat");
 
-		// if (patterns != null){
-		// 	for (int pattern : patterns){
-		// 		System.out.printf("%d ",pattern);
-		// 	}
-		// }
-
-		// Pattern33.stringToNumber("XO.#");
-		// char[] pattern = {'X','O','?','X','.','.','x','.','?'};
-		// char[] pattern_ = {'.','O','.','X','.','.','.','.','.'};
-		// ArrayList<String> allVariations = new ArrayList<String>();
-		// if(!pat.getAllVariations(pattern_,0,allVariations)){
-		// 	allVariations.add(String.valueOf(pattern_));
-		// }
-		// for (String variation : allVariations){
-		// 	System.out.println(variation);
-		// }
 
 	}
 	public static Point readNextMove(Board board){

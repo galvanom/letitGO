@@ -59,7 +59,7 @@ public class BoardTest{
 
 		board.makeMove(new Point(board,3,1), Board.FRIENDLY);
 
-		board.printBoard();
+		// board.printBoard();
 		// board.koPoint.printPoint();
 		
 		//board.setKO(new Point(8,7));
