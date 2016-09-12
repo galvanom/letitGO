@@ -6,7 +6,9 @@ import com.letitgo.heuristics.*;
 
 public class Main{
 	public static void main(String[] args){
-		
+		GTP gtp = new GTP();
+		gtp.start();
+
 		
 		Board board = new Board(9);
 		Point p = null;

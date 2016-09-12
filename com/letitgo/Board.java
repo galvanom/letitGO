@@ -69,6 +69,7 @@ public class Board{
 	public void tryMove(final Point p, int pointType){
 		this.tryPoint = p;
 		board[p.i + 1][p.j + 1] = pointType;
+		// board[(p.i + 1)*size + p.j + 1] 1D array
 	}
 	public void undoMove(){
 		if (this.tryPoint != null){
