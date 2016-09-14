@@ -203,9 +203,9 @@ public class Montecarlo{
 		// Помечаем ходы в окрестностях последнего хода как хорошие
 		if (lastPoint != null){
 			lastPointArea = lastPoint.getAllNeighbours();
-			if (papa.getParent() == null){
-				lastPoint.printPoint();
-			}
+			// if (papa.getParent() == null){
+			// 	lastPoint.printPoint();
+			// }
 			// Mark last move neighbourhood
 			for (Point point : lastPointArea){
 				if (point.i <= 0 || point.i >=boardSize-1 || point.j <= 0 || point.j >= boardSize-1){
@@ -291,7 +291,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 
 				if (max < childValue ){
@@ -304,7 +304,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			return bestChild.getPoint();
 
 		}

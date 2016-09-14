@@ -10,71 +10,71 @@ public class Main{
 		gtp.start();
 
 		
-		Board board = new Board(9);
-		Point p = null;
-		Playout playout = new Playout();
-		int aiStone;
-		int humanStone = 0;
-		Heuristics hr = new Heuristics();
-		Montecarlo mc;
-		long startTime;
+		// Board board = new Board(9);
+		// Point p = null;
+		// Playout playout = new Playout();
+		// int aiStone;
+		// int humanStone = 0;
+		// Heuristics hr = new Heuristics();
+		// Montecarlo mc;
+		// long startTime;
 
-		System.out.println("Please choose your side. Type X for black or O for white:");
-		char side = 'X';
-		try{
-			side = (char) System.in.read();
-		}
-		catch(IOException e){
+		// System.out.println("Please choose your side. Type X for black or O for white:");
+		// char side = 'X';
+		// try{
+		// 	side = (char) System.in.read();
+		// }
+		// catch(IOException e){
 
-		}
+		// }
 
-		if (side != 'X' && side != 'O'){
-			System.out.println("Wrong choice. Type X for black or O for white:");
-			return;
-		}
-		if (side == 'X'){
-			humanStone = Board.ENEMY;
-			aiStone = Board.FRIENDLY;
-			humanMove(board, humanStone);
-		}
-		if (side == 'O'){
-			humanStone = Board.FRIENDLY;
-			aiStone = Board.ENEMY;
-		}
+		// if (side != 'X' && side != 'O'){
+		// 	System.out.println("Wrong choice. Type X for black or O for white:");
+		// 	return;
+		// }
+		// if (side == 'X'){
+		// 	humanStone = Board.ENEMY;
+		// 	aiStone = Board.FRIENDLY;
+		// 	humanMove(board, humanStone);
+		// }
+		// if (side == 'O'){
+		// 	humanStone = Board.FRIENDLY;
+		// 	aiStone = Board.ENEMY;
+		// }
 
-		while (true){
+		// while (true){
 		
-			startTime = System.currentTimeMillis();
-			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 100; i++){
-				// if (i%10000 == 0){
-				// 	System.gc();
-				// }
-				mc.playOneSequence();
-				//playout.playRandomGame(board, Board.FRIENDLY);
-			}
+		// 	startTime = System.currentTimeMillis();
+		// 	mc = new Montecarlo(board, Board.FRIENDLY);	
+		// 	for (int i = 0; i < 100; i++){
+		// 		// if (i%10000 == 0){
+		// 		// 	System.gc();
+		// 		// }
+		// 		mc.playOneSequence();
+		// 		//playout.playRandomGame(board, Board.FRIENDLY);
+		// 	}
 
 
-			System.out.println(System.currentTimeMillis() - startTime);
+		// 	System.out.println(System.currentTimeMillis() - startTime);
 
-			p = mc.getWinner();
+		// 	p = mc.getWinner();
 			
-			if (p == null){
-				System.out.println("Error. Next move is Null\n");
-			}
-			else{
-				p.printPoint();
-				board.makeMove(p, Board.ENEMY);
-				board.printBoard();
+		// 	if (p == null){
+		// 		System.out.println("Error. Next move is Null\n");
+		// 	}
+		// 	else{
+		// 		p.printPoint();
+		// 		board.makeMove(p, Board.ENEMY);
+		// 		board.printBoard();
 	
-				//board.printBoard();
-				//mc.printTree();
-			}
+		// 		//board.printBoard();
+		// 		//mc.printTree();
+		// 	}
 
 			
-			humanMove(board, humanStone);
+		// 	humanMove(board, humanStone);
 
-		}		
+		// }		
 	
 
 
