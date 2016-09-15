@@ -174,10 +174,10 @@ public class Montecarlo{
 	private void rateChildren(Node papa){
 		// Constants
 		final int boardSize = papa.getBoard().getSize();
-		final int CAPTURE = 5;
-		final int PATTERN33 = 5;
-		final int THIRD_LINE = 5;
-		final int FIRST_SECOND_LINE = 5;
+		final int CAPTURE = 30;
+		final int PATTERN33 = 10;
+		final int THIRD_LINE = 10;
+		final int FIRST_SECOND_LINE = 10;
 		final int LAST_POINT_AREA = 10;
 
 		ArrayList<Node> children = papa.getChildren();
@@ -291,7 +291,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 
 				if (max < childValue ){
@@ -304,7 +304,10 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
+				System.out.printf("Resign!\n");
+			}
 			return bestChild.getPoint();
 
 		}

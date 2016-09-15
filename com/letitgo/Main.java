@@ -6,18 +6,27 @@ import com.letitgo.heuristics.*;
 
 public class Main{
 	public static void main(String[] args){
+		
 		GTP gtp = new GTP();
 		gtp.start();
 
 		
-		// Board board = new Board(9);
-		// Point p = null;
-		// Playout playout = new Playout();
-		// int aiStone;
-		// int humanStone = 0;
-		// Heuristics hr = new Heuristics();
-		// Montecarlo mc;
-		// long startTime;
+		Board board = new Board(9);
+		Point p = null;
+		Playout playout = new Playout();
+		int aiStone;
+		int humanStone = 0;
+		Heuristics hr = new Heuristics();
+		Montecarlo mc;
+		long startTime;
+
+		// board.loadFromFile("board9x9.dat");
+		// board.printBoard();
+		// board.makeMove(new Point(board,5,1),Board.ENEMY);
+		// board.printBoard();
+
+
+
 
 		// System.out.println("Please choose your side. Type X for black or O for white:");
 		// char side = 'X';
@@ -42,20 +51,20 @@ public class Main{
 		// 	aiStone = Board.ENEMY;
 		// }
 
-		// while (true){
+		while (true){
 		
-		// 	startTime = System.currentTimeMillis();
-		// 	mc = new Montecarlo(board, Board.FRIENDLY);	
-		// 	for (int i = 0; i < 100; i++){
-		// 		// if (i%10000 == 0){
-		// 		// 	System.gc();
-		// 		// }
-		// 		mc.playOneSequence();
-		// 		//playout.playRandomGame(board, Board.FRIENDLY);
-		// 	}
+			startTime = System.currentTimeMillis();
+			mc = new Montecarlo(board, Board.FRIENDLY);	
+			for (int i = 0; i < 100; i++){
+				// if (i%10000 == 0){
+				// 	System.gc();
+				// }
+				mc.playOneSequence();
+				//playout.playRandomGame(board, Board.FRIENDLY);
+			}
 
 
-		// 	System.out.println(System.currentTimeMillis() - startTime);
+			System.out.println(System.currentTimeMillis() - startTime);
 
 		// 	p = mc.getWinner();
 			
@@ -74,7 +83,7 @@ public class Main{
 			
 		// 	humanMove(board, humanStone);
 
-		// }		
+		}		
 	
 
 

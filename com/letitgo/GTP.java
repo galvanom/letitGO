@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class GTP{
 	private int boardsize;
 	private double komi;
-	private static final int PLAYOUTS_NUM = 30000;
+	private static final int PLAYOUTS_NUM = 5000;
 	private String[] commands = {
 								"boardsize",
 								"list_commands",
@@ -48,11 +48,13 @@ public class GTP{
                     	System.out.println(command);
                     }
                     System.out.println();
+                    continue;
                     
                 }
                 if (input.equals("name")){
                     System.out.print("= ");
                     System.out.println("LetItGO");
+                    continue;
                 }
                 if (input.equals("quit")){
                     break;
@@ -63,18 +65,27 @@ public class GTP{
                     if (input.split(" ")[1].equals("9")){
                     	boardsize = 9;
                     }
+                    if (input.split(" ")[1].equals("13")){
+                    	boardsize = 13;
+                    }
+                    if (input.split(" ")[1].equals("19")){
+                    	boardsize = 19;
+                    }
                     // System.out.printf("Helllo1\n");
+                    continue;
                     
                 }
                 if (input.startsWith("komi")){
 
                     System.out.println("=\n");
+                    continue;
                 }
                 if (input.startsWith("clear_board")){
                 	
                 	board = new Board(boardsize);
                 	
                 	System.out.println("=\n");
+                	continue;
                 }
                 if (input.startsWith("genmove")){
 
@@ -92,7 +103,7 @@ public class GTP{
 					p = mc.getWinner();
 					board.makeMove(p,stoneType);
 					System.out.printf("= %s\n\n", pointToStr(p.i, p.j));
-					
+					continue;
                 }
                  if (input.startsWith("play")){
                  	p = strToPoint(input.split(" ")[2]);
@@ -105,13 +116,15 @@ public class GTP{
                     }
                     
                     System.out.println("=\n");
+                    continue;
                     				
                 }
                 if (input.startsWith("showboard")){
                 	board.printBoard();
+                	continue;
                 }
 
-                
+                System.out.println("?\n");
             }
         }
         catch (IOException e){
@@ -137,7 +150,7 @@ public class GTP{
 				break;
 			}
 		}
-		digitCoord = 8 - (Integer.parseInt(lowcoord.substring(1)) - 1);
+		digitCoord = (boardsize -1) - (Integer.parseInt(lowcoord.substring(1)) - 1);
 
 		return new Point(board, digitCoord, charCoord);
 	}
