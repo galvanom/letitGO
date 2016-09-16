@@ -151,4 +151,33 @@ public class Capture{
 	return allCaptureMoves;
 	}
 
+	public ArrayList<Point> getAtariPoints(final Board board, final int groupsType){
+		int boardSize = board.getSize();
+		boolean[][] visited = new boolean[boardSize][boardSize];
+		Group group;
+		ArrayList<Point> groupDame;
+		ArrayList<Point> atariPoints = new ArrayList<Point>();
+
+		for (int i = 0; i < boardSize; i++)
+			for(int j = 0; j < boardSize; j++)
+				visited[i][j] = false;
+
+		for (int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				if (visited[i][j] || board.getPoint(i,j) != groupsType){
+					continue;
+				}
+				group = board.getGroup(new Point(board, i, j));
+				groupDame = group.getGroupDame();
+				if (groupDame.size() == 1){
+					atariPoints.add(groupDame.get(0));
+				}
+				for (Point stone: group){
+					visited[stone.i][stone.j] = true;
+				}
+			}
+		}
+
+		return atariPoints;
+	}
 }

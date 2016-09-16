@@ -158,9 +158,9 @@ public class Montecarlo{
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
 				// Проверяем не находится ли ход под атари
-				if (!move.isAtari(Board.getOppositeSide(papa.getStoneType()))){
+				// if (!move.isAtari(Board.getOppositeSide(papa.getStoneType()))){
 					papa.addChild(move);
-				}
+				// }
 				
 			}
 			if (papa.getChildren() != null){
@@ -179,6 +179,7 @@ public class Montecarlo{
 		final int THIRD_LINE = 10;
 		final int FIRST_SECOND_LINE = 10;
 		final int LAST_POINT_AREA = 10;
+		final int LAST_DAME = 30;
 
 		ArrayList<Node> children = papa.getChildren();
 		
@@ -192,6 +193,8 @@ public class Montecarlo{
 		// At first try to mark all capture moves with positive values
 		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
+		ArrayList<Point> enemyGroupsLastDame = hr.capture.getAtariPoints(papa.getBoard(),papa.getStoneType());
+
 		Point lastPoint = papa.getBoard().getLastPoint();
 		ArrayList<Point> lastPointArea = null;
 
@@ -223,6 +226,9 @@ public class Montecarlo{
 		}
 		for (Point move: allPattern33Moves){
 			markBoard[move.i][move.j] += PATTERN33;
+		}
+		for (Point move: enemyGroupsLastDame){
+			markBoard[move.i][move.j] += LAST_DAME;
 		}
 		// Add constant values to children
 		for (Node child: children){
