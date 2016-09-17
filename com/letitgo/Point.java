@@ -3,7 +3,7 @@ import java.util.*;
 // TODO: try factory method to get instances of the class
 public class Point{
 	public final int i, j;
-	private Board board;
+	public Board board;
 
 	public Point(Board board, int i, int j){
 		this.board = board;
@@ -54,17 +54,54 @@ public class Point{
 		return dame_count;
 	}
 	public boolean isSingleEyePoint(int stoneType){ 
+		ArrayList<Point> neighbours = getNeighbours();
+
+		for (Point neighbour : neighbours){
+			if (neighbour.getValue() == Board.getOppositeSide(stoneType) ||
+				neighbour.getValue() == Board.EMPTY){
+				return false;
+			}
+		}
 		// boolean is_friendly = true;
-		if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
-			return false;
-		if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
-			return false;
-		if (board.getPoint(this.i, this.j+1) == Board.getOppositeSide(stoneType))
-			return false;
-		if (board.getPoint(this.i, this.j-1) == Board.getOppositeSide(stoneType))
-			return false;
+		// if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
+		// 	return false;
+		// if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
+		// 	return false;
+		// if (board.getPoint(this.i, this.j+1) == Board.getOppositeSide(stoneType))
+		// 	return false;
+		// if (board.getPoint(this.i, this.j-1) == Board.getOppositeSide(stoneType))
+		// 	return false;
 
 		return true;
+	}
+	public boolean isTrueEye(int stoneType){
+		ArrayList<Point> diagNeighbours = getDiagonalNeighbours();
+		int myStones = 0;
+		int notMyStones = 0;
+		boolean sideOrCorner = false;
+
+		for (Point neighbour : diagNeighbours){
+			if (neighbour.getValue() == stoneType){
+				myStones++;
+			}
+			else if (neighbour.getValue() != Board.BORDER){
+				notMyStones++;
+			}
+				else{
+					sideOrCorner = true;
+				}
+			if (notMyStones > 1){
+				return false;
+			}
+		}
+
+		if (notMyStones == 0 && sideOrCorner){
+			return true;
+		}
+		if (notMyStones <= 1 && !sideOrCorner){
+			return true;
+		}
+		return false;
 	}
 	public void printPoint(){
 		System.out.printf("[%d %d]\n", this.i, this.j);

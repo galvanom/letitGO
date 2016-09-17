@@ -93,7 +93,7 @@ public class Playout{
 		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
 	// TODO: Make a test for this
-	private int[] getScore(Board board){
+	private int[] getScore(final Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		// int surroundedStones[] = new int[4];
 		ArrayList<Point> surroundedStones;
@@ -145,7 +145,7 @@ public class Playout{
 		return score;
 	}
 	// TODO: Make test for this
-	public static ArrayList<Point> getFreePoints(Board board, int stoneType){
+	public static ArrayList<Point> getFreePoints(final Board board, int stoneType){
 		int i,j;
 		int boardSize = board.getSize();
 		ArrayList<Point> freePoints = new ArrayList<Point>();
@@ -153,12 +153,12 @@ public class Playout{
 		Point p;
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++){
-				p = new Point(board, i, j);
+				p = new Point(board, i, j); //TODO: Поменять с нижней строчкой местами
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
 						// TODO: Dont like it. Try to move getDame check
 						// If point doesnt have dame but there is a friendly single eye
-						if (p.getDameNumber() == 0  && p.isSingleEyePoint(stoneType)){
+						if (p.isSingleEyePoint(stoneType) && p.isTrueEye(stoneType)){
 							continue;
 						}
 						freePoints.add(p);

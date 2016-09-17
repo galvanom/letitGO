@@ -15,7 +15,7 @@ public class Montecarlo{
 		int games;
 		//ArrayList<Point> allPossibleMoves;
 
-		Node(Node parent, Board board, Point point, int stoneType){
+		Node(Node parent, final Board board, final Point point, int stoneType){
 			this.point = point;
 			this.stoneType = stoneType;
 			this.parent = parent;
@@ -35,7 +35,7 @@ public class Montecarlo{
 			*/
 
 		}
-		Node addChild(Point p){
+		Node addChild(final Point p){
 			Node child;
 			if (children == null)
 				children = new ArrayList<Node>();
@@ -83,11 +83,13 @@ public class Montecarlo{
 			return playout.playRandomGame(board, Board.getOppositeSide(stoneType)); 
 		}
 	}
-	Node root;
-	Heuristics hr;
-	Montecarlo(Board board, int whoseTurn){
+	private Node root;
+	private Heuristics hr;
+	private final Board sourceBoard;
+	Montecarlo(final Board board, int whoseTurn){
 		Pattern33.init();
-		root = new Node(null, board, null, whoseTurn);
+		sourceBoard = board;
+		root = new Node(null, sourceBoard, null, whoseTurn);
 		hr = new Heuristics();
 	}
 	public void playOneSequence(){
@@ -179,7 +181,7 @@ public class Montecarlo{
 		final int THIRD_LINE = 10;
 		final int FIRST_SECOND_LINE = 10;
 		final int LAST_POINT_AREA = 10;
-		final int LAST_DAME = 30;
+		final int LAST_DAME = 40;
 
 		ArrayList<Node> children = papa.getChildren();
 		
@@ -299,7 +301,6 @@ public class Montecarlo{
 				}
 				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
-
 				if (max < childValue ){
 					max = childValue;
 					bestChild = child;
@@ -314,14 +315,13 @@ public class Montecarlo{
 			if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 				System.out.printf("Resign!\n");
 			}
-			return bestChild.getPoint();
+			return new Point (sourceBoard,bestChild.getPoint().i,bestChild.getPoint().j);
 
 		}
 		else {
 			return null;
 		}
-		
-		
+				
 	}
 	//non recursive DFS
 	public void printTree(){

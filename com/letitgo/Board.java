@@ -37,7 +37,7 @@ public class Board{
 
 	}
 	// TODO: Copy class fields too
-	public Board(Board otherBoard){
+	public Board(final Board otherBoard){
 		int i,j;
 		this.size = otherBoard.getSize()+2;
 		this.board = new int[this.size][this.size];
@@ -249,7 +249,7 @@ public class Board{
 		undoMove();
 		return false;
 	}
-	private ArrayList<Point> isDead(Point initialPoint){
+	private ArrayList<Point> isDead(final Point initialPoint){
 		int i,j;
 		int dame_number;
 		ArrayList<Point> neighbours;

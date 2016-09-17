@@ -7,23 +7,40 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		GTP gtp = new GTP();
-		gtp.start();
+		// GTP gtp = new GTP();
+		// gtp.start();
 
 		
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
-		int aiStone;
-		int humanStone = 0;
+		int aiStone = Board.ENEMY;
+		int humanStone = Board.FRIENDLY;
 		Heuristics hr = new Heuristics();
 		Montecarlo mc;
 		long startTime;
 
 		// board.loadFromFile("board9x9.dat");
 		// board.printBoard();
-		// board.makeMove(new Point(board,5,1),Board.ENEMY);
+		// board.makeMove(new Point(board, 5,5), Board.ENEMY);
 		// board.printBoard();
+	
+		// p = new Point(board, 1,4);
+		// p.printPoint();
+		// if (p.isSingleEyePoint(Board.ENEMY)){
+		// 	System.out.println("Is eye\n");
+
+		// 	if (p.isTrueEye(Board.ENEMY)){
+		// 		System.out.println("True eye\n");
+		// 	}
+		// 	else{
+		// 		System.out.println("Not true eye\n");
+		// 	}
+		// }
+		// else{
+		// 	System.out.println("Not an eye\n");
+		// }
+
 
 
 
@@ -54,8 +71,8 @@ public class Main{
 		while (true){
 		
 			startTime = System.currentTimeMillis();
-			mc = new Montecarlo(board, Board.FRIENDLY);	
-			for (int i = 0; i < 100; i++){
+			mc = new Montecarlo(board, humanStone);	
+			for (int i = 0; i < 5000; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }
@@ -66,22 +83,23 @@ public class Main{
 
 			System.out.println(System.currentTimeMillis() - startTime);
 
-		// 	p = mc.getWinner();
-			
-		// 	if (p == null){
-		// 		System.out.println("Error. Next move is Null\n");
-		// 	}
-		// 	else{
-		// 		p.printPoint();
-		// 		board.makeMove(p, Board.ENEMY);
-		// 		board.printBoard();
-	
-		// 		//board.printBoard();
-		// 		//mc.printTree();
-		// 	}
+			p = mc.getWinner();
 
 			
-		// 	humanMove(board, humanStone);
+			if (p == null){
+				System.out.println("Error. Next move is Null\n");
+			}
+			else{
+				p.printPoint();
+				board.makeMove(p, aiStone);
+				board.printBoard();
+	
+				//board.printBoard();
+				//mc.printTree();
+			}
+
+			
+			humanMove(board, humanStone);
 
 		}		
 	
@@ -98,7 +116,7 @@ public class Main{
 	public static void humanMove(Board board, int humanStoneType){
 		Point move;
 		while (true){
-				System.out.println("Set next Move for O:");
+				System.out.println("Set next Move: ");
 				move = readNextMove(board);
 				if (!board.checkRules(move, Board.FRIENDLY)){
 					System.out.println("Your move is illegal!");
