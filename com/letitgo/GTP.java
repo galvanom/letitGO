@@ -23,7 +23,7 @@ public class GTP extends ConsoleInterface{
 		komi = 6.5;
 		board = null;
 	}
-
+    @Override
 	public void start(){
 		String input;
         BufferedReader stdIn;

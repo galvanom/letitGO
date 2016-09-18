@@ -4,6 +4,27 @@ import java.io.*;
 public class ConsoleInterface{
 	protected static final String match = "abcdefghjklmnopqrstuvwxyz";
 	protected Board board = new Board(9);
+	private static final int PLAYOUTS_NUM = 5000;
+
+	public void start(){
+		String input;
+        BufferedReader stdIn;
+        Point p;
+        int stoneType =  Board.ENEMY;
+
+        try{
+            stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+            while (true){
+            	System.out.print("Next move:\n>");
+                input = stdIn.readLine();
+            }
+        }
+
+        catch (IOException e){
+            e.printStackTrace();
+        }
+	}
 
 	public boolean showBoard(){
 		if (board == null){
