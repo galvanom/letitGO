@@ -5,8 +5,9 @@ import com.letitgo.heuristics.*;
 
 public class Playout{
 	private final Heuristics heuristics;
-
+	private double komi;
     public Playout(){
+    	komi = 6.5;
 		heuristics = new Heuristics();
 	}
 
@@ -90,7 +91,7 @@ public class Playout{
 		int[] score = getScore(playBoard);
 
 		// System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
-		return score[0] > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
+		return (double)score[0] + komi > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
 	// TODO: Make a test for this
 	private int[] getScore(final Board board){
@@ -171,6 +172,8 @@ public class Playout{
 		return freePoints;		
 	}
 
-
+	public void setKomi(double value){
+		this.komi = value;
+	}
 
 }

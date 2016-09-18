@@ -1,12 +1,11 @@
 package com.letitgo;
 import java.io.*;
-import java.util.concurrent.TimeUnit;
 
-public class GTP{
+public class GTP extends ConsoleInterface{
 	private int boardsize;
 	private double komi;
 	private static final int PLAYOUTS_NUM = 5000;
-	private String[] commands = {
+	private final String[] commands = {
 								"boardsize",
 								"list_commands",
 								"name",
@@ -15,8 +14,8 @@ public class GTP{
 								"komi",
 								"quit",
 								"genmove"};
-	private String match = "abcdefghjklmnopqrstuvwxyz";
-	private Board board;
+	// private final String match = "abcdefghjklmnopqrstuvwxyz";
+	// private Board board;
 	private Montecarlo mc;
 
 	public GTP(){
@@ -29,18 +28,13 @@ public class GTP{
 		String input;
         BufferedReader stdIn;
         Point p;
-        int stoneType =  Board.ENEMY;;
+        int stoneType =  Board.ENEMY;
 
         try{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
             while (true){
-            	// try{
-            	// 	TimeUnit.SECONDS.sleep(1);
-            	// }
-            	// catch (InterruptedException e){
 
-            	// }
                 input = stdIn.readLine();
                 if (input.equals("list_commands")){
                     System.out.print("= ");
@@ -102,11 +96,11 @@ public class GTP{
 					}
 					p = mc.getWinner();
 					board.makeMove(p,stoneType);
-					System.out.printf("= %s\n\n", pointToStr(p.i, p.j));
+					System.out.printf("= %s\n\n", pointToStr(p.i, p.j,board.getSize()));
 					continue;
                 }
                  if (input.startsWith("play")){
-                 	p = strToPoint(input.split(" ")[2]);
+                 	p = strToPoint(input.split(" ")[2], board.getSize());
 
                 	if (input.split(" ")[1].equals("b")){
                 		board.makeMove(p, Board.ENEMY);
@@ -120,7 +114,7 @@ public class GTP{
                     				
                 }
                 if (input.startsWith("showboard")){
-                	board.printBoard();
+                	this.showBoard();
                 	continue;
                 }
 
@@ -133,25 +127,5 @@ public class GTP{
         // System.out.printf("%s\n", pointToStr(8,8));
         // strToPoint("J4").printPoint();
 	}
-	private String pointToStr(int i, int j){
-		String charCoord, digitCoord;
-		digitCoord = Integer.toString(boardsize-i);
-		charCoord = String.valueOf(match.charAt(j));
 
-		return charCoord+digitCoord;
-	}
-	private Point strToPoint(String coord){
-		int charCoord = -1;
-		int digitCoord;
-		String lowcoord = coord.toLowerCase();
-		for (int i = 0; i < match.length(); i++){
-			if (coord.toLowerCase().charAt(0) == match.charAt(i)){
-				charCoord = i;
-				break;
-			}
-		}
-		digitCoord = (boardsize -1) - (Integer.parseInt(lowcoord.substring(1)) - 1);
-
-		return new Point(board, digitCoord, charCoord);
-	}
 }

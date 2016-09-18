@@ -7,6 +7,8 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
+		ConsoleInterface ci = new ConsoleInterface();
+		ci.showBoard();
 		// GTP gtp = new GTP();
 		// gtp.start();
 
@@ -14,8 +16,12 @@ public class Main{
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
-		int aiStone = Board.ENEMY;
-		int humanStone = Board.FRIENDLY;
+		
+		// int aiStone = Board.ENEMY;
+		// int humanStone = Board.FRIENDLY;
+		// // int aiStone = Board.FRIENDLY;
+		// // int humanStone = Board.ENEMY;
+		
 		Heuristics hr = new Heuristics();
 		Montecarlo mc;
 		long startTime;
@@ -68,40 +74,40 @@ public class Main{
 		// 	aiStone = Board.ENEMY;
 		// }
 
-		while (true){
+		// while (true){
 		
-			startTime = System.currentTimeMillis();
-			mc = new Montecarlo(board, humanStone);	
-			for (int i = 0; i < 5000; i++){
-				// if (i%10000 == 0){
-				// 	System.gc();
-				// }
-				mc.playOneSequence();
-				//playout.playRandomGame(board, Board.FRIENDLY);
-			}
+		// 	startTime = System.currentTimeMillis();
+		// 	mc = new Montecarlo(board, humanStone);	
+		// 	for (int i = 0; i < 5000; i++){
+		// 		// if (i%10000 == 0){
+		// 		// 	System.gc();
+		// 		// }
+		// 		mc.playOneSequence();
+		// 		//playout.playRandomGame(board, Board.FRIENDLY);
+		// 	}
 
 
-			System.out.println(System.currentTimeMillis() - startTime);
+		// 	System.out.println(System.currentTimeMillis() - startTime);
 
-			p = mc.getWinner();
+		// 	p = mc.getWinner();
 
 			
-			if (p == null){
-				System.out.println("Error. Next move is Null\n");
-			}
-			else{
-				p.printPoint();
-				board.makeMove(p, aiStone);
-				board.printBoard();
+		// 	if (p == null){
+		// 		System.out.println("Error. Next move is Null\n");
+		// 	}
+		// 	else{
+		// 		p.printPoint();
+		// 		board.makeMove(p, aiStone);
+		// 		board.printBoard();
 	
-				//board.printBoard();
-				//mc.printTree();
-			}
+		// 		//board.printBoard();
+		// 		//mc.printTree();
+		// 	}
 
 			
-			humanMove(board, humanStone);
+		// 	humanMove(board, humanStone);
 
-		}		
+		// }		
 	
 
 
