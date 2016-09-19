@@ -104,8 +104,8 @@ public class Montecarlo{
 
 	}
 	private Node selectNode(Node node){
-		int i, n, w, t; 
-		double value, bestValue = -1, c = 0.44;
+		int i, t; 
+		double value, bestValue, c = 0.94,n,w;
 		Node bestNode = null;
 		int MAX_NODES = 10;
 		ArrayList<Node> children;
@@ -126,7 +126,7 @@ public class Montecarlo{
 				*/
 			
 			for (Node child: children){
-				t += child.getGames()+1;
+				t += child.getGames();
 			}
 			
 
@@ -141,7 +141,7 @@ public class Montecarlo{
 					bestNode = child;
 				}
 			}
-			children = currentNode.getChildren();
+			children = currentNode.getChildren(); //TODO:Was Null pointer exception??? changed from bestNode.getChildren() 
 			
 		}
 		return currentNode;
@@ -176,12 +176,12 @@ public class Montecarlo{
 	private void rateChildren(Node papa){
 		// Constants
 		final int boardSize = papa.getBoard().getSize();
-		final int CAPTURE = 30;
+		final int CAPTURE = 10;
 		final int PATTERN33 = 10;
 		final int THIRD_LINE = 10;
 		final int FIRST_SECOND_LINE = 10;
 		final int LAST_POINT_AREA = 10;
-		final int LAST_DAME = 40;
+		final int LAST_DAME = 10;
 
 		ArrayList<Node> children = papa.getChildren();
 		
@@ -299,7 +299,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 				if (max < childValue ){
 					max = childValue;
@@ -311,10 +311,11 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 				System.out.printf("Resign!\n");
 			}
+			// printTree();
 			return new Point (sourceBoard,bestChild.getPoint().i,bestChild.getPoint().j);
 
 		}
@@ -347,10 +348,12 @@ public class Montecarlo{
 				}
 			}
 			if (node.getParent() != null){
-				System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
-					node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
-				  	node.getPoint().i, node.getPoint().j,
-				  	node.getGames(), node.getWins());
+				if (node.getGames() != 0){
+					System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
+						node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
+					  	node.getPoint().i, node.getPoint().j,
+					  	node.getGames(), node.getWins());
+				}
 			}
 
 		}
