@@ -299,7 +299,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 				if (max < childValue ){
 					max = childValue;
@@ -311,7 +311,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 				System.out.printf("Resign!\n");
 			}

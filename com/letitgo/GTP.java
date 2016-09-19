@@ -1,5 +1,6 @@
 package com.letitgo;
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class GTP extends ConsoleInterface{
 	private int boardsize;
@@ -29,6 +30,7 @@ public class GTP extends ConsoleInterface{
         BufferedReader stdIn;
         Point p;
         int stoneType =  Board.ENEMY;
+        long startTime;
 
         try{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -91,9 +93,11 @@ public class GTP extends ConsoleInterface{
                     	mc = new Montecarlo(board, Board.ENEMY);
                     	stoneType = Board.FRIENDLY;
                     }
+                    startTime = System.currentTimeMillis();
                     for (int i = 0; i < PLAYOUTS_NUM; i++){
 						mc.playOneSequence();
 					}
+					System.out.println(System.currentTimeMillis() - startTime);
 					p = mc.getWinner();
 					board.makeMove(p,stoneType);
 					System.out.printf("= %s\n\n", pointToStr(p.i, p.j,board.getSize()));
