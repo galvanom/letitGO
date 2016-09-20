@@ -7,28 +7,28 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		// ConsoleInterface ci = new ConsoleInterface();
-		// ci.setParam(9, Board.ENEMY, 6.5, 5000);
-		// ci.start();
-		GTP gtp = new GTP();
-		gtp.start();
+		ConsoleInterface ci = new ConsoleInterface();
+		ci.setParam(9, Board.ENEMY, 6.5, 5000);
+		ci.start();
+		// GTP gtp = new GTP();
+		// gtp.start();
 
 		
 		Board board = new Board(9);
 		Point p = null;
 		Playout playout = new Playout();
-		
-		// int aiStone = Board.ENEMY;
-		// int humanStone = Board.FRIENDLY;
-		// // int aiStone = Board.FRIENDLY;
-		// // int humanStone = Board.ENEMY;
+
+		int aiStone = Board.ENEMY;
+		int humanStone = Board.FRIENDLY;
+		// // // int aiStone = Board.FRIENDLY;
+		// // // int humanStone = Board.ENEMY;
 		
 		Heuristics hr = new Heuristics();
 		Montecarlo mc;
 		long startTime;
 
-		// board.loadFromFile("board9x9.dat");
-		// board.printBoard();
+		board.loadFromFile("board9x9.dat");
+		board.printBoard();
 		// board.makeMove(new Point(board, 5,5), Board.ENEMY);
 		// board.printBoard();
 	
@@ -75,22 +75,24 @@ public class Main{
 		// 	aiStone = Board.ENEMY;
 		// }
 
-		// while (true){
+		while (true){
 		
-		// 	startTime = System.currentTimeMillis();
-		// 	mc = new Montecarlo(board, humanStone);	
-		// 	for (int i = 0; i < 5000; i++){
-		// 		// if (i%10000 == 0){
-		// 		// 	System.gc();
-		// 		// }
-		// 		mc.playOneSequence();
-		// 		//playout.playRandomGame(board, Board.FRIENDLY);
-		// 	}
+			startTime = System.currentTimeMillis();
+			mc = new Montecarlo(board, humanStone);	
+			for (int i = 0; i < 5000; i++){
+				// if (i%10000 == 0){
+				// 	System.gc();
+				// }
+				mc.playOneSequence();
+				//playout.playRandomGame(board, Board.FRIENDLY);
+			}
 
 
-		// 	System.out.println(System.currentTimeMillis() - startTime);
+			System.out.println(System.currentTimeMillis() - startTime);
 
-		// 	p = mc.getWinner();
+			p = mc.getWinner();
+			p.printPoint();
+			board.printBoard();
 
 			
 		// 	if (p == null){
@@ -108,7 +110,7 @@ public class Main{
 			
 		// 	humanMove(board, humanStone);
 
-		// }		
+		}		
 	
 
 

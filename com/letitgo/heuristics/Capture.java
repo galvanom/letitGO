@@ -37,6 +37,9 @@ public class Capture{
 				
 			}
 		}
+		long seed = System.nanoTime();
+		Collections.shuffle(points, new Random(seed));
+
 		return getCaptureMoves(board, points, ownStoneType, false);
 
 	}

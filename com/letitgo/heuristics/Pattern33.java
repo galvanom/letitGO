@@ -108,6 +108,8 @@ public  class Pattern33{
 		ArrayList<Point> points = new ArrayList<Point>();
 		points = board.getLastPoint().getNeighbours();
 		points.addAll(board.getLastPoint().getDiagonalNeighbours());
+				long seed = System.nanoTime();
+		Collections.shuffle(points, new Random(seed));
 		
 		return getPatternMove(board, points);
 	}

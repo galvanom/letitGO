@@ -15,12 +15,12 @@ public class Playout{
 		ArrayList<Point> free_points;
 		int boardSize = board.getSize();
 		//Point[] free_points = new Point[boardSize*boardSize];
+		Random random;
 		int freePointsSize;
-		Random random = new Random();
 		int random_point,i,j;
 		int stoneType = first_stone;
 		int passTimes = 0;
-		int MAX_MOVES = boardSize*boardSize*2;
+		final int MAX_MOVES = boardSize*boardSize*2;
 		Point captureMove = null;
 		Point move, patternMove = null;
 		//Point heurPoint = new Point();
@@ -50,7 +50,7 @@ public class Playout{
 					// playBoard.printBoard();
 					continue;
 				}
-				
+
 				patternMove = heuristics.pattern33.getFirstMove(playBoard);
 
 				if (patternMove != null){
@@ -61,8 +61,7 @@ public class Playout{
 					continue;
 				}
 				
-
-				
+			
 			}
 			
 			//TODO: Improve getFreePoints for the perfomance goal. The bigger number of free points is the bigger CPU load.
@@ -76,7 +75,7 @@ public class Playout{
 			}
 			passTimes = 0;
 
-
+			random = new Random(System.nanoTime());
 			//p = free_points.get(0);
 			move = free_points.get(random.nextInt(free_points.size()));
 			//p = getBestMove(playBoard, free_points);
