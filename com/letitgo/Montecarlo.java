@@ -83,6 +83,14 @@ public class Montecarlo{
 			return playout.playRandomGame(board, Board.getOppositeSide(stoneType)); 
 		}
 	}
+	// public static class Move extends Point{
+	// 	public Move(Board board, int i, int j){
+	// 		this.board = board;
+	// 		this.i = i;
+	// 		this.j = j;
+	// 	}
+
+	// }
 	private Node root;
 	private Heuristics hr;
 	private final Board sourceBoard;
@@ -105,7 +113,7 @@ public class Montecarlo{
 	}
 	private Node selectNode(Node node){
 		int i, t; 
-		double value, bestValue, c = 0.94,n,w;
+		double value, bestValue, c = 1.44,n,w;
 		Node bestNode = null;
 		int MAX_NODES = 10;
 		ArrayList<Node> children;
@@ -115,7 +123,7 @@ public class Montecarlo{
 			
 			bestNode = null;
 			bestValue = -1;
-			t = 0;
+			t = 1;
 
 			// if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
 			// 	break; ///!!!!
@@ -178,9 +186,9 @@ public class Montecarlo{
 		final int boardSize = papa.getBoard().getSize();
 		final int CAPTURE = 10;
 		final int PATTERN33 = 10;
-		final int THIRD_LINE = 10;
-		final int FIRST_SECOND_LINE = 10;
-		final int LAST_POINT_AREA = 10;
+		final int THIRD_LINE = 5;
+		final int FIRST_SECOND_LINE = 5;
+		final int LAST_POINT_AREA = 15;
 		final int LAST_DAME = 10;
 
 		ArrayList<Node> children = papa.getChildren();
@@ -301,8 +309,8 @@ public class Montecarlo{
 				}
 				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
-				if (max < childValue ){
-					max = childValue;
+				if (max < child.getGames() ){
+					max = child.getGames();
 					bestChild = child;
 				}
 
