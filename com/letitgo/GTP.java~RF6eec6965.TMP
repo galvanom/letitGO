@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class GTP extends ConsoleInterface{
 	private int boardsize;
 	private double komi;
-	private static final int PLAYOUTS_NUM = 10000;
+	private static final int PLAYOUTS_NUM = 5000;
 	private final String[] commands = {
 								"boardsize",
 								"list_commands",
@@ -31,8 +31,7 @@ public class GTP extends ConsoleInterface{
         Point p;
         int stoneType =  Board.ENEMY;
         long startTime;
-        Montecarlo.Move aiMove = null;
-        String humanMove;
+        Montecarlo.Move aiMove;
 
         try{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -107,7 +106,7 @@ public class GTP extends ConsoleInterface{
 					}
 
 					board.makeMove(aiMove,stoneType);
-					System.out.printf("Confidence level: %f\n\n", aiMove.getMoveScore());
+					System.out.printf("Confidence level: %d", (int)aiMove.getMoveScore()*100);
 					if (aiMove.getMoveScore() < 0.25){
 						System.out.printf("= resign\n\n");
 						continue;
@@ -116,15 +115,7 @@ public class GTP extends ConsoleInterface{
 					continue;
                 }
                  if (input.startsWith("play")){
-                 	humanMove = input.split(" ")[2];
-                 	// if (humanMove.equals("pass")){
-               			// if (aiMove != null && aiMove.getMoveScore() > 0.7){
-               			// 	System.out.println("= pass\n");
-                  //   		continue;
-                 	// 	}
-                 	// }
-
-                 	p = strToPoint(humanMove,board.getSize());
+                 	p = strToPoint(input.split(" ")[2], board.getSize());
 
                 	if (input.split(" ")[1].equals("b")){
                 		board.makeMove(p, Board.ENEMY);
