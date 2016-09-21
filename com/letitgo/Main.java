@@ -7,11 +7,11 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		ConsoleInterface ci = new ConsoleInterface();
-		ci.setParam(9, Board.ENEMY, 6.5, 5000);
-		ci.start();
-		// GTP gtp = new GTP();
-		// gtp.start();
+		// ConsoleInterface ci = new ConsoleInterface();
+		// ci.setParam(9, Board.ENEMY, 6.5, 5000);
+		// ci.start();
+		GTP gtp = new GTP();
+		gtp.start();
 
 		
 		Board board = new Board(9);
@@ -79,7 +79,7 @@ public class Main{
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, humanStone);	
-			for (int i = 0; i < 5000; i++){
+			for (int i = 0; i < 40000; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }

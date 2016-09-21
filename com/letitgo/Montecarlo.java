@@ -93,6 +93,7 @@ public class Montecarlo{
 			return moveScore;
 		}
 	}
+	private static final int MIN_GAMES_FOR_EXPLORATION = 8;
 	private Node root;
 	private Heuristics hr;
 	private final Board sourceBoard;
@@ -105,9 +106,15 @@ public class Montecarlo{
 	public void playOneSequence(){
 		Node node = selectNode(root);
 
-		node = expand(node);
-		if (node == null){
-			return;
+		//Раскрываем узел только если в не отыграно больше
+		//случайных партий чем MIN_GAMES_FOR_EXPLORATION
+
+		if (node == root || node.getGames() > MIN_GAMES_FOR_EXPLORATION){		
+			node = expand(node);
+
+			if (node == null){ //Если ошибка
+				return;
+			}
 		}
 		int winner = simulation(node);
 		backPropagation(node, winner);
@@ -175,6 +182,8 @@ public class Montecarlo{
 				// }
 				
 			}
+			// Назначаем приоритет новым ходам
+			// Закомментировать if, чтобы не использовать эвристику
 			if (papa.getChildren() != null){
 				rateChildren(papa);		
 			}
@@ -186,12 +195,12 @@ public class Montecarlo{
 	private void rateChildren(Node papa){
 		// Constants
 		final int boardSize = papa.getBoard().getSize();
-		final int CAPTURE = 15;
+		final int CAPTURE = 30;
 		final int PATTERN33 = 10;
-		final int THIRD_LINE = 5;
-		final int FIRST_SECOND_LINE = 5;
-		final int LAST_POINT_AREA = 20;
-		final int LAST_DAME = 15;
+		final int THIRD_LINE = 10;
+		final int FIRST_SECOND_LINE = 10;
+		final int LAST_POINT_AREA = 10;
+		final int LAST_DAME = 10;
 
 		ArrayList<Node> children = papa.getChildren();
 		

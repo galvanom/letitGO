@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class GTP extends ConsoleInterface{
 	private int boardsize;
 	private double komi;
-	private static final int PLAYOUTS_NUM = 10000;
+	private static final int PLAYOUTS_NUM = 5000;
 	private final String[] commands = {
 								"boardsize",
 								"list_commands",
