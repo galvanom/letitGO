@@ -21,15 +21,17 @@ public  class Pattern33{
 	public Pattern33(){
 	}
 	public static void init(){
-		patternsBase = readPatternsFile("patterns33.dat");
+		patternsBase = readPatternsFile("com\\letitgo\\patterns33.dat");
 	}
 	public static int[] readPatternsFile(String fileName){
-		FileInputStream in = null;
+		InputStream in = null;
 		DataInputStream din = null;
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		final int patternsNumber;
 		int[] patterns = null;
 		try{
-			in = new FileInputStream(fileName);
+			
+			in = classLoader.getResourceAsStream(fileName);
 			din = new DataInputStream(in);
 			patternsNumber = din.readInt();
 			patterns = new int[patternsNumber];
