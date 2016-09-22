@@ -49,7 +49,7 @@ public class GTP extends ConsoleInterface{
                     continue;
                     
                 }
-                if (input.equals("name")){
+                if (input.equals(" name")){
                     System.out.print("= ");
                     System.out.println("LetItGO");
                     continue;
