@@ -122,7 +122,7 @@ public class Montecarlo{
 	}
 	private Node selectNode(Node node){
 		int i, t; 
-		double value, bestValue, c = 1.44,n,w;
+		double value, bestValue, c = 3.44,n,w;
 		Node bestNode = null;
 		int MAX_NODES = 10;
 		ArrayList<Node> children;
@@ -193,14 +193,15 @@ public class Montecarlo{
 		return null;
 	}
 	private void rateChildren(Node papa){
-		// Constants
 		final int boardSize = papa.getBoard().getSize();
-		final int CAPTURE = 30;
-		final int PATTERN33 = 10;
+		// Параметры  для эвристики. Чем больше значения тем больше влияние
+		// конкретной эвристики на алгоритм UCT
+		final int CAPTURE = 100;
+		final int PATTERN33 = 30;
 		final int THIRD_LINE = 10;
 		final int FIRST_SECOND_LINE = 10;
 		final int LAST_POINT_AREA = 10;
-		final int LAST_DAME = 10;
+		final int LAST_DAME = 30;
 
 		ArrayList<Node> children = papa.getChildren();
 		
@@ -211,10 +212,13 @@ public class Montecarlo{
 		Point childPoint;
 		int child_i, child_j;
 
+
+
 		// At first try to mark all capture moves with positive values
 		ArrayList<Point> allCaptureMoves = hr.capture.getAllMoves(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		ArrayList<Point> allPattern33Moves = hr.pattern33.getAllMoves(papa.getBoard());
 		ArrayList<Point> enemyGroupsLastDame = hr.capture.getAtariPoints(papa.getBoard(),papa.getStoneType());
+
 
 		Point lastPoint = papa.getBoard().getLastPoint();
 		ArrayList<Point> lastPointArea = null;
@@ -227,9 +231,7 @@ public class Montecarlo{
 		// Помечаем ходы в окрестностях последнего хода как хорошие
 		if (lastPoint != null){
 			lastPointArea = lastPoint.getAllNeighbours();
-			// if (papa.getParent() == null){
-			// 	lastPoint.printPoint();
-			// }
+
 			// Mark last move neighbourhood
 			for (Point point : lastPointArea){
 				if (point.i <= 0 || point.i >=boardSize-1 || point.j <= 0 || point.j >= boardSize-1){
@@ -318,7 +320,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 				if (max < child.getGames() ){
 					max = child.getGames();
@@ -330,7 +332,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			// if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 			// 	System.out.printf("Resign!\n");
 			// }
@@ -353,7 +355,7 @@ public class Montecarlo{
 		
 		stack.push(root);
 		tabs_stack.add(tab);
-		System.out.printf("\nMonteCarlo search tree:\n");
+		// System.out.printf("\nMonteCarlo search tree:\n");
 		while(!stack.empty()){
 			node = stack.pop();
 			//node.getBoard().printBoard();
@@ -368,10 +370,10 @@ public class Montecarlo{
 			}
 			if (node.getParent() != null){
 				if (node.getGames() != 0){
-					System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
-						node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
-					  	node.getPoint().i, node.getPoint().j,
-					  	node.getGames(), node.getWins());
+					// System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
+						// node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
+					 //  	node.getPoint().i, node.getPoint().j,
+					 //  	node.getGames(), node.getWins());
 				}
 			}
 

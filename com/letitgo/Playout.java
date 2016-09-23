@@ -12,6 +12,11 @@ public class Playout{
 	}
 
 	public int playRandomGame(final Board board, int first_stone){
+		//Вероятность срабатывания эвристик
+		final int CAP_RAND_THRESS = 10;
+		final int PAT_RAND_THRESS = 10;
+		final int EYE_RAND_THRESS = 10;
+
 		ArrayList<Point> free_points;
 		int boardSize = board.getSize();
 		//Point[] free_points = new Point[boardSize*boardSize];
@@ -39,28 +44,32 @@ public class Playout{
 
 			//Before to get random moves, engine has to try moves in the last move's neighbourhood.
 			//This moves have to be either "capture/release capture" or the patterns
-			
+			random = new Random(System.nanoTime());
+
 			if (playBoard.getLastPoint() != null){
 
-				captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
-				if (captureMove != null) {
-					// playBoard.printBoard();
-					playBoard.makeMove(captureMove, stoneType);
-					// System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					// playBoard.printBoard();
-					continue;
+				if (random.nextInt(CAP_RAND_THRESS) != 0){
+					captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
+					if (captureMove != null) {
+						// playBoard.printBoard();
+						playBoard.makeMove(captureMove, stoneType);
+						// System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
+						// playBoard.printBoard();
+						continue;
+					}
 				}
 
-				patternMove = heuristics.pattern33.getFirstMove(playBoard);
+				if (random.nextInt(PAT_RAND_THRESS) != 0){
+					patternMove = heuristics.pattern33.getFirstMove(playBoard);
 
-				if (patternMove != null){
-					// playBoard.printBoard();
-					playBoard.makeMove(patternMove, stoneType);
-					// System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
-					// playBoard.printBoard();
-					continue;
+					if (patternMove != null){
+						// playBoard.printBoard();
+						playBoard.makeMove(patternMove, stoneType);
+						// System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
+						// playBoard.printBoard();
+						continue;
+					}
 				}
-				
 			
 			}
 			
@@ -75,9 +84,11 @@ public class Playout{
 			}
 			passTimes = 0;
 
-			random = new Random(System.nanoTime());
-			//p = free_points.get(0);
-			move = free_points.get(random.nextInt(free_points.size()));
+			
+			do {
+				move = free_points.get(random.nextInt(free_points.size()));
+			} while(move.isSingleEyePoint(stoneType) && random.nextInt(EYE_RAND_THRESS) != 0);
+
 			//p = getBestMove(playBoard, free_points);
 
 			playBoard.makeMove(move, stoneType);

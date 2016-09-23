@@ -29,57 +29,18 @@ public class Main{
 
 		board.loadFromFile("board9x9.dat");
 		board.printBoard();
-		// board.makeMove(new Point(board, 5,5), Board.ENEMY);
-		// board.printBoard();
-	
-		// p = new Point(board, 1,4);
-		// p.printPoint();
-		// if (p.isSingleEyePoint(Board.ENEMY)){
-		// 	System.out.println("Is eye\n");
 
-		// 	if (p.isTrueEye(Board.ENEMY)){
-		// 		System.out.println("True eye\n");
-		// 	}
-		// 	else{
-		// 		System.out.println("Not true eye\n");
-		// 	}
-		// }
-		// else{
-		// 	System.out.println("Not an eye\n");
+
+		// ArrayList<Point> capmov = hr.capture.getAllMoves(board, Board.ENEMY);
+		// for (Point move : capmov){
+		// 	move.printPoint();
 		// }
 
-
-
-
-
-		// System.out.println("Please choose your side. Type X for black or O for white:");
-		// char side = 'X';
-		// try{
-		// 	side = (char) System.in.read();
-		// }
-		// catch(IOException e){
-
-		// }
-
-		// if (side != 'X' && side != 'O'){
-		// 	System.out.println("Wrong choice. Type X for black or O for white:");
-		// 	return;
-		// }
-		// if (side == 'X'){
-		// 	humanStone = Board.ENEMY;
-		// 	aiStone = Board.FRIENDLY;
-		// 	humanMove(board, humanStone);
-		// }
-		// if (side == 'O'){
-		// 	humanStone = Board.FRIENDLY;
-		// 	aiStone = Board.ENEMY;
-		// }
-
-		while (true){
+		// while (true){
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, humanStone);	
-			for (int i = 0; i < 40000; i++){
+			for (int i = 0; i < 3000; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }
@@ -95,22 +56,8 @@ public class Main{
 			board.printBoard();
 
 			
-		// 	if (p == null){
-		// 		System.out.println("Error. Next move is Null\n");
-		// 	}
-		// 	else{
-		// 		p.printPoint();
-		// 		board.makeMove(p, aiStone);
-		// 		board.printBoard();
 	
-		// 		//board.printBoard();
-		// 		//mc.printTree();
-		// 	}
-
-			
-		// 	humanMove(board, humanStone);
-
-		}		
+		// }		
 	
 
 

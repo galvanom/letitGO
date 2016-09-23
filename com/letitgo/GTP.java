@@ -33,6 +33,7 @@ public class GTP extends ConsoleInterface{
         long startTime;
         Montecarlo.Move aiMove = null;
         String humanMove;
+        boolean aiPasses = false;
 
         try{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -99,15 +100,15 @@ public class GTP extends ConsoleInterface{
                     for (int i = 0; i < PLAYOUTS_NUM; i++){
 						mc.playOneSequence();
 					}
-					System.out.println(System.currentTimeMillis() - startTime);
+					// System.out.println(System.currentTimeMillis() - startTime);
 					aiMove = mc.getWinner();
-					if (aiMove == null){
-						System.out.printf("= pass\n\n");
+					if (aiMove == null || aiPasses == true){
+						System.out.printf("= PASS\n\n");
 						continue;
 					}
 
 					board.makeMove(aiMove,stoneType);
-					System.out.printf("Confidence level: %f\n\n", aiMove.getMoveScore());
+					// System.out.printf("Confidence level: %f\n\n", aiMove.getMoveScore());
 					if (aiMove.getMoveScore() < 0.25){
 						System.out.printf("= resign\n\n");
 						continue;
@@ -117,12 +118,14 @@ public class GTP extends ConsoleInterface{
                 }
                  if (input.startsWith("play")){
                  	humanMove = input.split(" ")[2];
-                 	// if (humanMove.equals("pass")){
-               			// if (aiMove != null && aiMove.getMoveScore() > 0.7){
-               			// 	System.out.println("= pass\n");
-                  //   		continue;
-                 	// 	}
-                 	// }
+                 	if (humanMove.equals("pass")){
+               			if (aiMove != null && aiMove.getMoveScore() > 0.7){
+               				aiPasses = true;
+                    	}
+               			System.out.println("=\n");
+                 		continue;
+                 	}
+
 
                  	p = strToPoint(humanMove,board.getSize());
 
