@@ -104,6 +104,7 @@ public class GTP extends ConsoleInterface{
 					aiMove = mc.getWinner();
 					if (aiMove == null || aiPasses == true){
 						System.out.printf("= PASS\n\n");
+						aiPasses = false;
 						continue;
 					}
 
