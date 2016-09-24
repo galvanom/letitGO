@@ -12,7 +12,7 @@ public class Montecarlo{
 	final int FIRST_SECOND_LINE = 10;
 	final int LAST_POINT_AREA = 10;
 	final int LAST_DAME = 30;
-	final int SELF_ATARI = 1000;
+	final int SELF_ATARI = 100000;
 	private class Node{
 		Node parent;
 		ArrayList<Node> children = null;
@@ -42,7 +42,7 @@ public class Montecarlo{
 				Group group = this.board.getGroup(this.point);
 				if (group.isGroupInAtari()){
 					this.wins = 0;
-					this.games = SELF_ATARI;
+					this.games = SELF_ATARI; //TODO: Переделать, удалять еще до создания ноды
 				}
 			}
 
@@ -333,9 +333,9 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
-				if (max < child.getGames() ){
+				if (max < child.getGames() && child.getGames() < SELF_ATARI){
 					max = child.getGames();
 					bestChild = child;
 				}
@@ -345,7 +345,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			// if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 			// 	System.out.printf("Resign!\n");
 			// }
