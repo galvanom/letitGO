@@ -64,5 +64,11 @@ public class Group implements Iterable<Point>{
 			stone.printPoint();
 		}
 	}
+	public boolean isGroupInAtari(){
+		if (getGroupDameNumber() == 1){
+			return true;
+		}
+		return false;
+	}
 
 }
