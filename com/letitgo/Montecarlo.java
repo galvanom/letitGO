@@ -25,17 +25,21 @@ public class Montecarlo{
 		//ArrayList<Point> allPossibleMoves;
 
 		Node(Node parent, final Board board, final Point point, int stoneType){
-			this.point = point;
+			
 			this.stoneType = stoneType;
 			this.parent = parent;
 			this.board = new Board(board);
+			if (point != null){
+				this.point = new Point(this.board,point.i,point.j);
+			}
 
 			//playout = new Playout();
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
 				this.board.makeMove(point, stoneType);
-				Group group = board.getGroup(point);
+
+				Group group = this.board.getGroup(this.point);
 				if (group.isGroupInAtari()){
 					this.wins = 0;
 					this.games = SELF_ATARI;

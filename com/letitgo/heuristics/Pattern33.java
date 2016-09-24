@@ -21,7 +21,7 @@ public  class Pattern33{
 	public Pattern33(){
 	}
 	public static void init(){
-		patternsBase = readPatternsFile("com\\letitgo\\patterns33.dat");
+		patternsBase = readPatternsFile("com/letitgo/patterns33.dat");
 	}
 	public static int[] readPatternsFile(String fileName){
 		InputStream in = null;
@@ -32,7 +32,11 @@ public  class Pattern33{
 		try{
 			
 			in = classLoader.getResourceAsStream(fileName);
+			//TODO: Проверить in на null
 			din = new DataInputStream(in);
+			if (classLoader == null){
+				System.out.printf("Huthuthut\n\n");
+			}
 			patternsNumber = din.readInt();
 			patterns = new int[patternsNumber];
 			
