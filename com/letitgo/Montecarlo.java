@@ -4,6 +4,15 @@ import java.io.*;
 import com.letitgo.heuristics.*;
 
 public class Montecarlo{
+	// Параметры  для эвристики. Чем больше значения тем больше влияние
+	// конкретной эвристики на алгоритм UCT
+	final int CAPTURE = 100;
+	final int PATTERN33 = 30;
+	final int THIRD_LINE = 10;
+	final int FIRST_SECOND_LINE = 10;
+	final int LAST_POINT_AREA = 10;
+	final int LAST_DAME = 30;
+	final int SELF_ATARI = 1000;
 	private class Node{
 		Node parent;
 		ArrayList<Node> children = null;
@@ -20,12 +29,19 @@ public class Montecarlo{
 			this.stoneType = stoneType;
 			this.parent = parent;
 			this.board = new Board(board);
+
 			//playout = new Playout();
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
 				this.board.makeMove(point, stoneType);
+				Group group = board.getGroup(point);
+				if (group.isGroupInAtari()){
+					this.wins = 0;
+					this.games = SELF_ATARI;
+				}
 			}
+
 			/*
 			allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
 			if (allPossibleMoves.size() == 0){
@@ -158,7 +174,7 @@ public class Montecarlo{
 					bestNode = child;
 				}
 			}
-			children = currentNode.getChildren(); //TODO:Was Null pointer exception??? changed from bestNode.getChildren() 
+			children = currentNode.getChildren(); //TODO: поменять на bestNode.getChildren()? 
 			
 		}
 		return currentNode;
@@ -177,6 +193,7 @@ public class Montecarlo{
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
 				// Проверяем не находится ли ход под атари
+
 				// if (!move.isAtari(Board.getOppositeSide(papa.getStoneType()))){
 					papa.addChild(move);
 				// }
@@ -194,14 +211,6 @@ public class Montecarlo{
 	}
 	private void rateChildren(Node papa){
 		final int boardSize = papa.getBoard().getSize();
-		// Параметры  для эвристики. Чем больше значения тем больше влияние
-		// конкретной эвристики на алгоритм UCT
-		final int CAPTURE = 100;
-		final int PATTERN33 = 30;
-		final int THIRD_LINE = 10;
-		final int FIRST_SECOND_LINE = 10;
-		final int LAST_POINT_AREA = 10;
-		final int LAST_DAME = 30;
 
 		ArrayList<Node> children = papa.getChildren();
 		
