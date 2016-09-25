@@ -22,18 +22,17 @@ public class Montecarlo{
 		Playout playout;
 		int wins;
 		int games;
-		//ArrayList<Point> allPossibleMoves;
 
+		// Создаем новый узел в дереве ходов
+		// Каждому узлу соответсвует уникальное состояние доски 
 		Node(Node parent, final Board board, final Point point, int stoneType){
 			
 			this.stoneType = stoneType;
 			this.parent = parent;
 			this.board = new Board(board);
-			if (point != null){
+			if (point != null){ // root node
 				this.point = new Point(this.board,point.i,point.j);
 			}
-
-			//playout = new Playout();
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
@@ -46,13 +45,6 @@ public class Montecarlo{
 				}
 			}
 
-			/*
-			allPossibleMoves = this.playout.getFreePoints(this.board, Board.getOppositeSide(stoneType));
-			if (allPossibleMoves.size() == 0){
-				//board.printBoard();
-				System.out.printf("\nallPossibleMoves == 0 %d,%d\n", point.i, point.j);
-			}
-			*/
 
 		}
 		Node addChild(final Point p){
@@ -103,6 +95,8 @@ public class Montecarlo{
 			return playout.playRandomGame(board, Board.getOppositeSide(stoneType)); 
 		}
 	}
+	// Класс Move расширяет Point для использования доп. параметров,
+	// например хранения вероятности победы для хода
 	public static class Move extends Point{
 		private double moveScore;
 		public Move(Board board, int i, int j, double moveScore){
@@ -113,16 +107,19 @@ public class Montecarlo{
 			return moveScore;
 		}
 	}
+	// Минимальное количество плейаутов перед раскрытием узла дерева
 	private static final int MIN_GAMES_FOR_EXPLORATION = 8;
 	private Node root;
 	private Heuristics hr;
 	private final Board sourceBoard;
 	Montecarlo(final Board board, int whoseTurn){
+		// Читаем файл с шаблонами
 		Pattern33.init();
 		sourceBoard = board;
 		root = new Node(null, sourceBoard, null, whoseTurn);
 		hr = new Heuristics();
 	}
+	// Сделать один проход UCT
 	public void playOneSequence(){
 		Node node = selectNode(root);
 
@@ -140,11 +137,13 @@ public class Montecarlo{
 		backPropagation(node, winner);
 
 	}
+	// Выбор узла
+	// Параметр c используется для баланса между глубиной и шириной поиска
+	// Чем меньше тем глубже исследуются интересные узлы 
 	private Node selectNode(Node node){
 		int i, t; 
 		double value, bestValue, c = 3.44,n,w;
 		Node bestNode = null;
-		int MAX_NODES = 10;
 		ArrayList<Node> children;
 		Node currentNode = node;
 
@@ -154,18 +153,9 @@ public class Montecarlo{
 			bestValue = -1;
 			t = 1;
 
-			// if (children.size() < currentNode.allPossibleMoves.size() && children.size() < MAX_NODES)
-			// 	break; ///!!!!
-			/*if (children == null)
-				System.out.printf("children == null");
-			else
-				System.out.printf("children != null");
-				*/
-			
 			for (Node child: children){
 				t += child.getGames();
-			}
-			
+			}			
 
 			for (Node child: children){
 				n = child.getGames()+1;
@@ -184,7 +174,9 @@ public class Montecarlo{
 		return currentNode;
 		
 	}
-	
+	// Когда в узле проигранно некоторое количество партий,
+	// мы открываем его. Т.е. создаем узлы с новыми ходами
+	// сделанными после текущего (papa)
 	private Node expand(Node papa){
 		int boardSize = root.getBoard().getSize();
 		int[][] childrenBoard = new int[boardSize][boardSize];
@@ -213,6 +205,7 @@ public class Montecarlo{
 		
 		return null;
 	}
+	// Функция назначения приоритетов ходам
 	private void rateChildren(Node papa){
 		final int boardSize = papa.getBoard().getSize();
 
@@ -273,7 +266,9 @@ public class Montecarlo{
 			child.addGames(value);
 			child.addWins(value);
 
-			// Set third line priority
+			// Положительное значение приоритета ходам на 3-ю линию, при условии, что
+			// на расстоянии в 3 клетки от него нет камней
+			// Отрицательный приоритет 1-й и 2-й линиям
 			if (hr.isEmptyArea(papa.getBoard(), child.getPoint(), 3)){
 				child_i = child.getPoint().i;
 				child_j = child.getPoint().j;
@@ -302,10 +297,11 @@ public class Montecarlo{
 		}
 
 	}
-
+	// Играем симуляцию из узла node
 	private int simulation(Node node){
 		return node.startPlayout();
 	}
+	// Обновляем значения узлов дерева
 	private void backPropagation(Node startNode, int winner){
 		Node currentNode = startNode;
 		do{
@@ -316,6 +312,7 @@ public class Montecarlo{
 		} while(currentNode != null);
 		
 	}
+	// Определяем узел победитель по наибольшему количеству посещений
 	public Move getWinner(){
 		ArrayList<Node> children = root.getChildren();
 		Node bestChild = null;
@@ -358,7 +355,7 @@ public class Montecarlo{
 		}
 				
 	}
-	//non recursive DFS
+	// Вывести в консоль дерево (очень много:)
 	public void printTree(){
 		Node node;
 		ArrayList<Node> nodeChildren;

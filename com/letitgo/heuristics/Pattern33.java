@@ -21,6 +21,7 @@ public  class Pattern33{
 	public Pattern33(){
 	}
 	public static void init(){
+		// При инициализации считываем все шаблоны из файла
 		patternsBase = readPatternsFile("com/letitgo/patterns33.dat");
 	}
 	public static int[] readPatternsFile(String fileName){
@@ -34,9 +35,6 @@ public  class Pattern33{
 			in = classLoader.getResourceAsStream(fileName);
 			//TODO: Проверить in на null
 			din = new DataInputStream(in);
-			if (classLoader == null){
-				System.out.printf("Huthuthut\n\n");
-			}
 			patternsNumber = din.readInt();
 			patterns = new int[patternsNumber];
 			
@@ -55,14 +53,14 @@ public  class Pattern33{
 		HashSet<String> permutations;
 		HashMap<String,String> wildchars = new HashMap<String,String>();
 
-		// Wildchars initialization
+		// Инициализация шаблонов состояний
 		wildchars.put("x","O.");
 		wildchars.put("X","X");
 		wildchars.put("O","O");
 		wildchars.put("o","X.");
 		wildchars.put("?","XO.");
 		wildchars.put(".",".");
-				// Initializing patterns...
+		// Получаем все вариации каждого шаблона 
 		permutations = getPermutations3x3(wildchars);
 		
 		LinkedList<Integer> digitalPermutations = new LinkedList<Integer>();
@@ -109,7 +107,7 @@ public  class Pattern33{
 		}
 
 	}
-	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
+	// Быстрая версия алгоритма ищет шаблоны только в округе 3 на 3
 	public Point getFirstMove(Board board){
 		ArrayList<Point> points = new ArrayList<Point>();
 		points = board.getLastPoint().getNeighbours();
@@ -119,6 +117,7 @@ public  class Pattern33{
 		
 		return getPatternMove(board, points);
 	}
+	// Ищет шаблоны по всей доске
 	public ArrayList<Point> getAllMoves(Board board){
 		int boardSize = board.getSize();
 		int i,j;
@@ -150,10 +149,8 @@ public  class Pattern33{
 		return null;
 			
 	}
-	/**
-	* Get 3x3 region around the point
-	* Returns chars wich represent region
-	*/
+
+	// Возвращает область 3 на 3 для заданной точки
 	private char[] get3x3Region(Board board, Point point){
 		int i,j,k;
 		int stoneType;
@@ -180,6 +177,7 @@ public  class Pattern33{
 		}
 		return square33;
 	}
+	// Определяет подходит ли поле под шаблон
 	public  boolean isPattern3x3(Board board, Point point){
 		int i,j;
 		int boardPoints; 
@@ -197,7 +195,7 @@ public  class Pattern33{
 
 		return false;
 	}
-
+	// Получаем все перевороты и изменения цвета для каждого шаблона
 	private HashSet<String> getPermutations3x3(HashMap<String,String> wildchars){
 		String currentVariation;
 		ArrayList<String> allVariations;
@@ -320,6 +318,7 @@ public  class Pattern33{
 		return false;
 		
 	}
+	// Переводим шаблон в число типа int
 	private int stringToNumber(String str){
 		char point;
 		int number = 0;

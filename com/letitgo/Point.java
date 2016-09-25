@@ -1,6 +1,6 @@
 package com.letitgo;
 import java.util.*;
-// TODO: try factory method to get instances of the class
+
 public class Point{
 	public final int i, j;
 	public Board board;
@@ -29,7 +29,7 @@ public class Point{
 		neighbours.add(new Point(board, this.i+1, this.j+1));
 		neighbours.add(new Point(board, this.i+1, this.j-1));
 		neighbours.add(new Point(board, this.i-1, this.j-1));
-		neighbours.add(new Point(board, this.i-1, this.j+1)); //WTF? This line increases execution for 5 times
+		neighbours.add(new Point(board, this.i-1, this.j+1));
 
 		return neighbours;
 	}
@@ -53,6 +53,7 @@ public class Point{
 
 		return dame_count;
 	}
+	// Является ли глазом
 	public boolean isSingleEyePoint(int stoneType){ 
 		ArrayList<Point> neighbours = getNeighbours();
 
@@ -62,18 +63,11 @@ public class Point{
 				return false;
 			}
 		}
-		// boolean is_friendly = true;
-		// if (board.getPoint(this.i+1, this.j) == Board.getOppositeSide(stoneType)) 
-		// 	return false;
-		// if (board.getPoint(this.i-1, this.j) == Board.getOppositeSide(stoneType))
-		// 	return false;
-		// if (board.getPoint(this.i, this.j+1) == Board.getOppositeSide(stoneType))
-		// 	return false;
-		// if (board.getPoint(this.i, this.j-1) == Board.getOppositeSide(stoneType))
-		// 	return false;
 
 		return true;
 	}
+	// Настоящий ли глаз
+	// Должна использоваться после определения точки как глаза
 	public boolean isTrueEye(int stoneType){
 		ArrayList<Point> diagNeighbours = getDiagonalNeighbours();
 		int myStones = 0;
@@ -109,26 +103,5 @@ public class Point{
 	public int getValue(){
 		return this.board.getPoint(this);
 	}
-	// Проверяем не находится ли текущая позиция под атари
-	// ownStoneType это цвет камня который находится под атари
-	public boolean isAtari(int ownStoneType){
-		int emptyPoints = 0;
-		int notFriendlyStones = 0;
-		ArrayList<Point> neighbours = getNeighbours();
-		for (Point neighbour: neighbours){
-			// Т.к. эта функция не проверяет группы под атари, встретив свой камень выходим
-			if (board.getPoint(neighbour) == ownStoneType){
-				return false;
-			}
-			else if (board.getPoint(neighbour) == Board.EMPTY){
-				emptyPoints++;
-			}
-		}
-		// Если только одно дыхание возвращаем true
-		if (emptyPoints == 1){
-			return true;
-		}
 
-		return false;
-	}
 }

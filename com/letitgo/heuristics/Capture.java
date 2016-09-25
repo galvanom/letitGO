@@ -22,7 +22,7 @@ public class Capture{
 			return null;
 		}
 	}
-	//Full version. Returns all available capture moves at the board
+	// Возвращает все ходы подподающие под эту эвристику
 	public ArrayList<Point> getAllMoves(final Board board, int ownStoneType){
 		int boardSize = board.getSize();
 		ArrayList<Point> points = new ArrayList<Point>();
@@ -85,7 +85,7 @@ public class Capture{
 			
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
-				//if this is enemy group return move to capture it
+				// Если  это вражеская группа с 1-м дамэ добавляем ее в список
 				if (pointType == Board.getOppositeSide(ownStoneType) && board.checkRules(atariGroupDame, ownStoneType) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
 					 allCaptureMoves.add(atariGroupDame);
@@ -94,11 +94,11 @@ public class Capture{
 					 }
 					//return null;
 				}
-				//if this is friendly group, try to capture neighbour enemy group or
-				//try to escape but dont't make selfatari as well as the ladder
+				// Если же с одним дамэ оказалась наша группа, то ищем способы убить соседние группы
+				// или попытаться уюежать из под атари избегая лестницы и самоатари
 				else if (pointType == ownStoneType){
 					
-					//trying to kill enemy
+					//Пытаемся убить соседние вражеские группы
 					for (i = 0; i < boardSize; i++)
 						for (j = 0; j < boardSize; j++)
 							visitedNeighbours[i][j] = 0;
@@ -127,7 +127,7 @@ public class Capture{
 						}
 					}
 					
-					//Try to put a stone to the free dame and avoid self atari and the ladder
+					//Пробуем убежать избегая самоатари и лестницы
 					if (board.checkRules(atariGroupDame, ownStoneType) == true){
 						board.tryMove(atariGroupDame, ownStoneType);
 						
@@ -154,6 +154,7 @@ public class Capture{
 	return allCaptureMoves;
 	}
 
+	// Ищем все группы с 1-м дамэ
 	public ArrayList<Point> getAtariPoints(final Board board, final int groupsType){
 		int boardSize = board.getSize();
 		boolean[][] visited = new boolean[boardSize][boardSize];
