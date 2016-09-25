@@ -19,9 +19,12 @@ public class ConsoleInterface{
 	public void start(){
 		String input;
         BufferedReader stdIn;
-        Point p;
+        Montecarlo.Move aiMove;
+        Point humanMove;
         Montecarlo mc;
         int currentMove = Board.ENEMY;
+        int passesNumber;
+
         if (board == null){
         	System.out.printf("Board wasn't initialized\n");
         	return;
@@ -42,7 +45,7 @@ public class ConsoleInterface{
 
         try{
             stdIn = new BufferedReader(new InputStreamReader(System.in));
-
+            passesNumber = 0;
             while (true){
             	if (currentMove == aiStone){
             		System.out.printf("AI is searching for a move\nIt can take some time\n");
@@ -50,14 +53,47 @@ public class ConsoleInterface{
             		for (int i = 0; i < playoutsNum; i++){
 						mc.playOneSequence();
 					}
-					p = mc.getWinner();
-					board.makeMove(p, aiStone);
+					aiMove = mc.getWinner();
+					if (aiMove == null || (passesNumber == 1 && aiMove != null && aiMove.getMoveScore() > 0.75)){
+						System.out.printf("Computer passed\n");
+						passesNumber++;
+						if (passesNumber > 1){
+							break;
+						}
+						currentMove = Board.getOppositeSide(currentMove);
+						continue;
+					}
+					if (aiMove.getMoveScore() < 0.25){
+						System.out.printf("Computer resigned\n");
+						break;
+					}
+					board.makeMove(aiMove, aiStone);
+					passesNumber = 0;
             	}
             	else{
             		System.out.print("Next move:\n>");
                 	input = stdIn.readLine();
-                	p = strToPoint(input, board.getSize());
-                	board.makeMove(p, Board.getOppositeSide(aiStone));
+                	if (input.toLowerCase().startsWith("pass")){
+                		passesNumber++;
+                		if (passesNumber > 1){
+                			break;
+                		}
+                		currentMove = Board.getOppositeSide(currentMove);
+                		continue;
+                	}
+                	humanMove = strToPoint(input, board.getSize());
+                	if (humanMove != null){
+                		if (board.checkRules(humanMove,Board.getOppositeSide(aiStone)) == false){
+                			System.out.printf("Illegal move\n");
+                			continue;
+                		}
+                		board.makeMove(humanMove, Board.getOppositeSide(aiStone));
+                	}
+                	else{
+                		System.out.printf("Illegal move\n");
+                		continue;
+                	}
+                	passesNumber = 0;	
             	}
             	showBoard();
             	currentMove = Board.getOppositeSide(currentMove);
@@ -69,7 +105,7 @@ public class ConsoleInterface{
         }
 	}
 
-	public boolean showBoard(){
+	protected boolean showBoard(){
 		if (board == null){
 			return false;
 		}
@@ -120,14 +156,14 @@ public class ConsoleInterface{
 		return true;
 	}
 
-	public String pointToStr(int i, int j, int boardSize){
+	protected String pointToStr(int i, int j, int boardSize){
 		String charCoord, digitCoord;
 		digitCoord = Integer.toString(boardSize-i);
 		charCoord = String.valueOf(match.charAt(j));
 
 		return charCoord+digitCoord;
 	}
-	public Point strToPoint(String coord, int boardSize){
+	protected Point strToPoint(String coord, int boardSize){
 		int charCoord =-1;
 		int digitCoord;
 		String lowcoord = coord.toLowerCase();
@@ -138,7 +174,9 @@ public class ConsoleInterface{
 			}
 		}
 		digitCoord = (boardSize-1) - (Integer.parseInt(lowcoord.substring(1)) - 1);
-
+		if (charCoord == -1 || digitCoord < 0 || digitCoord >= boardSize){
+			return null;
+		}
 		return new Point(board, digitCoord, charCoord);
 	}
 
