@@ -7,65 +7,69 @@ public class Playout{
 	private final Heuristics heuristics;
 	private double komi;
     public Playout(){
-    	komi = 6.5;
+    	this.komi = 6.5;
 		heuristics = new Heuristics();
 	}
+	public Playout(double komi){
+    	this();
+    	this.komi = komi;
+	}
+
 
 	public int playRandomGame(final Board board, int first_stone){
-		//Вероятность срабатывания эвристик
+		int boardSize = board.getSize();
+		// Вероятность срабатывания эвристик
+		// Например, 10 означает 1 раз из 10
 		final int CAP_RAND_THRESS = 10;
 		final int PAT_RAND_THRESS = 10;
 		final int EYE_RAND_THRESS = 10;
+		// Игра длится не более чем это значение ходов
+		final int MAX_MOVES = boardSize*boardSize*2;
 
 		ArrayList<Point> free_points;
-		int boardSize = board.getSize();
-		//Point[] free_points = new Point[boardSize*boardSize];
+		
 		Random random;
 		int freePointsSize;
 		int random_point,i,j;
 		int stoneType = first_stone;
 		int passTimes = 0;
-		final int MAX_MOVES = boardSize*boardSize*2;
 		Point captureMove = null;
 		Point move, patternMove = null;
-		//Point heurPoint = new Point();
 		Board playBoard = new Board(board);
 		ArrayList<Point> points = null;
-		
-		//Tests for patterns
-		/*if (Pattern33.isPattern3x3(playBoard, new Point(1,7)))
-			System.out.printf("\n***Pattern found!\n");
-		else
-			System.out.printf("\n***No pattern found\n");
-		*/	
 		
 
 		for (int movesCount = 0; movesCount < MAX_MOVES && passTimes < 2; stoneType = Board.getOppositeSide(stoneType), movesCount++){
 
-			//Before to get random moves, engine has to try moves in the last move's neighbourhood.
-			//This moves have to be either "capture/release capture" or the patterns
+
+			
+			// Перед использованием случайных ходов, пытаемся найти в окрестностях последнего хода
+			// интересные с точки зрения эвристики точки.
+			// Если они найдены ходим туда.
 			random = new Random(System.nanoTime());
 
 			if (playBoard.getLastPoint() != null){
 
 				if (random.nextInt(CAP_RAND_THRESS) != 0){
 					captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
+					// Если ходы связанные с захватом групп найдены, делаем ход
+
 					if (captureMove != null) {
 						// playBoard.printBoard();
 						playBoard.makeMove(captureMove, stoneType);
-						// System.out.printf("\n****Capture occured. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
+						// System.out.printf("\n****Capture move found. The point is [%d,%d] Stone type is: %s ****",captureMove.i, captureMove.j, stoneType == Board.ENEMY ? "X" :"O");
 						// playBoard.printBoard();
 						continue;
 					}
 				}
-
+				// Если ходы попавшие под шаблоны найдены делаем ход
 				if (random.nextInt(PAT_RAND_THRESS) != 0){
 					patternMove = heuristics.pattern33.getFirstMove(playBoard);
 
 					if (patternMove != null){
 						// playBoard.printBoard();
 						playBoard.makeMove(patternMove, stoneType);
-						// System.out.printf("\n****Pattern occured. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
+						// System.out.printf("\n****Pattern found. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
 						// playBoard.printBoard();
 						continue;
 					}
@@ -73,9 +77,7 @@ public class Playout{
 			
 			}
 			
-			//TODO: Improve getFreePoints for the perfomance goal. The bigger number of free points is the bigger CPU load.
-			//Maybe this too many garbage to collect and GC runs more frequently then usually
-			
+			// Эвристики не сработали? Выбираем слчайный ход
 			free_points = getFreePoints(playBoard, stoneType);
 
 			if (free_points.size() == 0){
@@ -84,7 +86,7 @@ public class Playout{
 			}
 			passTimes = 0;
 
-			
+			// При этом ход не должен быть внутрь своего глаза с некоторой вероятностью
 			do {
 				move = free_points.get(random.nextInt(free_points.size()));
 			} while(move.isSingleEyePoint(stoneType) && random.nextInt(EYE_RAND_THRESS) != 0);
@@ -97,13 +99,15 @@ public class Playout{
 			
 		}
 		// playBoard.printBoard();
-
+		// Отыграли. Получаем счет.
 		int[] score = getScore(playBoard);
 
 		// System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return (double)score[0] + komi > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
-	// TODO: Make a test for this
+	// TODO: Сделать тесты
+	// Ищем точки окруженные каждым игроком
+	// И вычисляем счет по китайским правилам
 	private int[] getScore(final Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		// int surroundedStones[] = new int[4];
@@ -155,7 +159,8 @@ public class Playout{
 		int[] score = {friendScore, enemyScore};
 		return score;
 	}
-	// TODO: Make test for this
+	// TODO: Сделать тесты
+	// Получаем список всех валидных точек на доске, куда можно сходить
 	public static ArrayList<Point> getFreePoints(final Board board, int stoneType){
 		int i,j;
 		int boardSize = board.getSize();
@@ -167,8 +172,6 @@ public class Playout{
 				p = new Point(board, i, j); //TODO: Поменять с нижней строчкой местами
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
-						// TODO: Dont like it. Try to move getDame check
-						// If point doesnt have dame but there is a friendly single eye
 						if (p.isSingleEyePoint(stoneType) && p.isTrueEye(stoneType)){
 							continue;
 						}
@@ -180,10 +183,6 @@ public class Playout{
 
 			}
 		return freePoints;		
-	}
-
-	public void setKomi(double value){
-		this.komi = value;
 	}
 
 }

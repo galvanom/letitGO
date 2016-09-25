@@ -7,11 +7,11 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		// ConsoleInterface ci = new ConsoleInterface();
-		// ci.setParam(9, Board.ENEMY, 6.5, 5000);
-		// ci.start();
-		GTP gtp = new GTP();
-		gtp.start();
+		ConsoleInterface ci = new ConsoleInterface();
+		ci.setParam(9, Board.ENEMY, 6.5, 5000);
+		ci.start();
+		// GTP gtp = new GTP();
+		// gtp.start();
 
 		
 		Board board = new Board(9);
@@ -60,32 +60,7 @@ public class Main{
 		// }		
 	
 
-
 	}
-	public static Point readNextMove(Board board){
-		int i,j;
-		Scanner sc = new Scanner(System.in);
-		i = sc.nextInt(); j = sc.nextInt();
-		
-		return new Point(board, i,j);
-	}
-	public static void humanMove(Board board, int humanStoneType){
-		Point move;
-		while (true){
-				System.out.println("Set next Move: ");
-				move = readNextMove(board);
-				if (!board.checkRules(move, Board.FRIENDLY)){
-					System.out.println("Your move is illegal!");
 
-				}
-				else{
-					break;
-				}
-			}
-
-			board.makeMove(move,Board.FRIENDLY);
-			board.printBoard();
-	}
-	
 	
 }

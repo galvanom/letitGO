@@ -48,7 +48,7 @@ public class ConsoleInterface{
             passesNumber = 0;
             while (true){
             	if (currentMove == aiStone){
-            		System.out.printf("AI is searching for a move\nIt can take some time\n");
+            		System.out.printf("AI is searching for a move\nIt can take awhile\n");
             		mc = new Montecarlo(board, Board.getOppositeSide(aiStone));
             		for (int i = 0; i < playoutsNum; i++){
 						mc.playOneSequence();

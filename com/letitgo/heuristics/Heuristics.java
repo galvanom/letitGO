@@ -13,13 +13,7 @@ public class Heuristics{
 		this.capture = new Capture();
 	}
 
-
-	/**
-	* Searches not empty points in the manhatten distance area.
-	* If there is no stones around the given point returns true.
-	* ! Not efficient algorithm. Need to look into the points just once for more speed.
-	* ! Maybe it will be good to move this at the Point class 
-	*/
+	// Определяем нет ли в окрестностях манхэтенского расстояния от данной точки камней
 	public boolean isEmptyArea(Board board, Point p, int dist){
 		if (p.i < 0 || p.j < 0 || p.i >= board.getSize() || p.j >= board.getSize()){
 			return true;

@@ -12,13 +12,12 @@ public class Board{
 	private Point lastPoint = null;
 	public Point tryPoint = null;
 
-	//Point types
+	// Состояния пересечения доски 
 	public static final int EMPTY = 0;
 	public static final int BORDER = 1;
 	public static final int FRIENDLY= 2;
 	public static final int ENEMY = 3;
 
-	//public Board(){}
 
 	public Board(int size){
 		int i, j;
@@ -36,7 +35,7 @@ public class Board{
 		}
 
 	}
-	// TODO: Copy class fields too
+	// Копируем доску
 	public Board(final Board otherBoard){
 		int i,j;
 		this.size = otherBoard.getSize()+2;
@@ -52,7 +51,7 @@ public class Board{
 			for (j = 0; j < this.size-2; j++)
 				this.board[i+1][j+1] = otherBoard.getPoint(i,j);
 
-		// TODO: Rewrite it for incapsulation!!!
+		// Копируем не только доску, но и состояние ее полей
 		if (otherBoard.koPoint != null){
 			this.koPoint = new Point(this, otherBoard.koPoint.i,
 				otherBoard.koPoint.j) ;
@@ -66,11 +65,13 @@ public class Board{
 		
 
 	}
+	// Запоминает состояние доски перед тем как поставить камень
 	public void tryMove(final Point p, int pointType){
 		this.tryPoint = p;
 		board[p.i + 1][p.j + 1] = pointType;
 		// board[(p.i + 1)*size + p.j + 1] 1D array
 	}
+	// Восстанавливает состояние доски после 
 	public void undoMove(){
 		if (this.tryPoint != null){
 			board[this.tryPoint.i + 1][this.tryPoint.j + 1] = Board.EMPTY;
@@ -114,6 +115,7 @@ public class Board{
 		}
 		
 	}
+	// Читаем доску из файла
 	public void loadFromFile(String filename){
 		int i,j;
 		char point;
@@ -151,6 +153,7 @@ public class Board{
 			System.out.println("File read error");
 		}
 	}
+	// Установить пересечение в нужное состояние
 	public void setPoint(int i, int j, int pointType){
 		if (pointType == Board.FRIENDLY || pointType == Board.ENEMY){
 			koPointLifeTime++; //for KO
@@ -162,23 +165,25 @@ public class Board{
 	public void setPoint(Point p, int pointType){
 		setPoint(p.i, p.j, pointType);
 	}
+	// Вернуть состояние пересечения (точки)
 	public int getPoint(int i, int j){
 		return board[i + 1][j + 1];
 	}
 	public int getPoint(Point p){
 		return board[p.i + 1][p.j + 1];
 	}
-
+	// Вернуть формальный размер доски (9,13,19 итд)
 	public int getSize(){
 		return size - 2;
 	}
-
+	// Установить КО
 	private void setKO(Point point, int stoneType){
 		koPoint = point;
 		koStoneType = stoneType;
 		koPointLifeTime = 0;
 
 	}
+	// Проверка на КО
 	public boolean isKO(Point point, int stoneType){
 		if (koPointLifeTime == 0 && koPoint != null){
 
@@ -189,14 +194,17 @@ public class Board{
 		}
 		return false;
 	}
+	// Вернуть последний ход
 	public Point getLastPoint(){
 		return lastPoint;
 	}
+	// Сделать ход
+	// Установить точку в состояние stoneType и удалить мертвые камни
 	public void makeMove(Point p, int stoneType){
 		setPoint(p, stoneType);
 		removeDeadStones(p);
 	}
-
+	// Проверить можно ли поставить камень в эту точку
 	public  boolean checkRules(final Point p, int stoneType){
 
 		ArrayList<Point> points_to_delete = new ArrayList<Point>();
@@ -207,22 +215,17 @@ public class Board{
 		if (p.getValue() != Board.EMPTY){
 			return false;
 		}
-		// if (!p.isFriendlySingleEyePoint(stoneType)){
-		// 	return false;
-		// }
-		// If point has dame return true
+		// Если у камня есть дамэ, тогда все по правилам
 		if (p.getDameNumber() != 0){
 			return true;
 		}
-		// If there is a Ko return false
+		// Если это КО, тогда нарушение правил
 		if (isKO(p, stoneType)){
 			return false;
 		}
 		
+		// Проверяем можем ли можем ли мы убить соседние группы
 
-	    // Check. Could we kill neigbour enemy groups with this move.
-	    // So we put a stone to the point position 
-	    // and look for dead enemy groups around
 		tryMove(p, stoneType);
 		
 		if (!isDead(p).isEmpty()){
@@ -249,6 +252,7 @@ public class Board{
 		undoMove();
 		return false;
 	}
+	// Мертва ли группа в которую входит камень
 	private ArrayList<Point> isDead(final Point initialPoint){
 		int i,j;
 		int dame_number;
@@ -325,7 +329,7 @@ public class Board{
 		return group.size();
 	}
 
-	// TODO: Return an empty group, not null
+	// Находим все камни в группе, где находится камень p 
 	public Group getGroup(final Point p){
 		int i,j;
 		int dame_number;
@@ -373,6 +377,7 @@ public class Board{
 
 		return false;
 	}
+	// Возвращает камень обратный данному
 	public static int getOppositeSide(int stone){
 		if (stone == FRIENDLY)
 			return ENEMY;

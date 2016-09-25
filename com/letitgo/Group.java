@@ -16,10 +16,6 @@ public class Group implements Iterable<Point>{
 	public int getSize(){
 		return this.group.size();
 	}
-	// TODO: Don't know is this function needed or not
-	public void addPoint(Point point){
-		this.group.add(point);
-	}
 	public int getGroupDameNumber(){
 		if (this.groupDame == null){
 			this.groupDame = getGroupDame();
