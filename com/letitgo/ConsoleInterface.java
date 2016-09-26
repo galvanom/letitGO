@@ -8,7 +8,7 @@ public class ConsoleInterface{
 	protected int aiStone;
 	protected double komi;
 
-
+	//TODO: Добавить команду quit/resign
 	public void setParam(int boardSize, int aiStone, double komi, int playoutsNum){
 		this.board = new Board(boardSize);
 		this.aiStone = aiStone;
@@ -31,7 +31,7 @@ public class ConsoleInterface{
         }
         System.out.printf("\n*LetItGo engine*\n\n");
         System.out.printf("Board size: %d\n", board.getSize());
-        System.out.printf("Komi %f\n", this.komi);
+        System.out.printf("Komi %2.1f\n", this.komi);
         System.out.printf("Playouts per move %d\n", this.playoutsNum);
         if (aiStone == Board.ENEMY){
         	System.out.printf("AI plays for black\n");
