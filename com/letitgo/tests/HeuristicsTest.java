@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class HeuristicsTest{
-
 	//Test killing the enemy group
 	@Test
 	public void getHeuristicMoveTest1(){
@@ -136,7 +135,6 @@ public class HeuristicsTest{
 
 	}
 
-	//isEmptyArea()
 	@Test
 	public void isEmptyAreaTest(){
 		Board board = new Board(9);
