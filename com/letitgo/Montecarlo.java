@@ -4,8 +4,8 @@ import java.io.*;
 import com.letitgo.heuristics.*;
 
 public class Montecarlo{
-	// РџР°СЂР°РјРµС‚СЂС‹  РґР»СЏ СЌРІСЂРёСЃС‚РёРєРё. Р§РµРј Р±РѕР»СЊС€Рµ Р·РЅР°С‡РµРЅРёСЏ С‚РµРј Р±РѕР»СЊС€Рµ РІР»РёСЏРЅРёРµ
-	// РєРѕРЅРєСЂРµС‚РЅРѕР№ СЌРІСЂРёСЃС‚РёРєРё РЅР° Р°Р»РіРѕСЂРёС‚Рј UCT
+	// Параметры  для эвристики. Чем больше значения тем больше влияние
+	// конкретной эвристики на алгоритм UCT
 	final int CAPTURE = 100;
 	final int PATTERN33 = 30;
 	final int THIRD_LINE = 10;
@@ -23,8 +23,8 @@ public class Montecarlo{
 		int wins;
 		int games;
 
-		// РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СѓР·РµР» РІ РґРµСЂРµРІРµ С…РѕРґРѕРІ
-		// РљР°Р¶РґРѕРјСѓ СѓР·Р»Сѓ СЃРѕРѕС‚РІРµС‚СЃРІСѓРµС‚ СѓРЅРёРєР°Р»СЊРЅРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РґРѕСЃРєРё 
+		// Создаем новый узел в дереве ходов
+		// Каждому узлу соответсвует уникальное состояние доски 
 		Node(Node parent, final Board board, final Point point, int stoneType){
 			
 			this.stoneType = stoneType;
@@ -41,7 +41,7 @@ public class Montecarlo{
 				Group group = this.board.getGroup(this.point);
 				if (group.isGroupInAtari()){
 					this.wins = 0;
-					this.games = SELF_ATARI; //TODO: РџРµСЂРµРґРµР»Р°С‚СЊ, СѓРґР°Р»СЏС‚СЊ РµС‰Рµ РґРѕ СЃРѕР·РґР°РЅРёСЏ РЅРѕРґС‹
+					this.games = SELF_ATARI; //TODO: Переделать, удалять еще до создания ноды
 				}
 			}
 
@@ -90,13 +90,13 @@ public class Montecarlo{
 		}
 		int startPlayout(){
 			if (playout == null){
-				playout = new Playout();
+				playout = new Playout(komi);
 			}
 			return playout.playRandomGame(board, Board.getOppositeSide(stoneType)); 
 		}
 	}
-	// РљР»Р°СЃСЃ Move СЂР°СЃС€РёСЂСЏРµС‚ Point РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РґРѕРї. РїР°СЂР°РјРµС‚СЂРѕРІ,
-	// РЅР°РїСЂРёРјРµСЂ С…СЂР°РЅРµРЅРёСЏ РІРµСЂРѕСЏС‚РЅРѕСЃС‚Рё РїРѕР±РµРґС‹ РґР»СЏ С…РѕРґР°
+	// Класс Move расширяет Point для использования доп. параметров,
+	// например хранения вероятности победы для хода
 	public static class Move extends Point{
 		private double moveScore;
 		public Move(Board board, int i, int j, double moveScore){
@@ -107,29 +107,36 @@ public class Montecarlo{
 			return moveScore;
 		}
 	}
-	// РњРёРЅРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР»РµР№Р°СѓС‚РѕРІ РїРµСЂРµРґ СЂР°СЃРєСЂС‹С‚РёРµРј СѓР·Р»Р° РґРµСЂРµРІР°
+	// Минимальное количество плейаутов перед раскрытием узла дерева
 	private static final int MIN_GAMES_FOR_EXPLORATION = 8;
 	private Node root;
 	private Heuristics hr;
 	private final Board sourceBoard;
+	private double komi = 6.5;
+	
 	Montecarlo(final Board board, int whoseTurn){
-		// Р§РёС‚Р°РµРј С„Р°Р№Р» СЃ С€Р°Р±Р»РѕРЅР°РјРё
+		// Читаем файл с шаблонами
 		Pattern33.init();
+
 		sourceBoard = board;
-		root = new Node(null, sourceBoard, null, whoseTurn);
+		root = new Node(null, sourceBoard, null, whoseTurn); //TODO: Поменять whoseTurn на обратный
 		hr = new Heuristics();
 	}
-	// РЎРґРµР»Р°С‚СЊ РѕРґРёРЅ РїСЂРѕС…РѕРґ UCT
+	Montecarlo(final Board board, int whoseTurn, double komi){
+		this(board, whoseTurn);
+		this.komi = komi;
+	}
+	// Сделать один проход UCT
 	public void playOneSequence(){
 		Node node = selectNode(root);
 
-		//Р Р°СЃРєСЂС‹РІР°РµРј СѓР·РµР» С‚РѕР»СЊРєРѕ РµСЃР»Рё РІ РЅРµ РѕС‚С‹РіСЂР°РЅРѕ Р±РѕР»СЊС€Рµ
-		//СЃР»СѓС‡Р°Р№РЅС‹С… РїР°СЂС‚РёР№ С‡РµРј MIN_GAMES_FOR_EXPLORATION
+		//Раскрываем узел только если в не отыграно больше
+		//случайных партий чем MIN_GAMES_FOR_EXPLORATION
 
 		if (node == root || node.getGames() > MIN_GAMES_FOR_EXPLORATION){		
 			node = expand(node);
 
-			if (node == null){ //Р•СЃР»Рё РѕС€РёР±РєР°
+			if (node == null){ //Если ошибка
 				return;
 			}
 		}
@@ -137,9 +144,9 @@ public class Montecarlo{
 		backPropagation(node, winner);
 
 	}
-	// Р’С‹Р±РѕСЂ СѓР·Р»Р°
-	// РџР°СЂР°РјРµС‚СЂ c РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ Р±Р°Р»Р°РЅСЃР° РјРµР¶РґСѓ РіР»СѓР±РёРЅРѕР№ Рё С€РёСЂРёРЅРѕР№ РїРѕРёСЃРєР°
-	// Р§РµРј РјРµРЅСЊС€Рµ С‚РµРј РіР»СѓР±Р¶Рµ РёСЃСЃР»РµРґСѓСЋС‚СЃСЏ РёРЅС‚РµСЂРµСЃРЅС‹Рµ СѓР·Р»С‹ 
+	// Выбор узла
+	// Параметр c используется для баланса между глубиной и шириной поиска
+	// Чем меньше тем глубже исследуются интересные узлы 
 	private Node selectNode(Node node){
 		int i, t; 
 		double value, bestValue, c = 3.44,n,w;
@@ -168,15 +175,15 @@ public class Montecarlo{
 					bestNode = child;
 				}
 			}
-			children = currentNode.getChildren(); //TODO: РїРѕРјРµРЅСЏС‚СЊ РЅР° bestNode.getChildren()? 
+			children = currentNode.getChildren(); //TODO: поменять на bestNode.getChildren()? 
 			
 		}
 		return currentNode;
 		
 	}
-	// РљРѕРіРґР° РІ СѓР·Р»Рµ РїСЂРѕРёРіСЂР°РЅРЅРѕ РЅРµРєРѕС‚РѕСЂРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂС‚РёР№,
-	// РјС‹ РѕС‚РєСЂС‹РІР°РµРј РµРіРѕ. Рў.Рµ. СЃРѕР·РґР°РµРј СѓР·Р»С‹ СЃ РЅРѕРІС‹РјРё С…РѕРґР°РјРё
-	// СЃРґРµР»Р°РЅРЅС‹РјРё РїРѕСЃР»Рµ С‚РµРєСѓС‰РµРіРѕ (papa)
+	// Когда в узле проигранно некоторое количество партий,
+	// мы открываем его. Т.е. создаем узлы с новыми ходами
+	// сделанными после текущего (papa)
 	private Node expand(Node papa){
 		int boardSize = root.getBoard().getSize();
 		int[][] childrenBoard = new int[boardSize][boardSize];
@@ -188,15 +195,15 @@ public class Montecarlo{
 		allPossibleMoves = Playout.getFreePoints(papa.getBoard(), Board.getOppositeSide(papa.getStoneType()));
 		if (allPossibleMoves.size() > 0){
 			for (Point move : allPossibleMoves){
-				// РџСЂРѕРІРµСЂСЏРµРј РЅРµ РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё С…РѕРґ РїРѕРґ Р°С‚Р°СЂРё
+				// Проверяем не находится ли ход под атари
 
 				// if (!move.isAtari(Board.getOppositeSide(papa.getStoneType()))){
 					papa.addChild(move);
 				// }
 				
 			}
-			// РќР°Р·РЅР°С‡Р°РµРј РїСЂРёРѕСЂРёС‚РµС‚ РЅРѕРІС‹Рј С…РѕРґР°Рј
-			// Р—Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ if, С‡С‚РѕР±С‹ РЅРµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЌРІСЂРёСЃС‚РёРєСѓ
+			// Назначаем приоритет новым ходам
+			// Закомментировать if, чтобы не использовать эвристику
 			if (papa.getChildren() != null){
 				rateChildren(papa);		
 			}
@@ -205,7 +212,7 @@ public class Montecarlo{
 		
 		return null;
 	}
-	// Р¤СѓРЅРєС†РёСЏ РЅР°Р·РЅР°С‡РµРЅРёСЏ РїСЂРёРѕСЂРёС‚РµС‚РѕРІ С…РѕРґР°Рј
+	// Функция назначения приоритетов ходам
 	private void rateChildren(Node papa){
 		final int boardSize = papa.getBoard().getSize();
 
@@ -234,7 +241,7 @@ public class Montecarlo{
 			Arrays.fill(markBoard[i],0);
 		}
 
-		// РџРѕРјРµС‡Р°РµРј С…РѕРґС‹ РІ РѕРєСЂРµСЃС‚РЅРѕСЃС‚СЏС… РїРѕСЃР»РµРґРЅРµРіРѕ С…РѕРґР° РєР°Рє С…РѕСЂРѕС€РёРµ
+		// Помечаем ходы в окрестностях последнего хода как хорошие
 		if (lastPoint != null){
 			lastPointArea = lastPoint.getAllNeighbours();
 
@@ -266,9 +273,9 @@ public class Montecarlo{
 			child.addGames(value);
 			child.addWins(value);
 
-			// РџРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїСЂРёРѕСЂРёС‚РµС‚Р° С…РѕРґР°Рј РЅР° 3-СЋ Р»РёРЅРёСЋ, РїСЂРё СѓСЃР»РѕРІРёРё, С‡С‚Рѕ
-			// РЅР° СЂР°СЃСЃС‚РѕСЏРЅРёРё РІ 3 РєР»РµС‚РєРё РѕС‚ РЅРµРіРѕ РЅРµС‚ РєР°РјРЅРµР№
-			// РћС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Р№ РїСЂРёРѕСЂРёС‚РµС‚ 1-Р№ Рё 2-Р№ Р»РёРЅРёСЏРј
+			// Положительное значение приоритета ходам на 3-ю линию, при условии, что
+			// на расстоянии в 3 клетки от него нет камней
+			// Отрицательный приоритет 1-й и 2-й линиям
 			if (hr.isEmptyArea(papa.getBoard(), child.getPoint(), 3)){
 				child_i = child.getPoint().i;
 				child_j = child.getPoint().j;
@@ -297,11 +304,11 @@ public class Montecarlo{
 		}
 
 	}
-	// РРіСЂР°РµРј СЃРёРјСѓР»СЏС†РёСЋ РёР· СѓР·Р»Р° node
+	// Играем симуляцию из узла node
 	private int simulation(Node node){
 		return node.startPlayout();
 	}
-	// РћР±РЅРѕРІР»СЏРµРј Р·РЅР°С‡РµРЅРёСЏ СѓР·Р»РѕРІ РґРµСЂРµРІР°
+	// Обновляем значения узлов дерева
 	private void backPropagation(Node startNode, int winner){
 		Node currentNode = startNode;
 		do{
@@ -312,7 +319,7 @@ public class Montecarlo{
 		} while(currentNode != null);
 		
 	}
-	// РћРїСЂРµРґРµР»СЏРµРј СѓР·РµР» РїРѕР±РµРґРёС‚РµР»СЊ РїРѕ РЅР°РёР±РѕР»СЊС€РµРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ РїРѕСЃРµС‰РµРЅРёР№
+	// Определяем узел победитель по наибольшему количеству посещений
 	public Move getWinner(){
 		ArrayList<Node> children = root.getChildren();
 		Node bestChild = null;
@@ -330,7 +337,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 				if (max < child.getGames() && child.getGames() < SELF_ATARI){
 					max = child.getGames();
@@ -342,7 +349,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			// if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 			// 	System.out.printf("Resign!\n");
 			// }
@@ -355,7 +362,7 @@ public class Montecarlo{
 		}
 				
 	}
-	// Р’С‹РІРµСЃС‚Рё РІ РєРѕРЅСЃРѕР»СЊ РґРµСЂРµРІРѕ (РѕС‡РµРЅСЊ РјРЅРѕРіРѕ:)
+	// Вывести в консоль дерево (очень много:)
 	public void printTree(){
 		Node node;
 		ArrayList<Node> nodeChildren;

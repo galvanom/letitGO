@@ -116,12 +116,13 @@ public class Board{
 		
 	}
 	// Читаем доску из файла
-	public void loadFromFile(String filename){
+	public void loadFromFile(String fileName){
 		int i,j;
 		char point;
 		int c;
 		try{
-			InputStream in = new FileInputStream(new File(filename));
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream in = classLoader.getResourceAsStream(fileName);
 			for (i = 0, j = 0, c = in.read(); c != -1 &&
 			 i < this.size -2; c = in.read()){ 
 				if ((char)c == ' ')
@@ -314,7 +315,7 @@ public class Board{
 			
 		}
 		// Если удалили 1 камень и ход сделан в глаз противника,
-		// то возможно, что это Ко
+		// то это Ко
 		if (allDeleted == 1 && lastPoint != null && isSingleEye){
 
 			setKO(lastPoint, stoneType);

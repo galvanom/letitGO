@@ -8,7 +8,7 @@ public class Main{
 	public static void main(String[] args){
 		
 		ConsoleInterface ci = new ConsoleInterface();
-		ci.setParam(9, Board.ENEMY, 6.5, 5000);
+		ci.setParam(9, Board.FRIENDLY, 6.5, 5000);
 		ci.start();
 		// GTP gtp = new GTP();
 		// gtp.start();
