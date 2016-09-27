@@ -13,6 +13,9 @@ public class Montecarlo{
 	final int LAST_POINT_AREA = 10;
 	final int LAST_DAME = 30;
 	final int SELF_ATARI = 100000;
+	// Минимальное количество плейаутов перед раскрытием узла дерева
+	private static final int MIN_GAMES_FOR_EXPLORATION = 5;
+	
 	private class Node{
 		Node parent;
 		ArrayList<Node> children = null;
@@ -36,12 +39,14 @@ public class Montecarlo{
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
-				this.board.makeMove(point, stoneType);
+				this.board.makeMove(this.point, stoneType);
 
 				Group group = this.board.getGroup(this.point);
+
 				if (group.isGroupInAtari()){
 					this.wins = 0;
 					this.games = SELF_ATARI; //TODO: Переделать, удалять еще до создания ноды
+
 				}
 			}
 
@@ -107,8 +112,7 @@ public class Montecarlo{
 			return moveScore;
 		}
 	}
-	// Минимальное количество плейаутов перед раскрытием узла дерева
-	private static final int MIN_GAMES_FOR_EXPLORATION = 8;
+
 	private Node root;
 	private Heuristics hr;
 	private final Board sourceBoard;
@@ -337,7 +341,7 @@ public class Montecarlo{
 				catch(ArithmeticException e){
 					childValue = 0;
 				}
-				// System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
+				System.out.printf("[%d %d] Child %d wins: %d, games: %d (%f)\n",child.getPoint().i,child.getPoint().j, child.stoneType, child.getWins(), child.getGames(), childValue);
 
 				if (max < child.getGames() && child.getGames() < SELF_ATARI){
 					max = child.getGames();
@@ -349,7 +353,7 @@ public class Montecarlo{
 
 		if (bestChild != null){
 
-			// System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
+			System.out.printf("Best child wins: %d, games: %d\n", bestChild.getWins(), bestChild.getGames());
 			// if ((double)bestChild.getWins()/bestChild.getGames() < 0.25){
 			// 	System.out.printf("Resign!\n");
 			// }
@@ -387,10 +391,10 @@ public class Montecarlo{
 			}
 			if (node.getParent() != null){
 				if (node.getGames() != 0){
-					// System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
-						// node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
-					 //  	node.getPoint().i, node.getPoint().j,
-					 //  	node.getGames(), node.getWins());
+					System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
+						node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
+					  	node.getPoint().i, node.getPoint().j,
+					  	node.getGames(), node.getWins());
 				}
 			}
 

@@ -7,11 +7,11 @@ import com.letitgo.heuristics.*;
 public class Main{
 	public static void main(String[] args){
 		
-		ConsoleInterface ci = new ConsoleInterface();
-		ci.setParam(9, Board.FRIENDLY, 6.5, 5000);
-		ci.start();
-		// GTP gtp = new GTP();
-		// gtp.start();
+		// ConsoleInterface ci = new ConsoleInterface();
+		// ci.setParam(9, Board.FRIENDLY, 6.5, 5000);
+		// ci.start();
+		GTP gtp = new GTP();
+		gtp.start();
 
 		
 		Board board = new Board(9);
@@ -28,7 +28,8 @@ public class Main{
 		long startTime;
 
 		board.loadFromFile("board9x9.dat");
-		board.printBoard();
+		// board.printBoard();
+		// System.out.println(board.checkRules(new Point(board,1,3),Board.ENEMY));
 
 
 		// ArrayList<Point> capmov = hr.capture.getAllMoves(board, Board.ENEMY);
@@ -40,7 +41,7 @@ public class Main{
 		
 			startTime = System.currentTimeMillis();
 			mc = new Montecarlo(board, humanStone);	
-			for (int i = 0; i < 3000; i++){
+			for (int i = 0; i < 1; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();
 				// }

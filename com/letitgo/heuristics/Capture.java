@@ -133,6 +133,7 @@ public class Capture{
 						
 						friendlyGroup = board.getGroup(atariGroupDame);
 						friendlyGroupDame = friendlyGroup.getGroupDame();
+						
 						board.undoMove();
 						if (friendlyGroupDame.size() > 2){
 							allCaptureMoves.add(atariGroupDame);
