@@ -21,7 +21,7 @@ public class Playout{
 		// Вероятность срабатывания эвристик
 		// Например, 10 означает 1 раз из 10
 		final int CAP_RAND_THRESS = 10;
-		final int PAT_RAND_THRESS = 10;
+		final int PAT_RAND_THRESS = 100;
 		final int EYE_RAND_THRESS = 10;
 		// Игра длится не более чем это значение ходов
 		final int MAX_MOVES = boardSize*boardSize*2;
@@ -64,14 +64,16 @@ public class Playout{
 				}
 				// Если ходы попавшие под шаблоны найдены делаем ход
 				if (random.nextInt(PAT_RAND_THRESS) != 0){
-					patternMove = heuristics.pattern33.getFirstMove(playBoard);
+					patternMove = heuristics.pattern33.getFirstMove(playBoard, stoneType);
 
-					if (patternMove != null){
+					if (patternMove != null ){
 						// playBoard.printBoard();
-						playBoard.makeMove(patternMove, stoneType);
-						// System.out.printf("\n****Pattern found. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
-						// playBoard.printBoard();
-						continue;
+						
+							playBoard.makeMove(patternMove, stoneType);
+							// System.out.printf("\n****Pattern found. The point is [%d,%d] Stone type is: %s ****",patternMove.i , patternMove.j, stoneType == Board.ENEMY ? "X" :"O");
+							// playBoard.printBoard();
+							continue;
+						
 					}
 				}
 			
@@ -123,7 +125,7 @@ public class Playout{
 				if (board.getPoint(p) == Board.EMPTY){
 					surroundedStones = p.getNeighbours();
 					isFriendly = true; isEnemy = true;
-					// TODO: Change for stone.isFriendlySinglePoint()
+					// TODO: Поменять на stone.isFriendlySinglePoint()
 					for (Point stone: surroundedStones){
 						pointType = board.getPoint(stone);
 						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){

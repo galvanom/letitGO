@@ -8,7 +8,7 @@ import com.letitgo.Point;
 public  class Pattern33{
 	private final int PATTERN_SIZE = 9;
 	private static int[] patternsBase;
-	private static final String [] patterns = {  // 3x3 playout patterns; X,O are colors, x,o are their inverses
+	private static final String [] patterns = {
 						       "XOX...???",
 						       "XO....?.?",
 						       "XO?X..x.?",
@@ -108,11 +108,19 @@ public  class Pattern33{
 
 	}
 	// Быстрая версия алгоритма ищет шаблоны только в округе 3 на 3
-	public Point getFirstMove(Board board){
+	public Point getFirstMove(Board board, int stoneType){
+
 		ArrayList<Point> points = new ArrayList<Point>();
 		points = board.getLastPoint().getNeighbours();
 		points.addAll(board.getLastPoint().getDiagonalNeighbours());
-				long seed = System.nanoTime();
+		
+		for (int i = 0; i < points.size(); i++){
+			if (!board.checkRules(points.get(i), stoneType)){
+				points.remove(i);
+			}
+		}
+		
+		long seed = System.nanoTime();
 		Collections.shuffle(points, new Random(seed));
 		
 		return getPatternMove(board, points);
