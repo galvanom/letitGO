@@ -24,7 +24,7 @@ public class GTP extends ConsoleInterface{
 		komi = 6.5;
 		board = null;
 	}
-    @Override
+	@Override
 	public void start(){
 		String input;
         BufferedReader stdIn;
@@ -75,7 +75,7 @@ public class GTP extends ConsoleInterface{
                     
                 }
                 if (input.startsWith("komi")){
-
+                	//TODO: Считать коми
                     System.out.println("=\n");
                     continue;
                 }
@@ -89,18 +89,19 @@ public class GTP extends ConsoleInterface{
                 if (input.startsWith("genmove")){
 
                 	if (input.split(" ")[1].equals("b")){
-                    	mc = new Montecarlo(board, Board.FRIENDLY);
+                    	mc = new Montecarlo(board, Board.ENEMY);
                     	stoneType = Board.ENEMY;
                     }
                     if (input.split(" ")[1].equals("w")){
-                    	mc = new Montecarlo(board, Board.ENEMY);
+                    	mc = new Montecarlo(board, Board.FRIENDLY);
                     	stoneType = Board.FRIENDLY;
                     }
                     startTime = System.currentTimeMillis();
                     for (int i = 0; i < PLAYOUTS_NUM; i++){
 						mc.playOneSequence();
 					}
-					System.out.println(System.currentTimeMillis() - startTime);
+
+					// System.out.println(System.currentTimeMillis() - startTime);
 					aiMove = mc.getWinner();
 					if (aiMove == null || aiPasses == true){
 						System.out.printf("= PASS\n\n");

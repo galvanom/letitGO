@@ -49,7 +49,7 @@ public class ConsoleInterface{
             while (true){
             	if (currentMove == aiStone){
             		System.out.printf("AI is searching for a move\nIt can take awhile\n");
-            		mc = new Montecarlo(board, Board.getOppositeSide(aiStone));
+            		mc = new Montecarlo(board, aiStone);
             		for (int i = 0; i < playoutsNum; i++){
 						mc.playOneSequence();
 					}
