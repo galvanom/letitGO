@@ -29,7 +29,7 @@ public class Montecarlo{
 		// —оздаем новый узел в дереве ходов
 		//  аждому узлу соответсвует уникальное состо€ние доски 
 		Node(Node parent, final Board board, final Point point, int stoneType){
-			
+
 			this.stoneType = stoneType;
 			this.parent = parent;
 			this.board = new Board(board);
@@ -39,11 +39,13 @@ public class Montecarlo{
 			wins = 0;
 			games = 0;
 			if (parent != null && point != null){ 		//root node
-				this.board.makeMove(this.point, stoneType);
+				this.board.setPoint(this.point, stoneType);
+				boolean wasRemovedStones = this.board.removeDeadStones(this.point);
+				// this.board.makeMove(this.point, stoneType);
 
 				Group group = this.board.getGroup(this.point);
 
-				if (group.isGroupInAtari()){
+				if (group.isGroupInAtari() && !wasRemovedStones){
 					this.wins = 0;
 					this.games = SELF_ATARI; //TODO: ѕеределать, удал€ть еще до создани€ ноды
 
@@ -123,7 +125,7 @@ public class Montecarlo{
 		Pattern33.init();
 
 		sourceBoard = board;
-		root = new Node(null, sourceBoard, null, whoseTurn); //TODO: ѕомен€ть whoseTurn на обратный
+		root = new Node(null, sourceBoard, null, Board.getOppositeSide(whoseTurn));
 		hr = new Heuristics();
 	}
 	Montecarlo(final Board board, int whoseTurn, double komi){
@@ -179,7 +181,7 @@ public class Montecarlo{
 					bestNode = child;
 				}
 			}
-			children = currentNode.getChildren(); //TODO: помен€ть на bestNode.getChildren()? 
+			children = bestNode.getChildren(); 
 			
 		}
 		return currentNode;
@@ -391,10 +393,10 @@ public class Montecarlo{
 			}
 			if (node.getParent() != null){
 				if (node.getGames() != 0){
-					System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
-						node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
-					  	node.getPoint().i, node.getPoint().j,
-					  	node.getGames(), node.getWins());
+					// System.out.printf("\n%s %s [%d,%d] Games:%d Wins:%d\n", tab,
+					// 	node.getStoneType() == Board.FRIENDLY ? "FRIENDLY" : "ENEMY",
+					//   	node.getPoint().i, node.getPoint().j,
+					//   	node.getGames(), node.getWins());
 				}
 			}
 

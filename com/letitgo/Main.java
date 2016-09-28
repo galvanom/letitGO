@@ -40,7 +40,7 @@ public class Main{
 		// while (true){
 		
 			startTime = System.currentTimeMillis();
-			mc = new Montecarlo(board, humanStone);	
+			mc = new Montecarlo(board, aiStone);	
 			for (int i = 0; i < 1; i++){
 				// if (i%10000 == 0){
 				// 	System.gc();

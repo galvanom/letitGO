@@ -293,7 +293,7 @@ public class Board{
 	* Параметр lastMove содержит последний ход, вокруг которого
 	* мы будем искать мертвые камни
 	*/
-	public void removeDeadStones(Point lastMove){
+	public boolean removeDeadStones(Point lastMove){
 		int stoneType = getOppositeSide(getPoint(lastMove));
 		int i,j, allDeleted = 0, deleted;
 		Point point, lastPoint = null; //change lastPoint name
@@ -320,6 +320,11 @@ public class Board{
 
 			setKO(lastPoint, stoneType);
 		}
+		if (allDeleted > 0){ // удалили с доски камни или нет
+			return true;
+		}
+
+		return false;
 	}
 
 	public int deleteGroupIfItsDead(final Point p){
