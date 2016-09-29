@@ -1,7 +1,10 @@
 *.class
 test.java
 *.jar
-*.bat
 build/
 prodbuild/
 kgs/
+runtest_hr.bat
+prodbuild2609/com/letitgo/patterns33.dat
+prodbuild2809/patterns33.dat
+runtest_bd.bat

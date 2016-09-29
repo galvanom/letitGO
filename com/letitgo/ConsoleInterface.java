@@ -29,6 +29,7 @@ public class ConsoleInterface{
         	System.out.printf("Board wasn't initialized\n");
         	return;
         }
+        
         System.out.printf("\n*LetItGo engine*\n\n");
         System.out.printf("Board size: %d\n", board.getSize());
         System.out.printf("Komi %2.1f\n", this.komi);
