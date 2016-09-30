@@ -18,12 +18,12 @@ public class Playout{
 
 	public int playRandomGame(final Board board, int first_stone){
 		int boardSize = board.getSize();
-		// Вероятность срабатывания эвристик
-		// Например, 10 означает 1 раз из 10
+		// Г‚ГҐГ°Г®ГїГІГ­Г®Г±ГІГј Г±Г°Г ГЎГ ГІГ»ГўГ Г­ГЁГї ГЅГўГ°ГЁГ±ГІГЁГЄ
+		// ГЌГ ГЇГ°ГЁГ¬ГҐГ°, 10 Г®Г§Г­Г Г·Г ГҐГІ 1 Г°Г Г§ ГЁГ§ 10
 		final int CAP_RAND_THRESS = 10;
 		final int PAT_RAND_THRESS = 100;
 		final int EYE_RAND_THRESS = 10;
-		// Игра длится не более чем это значение ходов
+		// Г€ГЈГ°Г  Г¤Г«ГЁГІГ±Гї Г­ГҐ ГЎГ®Г«ГҐГҐ Г·ГҐГ¬ ГЅГІГ® Г§Г­Г Г·ГҐГ­ГЁГҐ ГµГ®Г¤Г®Гў
 		final int MAX_MOVES = boardSize*boardSize*2;
 
 		ArrayList<Point> free_points;
@@ -43,16 +43,16 @@ public class Playout{
 
 
 			
-			// Перед использованием случайных ходов, пытаемся найти в окрестностях последнего хода
-			// интересные с точки зрения эвристики точки.
-			// Если они найдены ходим туда.
+			// ГЏГҐГ°ГҐГ¤ ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГҐГ¬ Г±Г«ГіГ·Г Г©Г­Г»Гµ ГµГ®Г¤Г®Гў, ГЇГ»ГІГ ГҐГ¬Г±Гї Г­Г Г©ГІГЁ Гў Г®ГЄГ°ГҐГ±ГІГ­Г®Г±ГІГїГµ ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® ГµГ®Г¤Г 
+			// ГЁГ­ГІГҐГ°ГҐГ±Г­Г»ГҐ Г± ГІГ®Г·ГЄГЁ Г§Г°ГҐГ­ГЁГї ГЅГўГ°ГЁГ±ГІГЁГЄГЁ ГІГ®Г·ГЄГЁ.
+			// Г…Г±Г«ГЁ Г®Г­ГЁ Г­Г Г©Г¤ГҐГ­Г» ГµГ®Г¤ГЁГ¬ ГІГіГ¤Г .
 			random = new Random(System.nanoTime());
 
 			if (playBoard.getLastPoint() != null){
 
 				if (random.nextInt(CAP_RAND_THRESS) != 0){
 					captureMove =  heuristics.capture.getFirstMove(playBoard, stoneType);
-					// Если ходы связанные с захватом групп найдены, делаем ход
+					// Г…Г±Г«ГЁ ГµГ®Г¤Г» Г±ГўГїГ§Г Г­Г­Г»ГҐ Г± Г§Г ГµГўГ ГІГ®Г¬ ГЈГ°ГіГЇГЇ Г­Г Г©Г¤ГҐГ­Г», Г¤ГҐГ«Г ГҐГ¬ ГµГ®Г¤
 
 					if (captureMove != null) {
 						// playBoard.printBoard();
@@ -62,7 +62,7 @@ public class Playout{
 						continue;
 					}
 				}
-				// Если ходы попавшие под шаблоны найдены делаем ход
+				// Г…Г±Г«ГЁ ГµГ®Г¤Г» ГЇГ®ГЇГ ГўГёГЁГҐ ГЇГ®Г¤ ГёГ ГЎГ«Г®Г­Г» Г­Г Г©Г¤ГҐГ­Г» Г¤ГҐГ«Г ГҐГ¬ ГµГ®Г¤
 				if (random.nextInt(PAT_RAND_THRESS) != 0){
 					patternMove = heuristics.pattern33.getFirstMove(playBoard, stoneType);
 
@@ -79,7 +79,7 @@ public class Playout{
 			
 			}
 			
-			// Эвристики не сработали? Выбираем слчайный ход
+			// ГќГўГ°ГЁГ±ГІГЁГЄГЁ Г­ГҐ Г±Г°Г ГЎГ®ГІГ Г«ГЁ? Г‚Г»ГЎГЁГ°Г ГҐГ¬ Г±Г«Г·Г Г©Г­Г»Г© ГµГ®Г¤
 			free_points = getFreePoints(playBoard, stoneType);
 
 			if (free_points.size() == 0){
@@ -88,7 +88,7 @@ public class Playout{
 			}
 			passTimes = 0;
 
-			// При этом ход не должен быть внутрь своего глаза с некоторой вероятностью
+			// ГЏГ°ГЁ ГЅГІГ®Г¬ ГµГ®Г¤ Г­ГҐ Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј ГўГ­ГіГІГ°Гј Г±ГўГ®ГҐГЈГ® ГЈГ«Г Г§Г  Г± Г­ГҐГЄГ®ГІГ®Г°Г®Г© ГўГҐГ°Г®ГїГІГ­Г®Г±ГІГјГѕ
 			do {
 				move = free_points.get(random.nextInt(free_points.size()));
 			} while(move.isSingleEyePoint(stoneType) && random.nextInt(EYE_RAND_THRESS) != 0);
@@ -101,15 +101,15 @@ public class Playout{
 			
 		}
 		// playBoard.printBoard();
-		// Отыграли. Получаем счет.
+		// ГЋГІГ»ГЈГ°Г Г«ГЁ. ГЏГ®Г«ГіГ·Г ГҐГ¬ Г±Г·ГҐГІ.
 		int[] score = getScore(playBoard);
 
 		// System.out.printf("\nO: %d  X: %d\n", score[0], score[1]);  
 		return (double)score[0] + komi > score[1] ? Board.FRIENDLY : Board.ENEMY; //TODO: komi is not used
 	}
-	// TODO: Сделать тесты
-	// Ищем точки окруженные каждым игроком
-	// И вычисляем счет по китайским правилам
+	// TODO: Г‘Г¤ГҐГ«Г ГІГј ГІГҐГ±ГІГ»
+	// Г€Г№ГҐГ¬ ГІГ®Г·ГЄГЁ Г®ГЄГ°ГіГ¦ГҐГ­Г­Г»ГҐ ГЄГ Г¦Г¤Г»Г¬ ГЁГЈГ°Г®ГЄГ®Г¬
+	// Г€ ГўГ»Г·ГЁГ±Г«ГїГҐГ¬ Г±Г·ГҐГІ ГЇГ® ГЄГЁГІГ Г©Г±ГЄГЁГ¬ ГЇГ°Г ГўГЁГ«Г Г¬
 	private int[] getScore(final Board board){
 		int i,j, friendScore = 0, enemyScore = 0;
 		// int surroundedStones[] = new int[4];
@@ -125,7 +125,7 @@ public class Playout{
 				if (board.getPoint(p) == Board.EMPTY){
 					surroundedStones = p.getNeighbours();
 					isFriendly = true; isEnemy = true;
-					// TODO: Поменять на stone.isFriendlySinglePoint()
+					// TODO: ГЏГ®Г¬ГҐГ­ГїГІГј Г­Г  stone.isFriendlySinglePoint()
 					for (Point stone: surroundedStones){
 						pointType = board.getPoint(stone);
 						if (pointType != Board.FRIENDLY && pointType != Board.BORDER){
@@ -161,8 +161,8 @@ public class Playout{
 		int[] score = {friendScore, enemyScore};
 		return score;
 	}
-	// TODO: Сделать тесты
-	// Получаем список всех валидных точек на доске, куда можно сходить
+	// TODO: Г‘Г¤ГҐГ«Г ГІГј ГІГҐГ±ГІГ»
+	// ГЏГ®Г«ГіГ·Г ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГўГ±ГҐГµ ГўГ Г«ГЁГ¤Г­Г»Гµ ГІГ®Г·ГҐГЄ Г­Г  Г¤Г®Г±ГЄГҐ, ГЄГіГ¤Г  Г¬Г®Г¦Г­Г® Г±ГµГ®Г¤ГЁГІГј
 	public static ArrayList<Point> getFreePoints(final Board board, int stoneType){
 		int i,j;
 		int boardSize = board.getSize();
@@ -171,7 +171,7 @@ public class Playout{
 		Point p;
 		for (i = 0; i < boardSize; i++)
 			for (j = 0; j < boardSize; j++){
-				p = new Point(board, i, j); //TODO: Поменять с нижней строчкой местами
+				p = new Point(board, i, j); //TODO: ГЏГ®Г¬ГҐГ­ГїГІГј Г± Г­ГЁГ¦Г­ГҐГ© Г±ГІГ°Г®Г·ГЄГ®Г© Г¬ГҐГ±ГІГ Г¬ГЁ
 				if (board.getPoint(p) == Board.EMPTY){
 					if (board.checkRules(p, stoneType)){
 						if (p.isSingleEyePoint(stoneType) && p.isTrueEye(stoneType)){

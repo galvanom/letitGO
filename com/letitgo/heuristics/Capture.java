@@ -6,7 +6,6 @@ import com.letitgo.Point;
 import com.letitgo.Group;
 
 public class Capture{
-	//Fast version of the algorithm. Searches moves only in area of 3x3 around last move
 	public Point getFirstMove(final Board board, int ownStoneType){
 		ArrayList<Point> points = new ArrayList<Point>();
 		ArrayList<Point> captureMoves;
@@ -22,7 +21,7 @@ public class Capture{
 			return null;
 		}
 	}
-	// Возвращает все ходы подподающие под эту эвристику
+	// Г‚Г®Г§ГўГ°Г Г№Г ГҐГІ ГўГ±ГҐ ГµГ®Г¤Г» ГЇГ®Г¤ГЇГ®Г¤Г ГѕГ№ГЁГҐ ГЇГ®Г¤ ГЅГІГі ГЅГўГ°ГЁГ±ГІГЁГЄГі
 	public ArrayList<Point> getAllMoves(final Board board, int ownStoneType){
 		int boardSize = board.getSize();
 		ArrayList<Point> points = new ArrayList<Point>();
@@ -85,7 +84,7 @@ public class Capture{
 			
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
-				// Если  это вражеская группа с 1-м дамэ добавляем ее в список
+				// Г…Г±Г«ГЁ  ГЅГІГ® ГўГ°Г Г¦ГҐГ±ГЄГ Гї ГЈГ°ГіГЇГЇГ  Г± 1-Г¬ Г¤Г Г¬ГЅ Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГҐГҐ Гў Г±ГЇГЁГ±Г®ГЄ
 				if (pointType == Board.getOppositeSide(ownStoneType) && board.checkRules(atariGroupDame, ownStoneType) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
 					 allCaptureMoves.add(atariGroupDame);
@@ -94,11 +93,11 @@ public class Capture{
 					 }
 					//return null;
 				}
-				// Если же с одним дамэ оказалась наша группа, то ищем способы убить соседние группы
-				// или попытаться уюежать из под атари избегая лестницы и самоатари
+				// Г…Г±Г«ГЁ Г¦ГҐ Г± Г®Г¤Г­ГЁГ¬ Г¤Г Г¬ГЅ Г®ГЄГ Г§Г Г«Г Г±Гј Г­Г ГёГ  ГЈГ°ГіГЇГЇГ , ГІГ® ГЁГ№ГҐГ¬ Г±ГЇГ®Г±Г®ГЎГ» ГіГЎГЁГІГј Г±Г®Г±ГҐГ¤Г­ГЁГҐ ГЈГ°ГіГЇГЇГ»
+				// ГЁГ«ГЁ ГЇГ®ГЇГ»ГІГ ГІГјГ±Гї ГіГѕГҐГ¦Г ГІГј ГЁГ§ ГЇГ®Г¤ Г ГІГ Г°ГЁ ГЁГ§ГЎГҐГЈГ Гї Г«ГҐГ±ГІГ­ГЁГ¶Г» ГЁ Г±Г Г¬Г®Г ГІГ Г°ГЁ
 				else if (pointType == ownStoneType){
 					
-					//Пытаемся убить соседние вражеские группы
+					//ГЏГ»ГІГ ГҐГ¬Г±Гї ГіГЎГЁГІГј Г±Г®Г±ГҐГ¤Г­ГЁГҐ ГўГ°Г Г¦ГҐГ±ГЄГЁГҐ ГЈГ°ГіГЇГЇГ»
 					for (i = 0; i < boardSize; i++)
 						for (j = 0; j < boardSize; j++)
 							visitedNeighbours[i][j] = 0;
@@ -127,7 +126,7 @@ public class Capture{
 						}
 					}
 					
-					//Пробуем убежать избегая самоатари и лестницы
+					//ГЏГ°Г®ГЎГіГҐГ¬ ГіГЎГҐГ¦Г ГІГј ГЁГ§ГЎГҐГЈГ Гї Г±Г Г¬Г®Г ГІГ Г°ГЁ ГЁ Г«ГҐГ±ГІГ­ГЁГ¶Г»
 					if (board.checkRules(atariGroupDame, ownStoneType) == true){
 						board.tryMove(atariGroupDame, ownStoneType);
 						
@@ -155,7 +154,7 @@ public class Capture{
 	return allCaptureMoves;
 	}
 
-	// Ищем все группы с 1-м дамэ
+	// Г€Г№ГҐГ¬ ГўГ±ГҐ ГЈГ°ГіГЇГЇГ» Г± 1-Г¬ Г¤Г Г¬ГЅ
 	public ArrayList<Point> getAtariPoints(final Board board, final int groupsType){
 		int boardSize = board.getSize();
 		boolean[][] visited = new boolean[boardSize][boardSize];
