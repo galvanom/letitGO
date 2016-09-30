@@ -101,7 +101,7 @@ public class GTP extends ConsoleInterface{
 						mc.playOneSequence();
 					}
 
-					System.out.println(System.currentTimeMillis() - startTime);
+					//System.out.println(System.currentTimeMillis() - startTime);
 					aiMove = mc.getWinner();
 					if (aiMove == null || aiPasses == true){
 						System.out.printf("= PASS\n\n");
