@@ -45,7 +45,8 @@ public class Playout{
 			
 			// Перед использованием случайных ходов, пытаемся найти в окрестностях последнего хода
 			// интересные с точки зрения эвристики точки.
-			// Если они найдены ходим туда.			random = new Random(System.nanoTime());
+			// Если они найдены ходим туда.			
+			random = new Random(System.nanoTime());
 
 			if (playBoard.getLastPoint() != null){
 
