@@ -21,7 +21,7 @@ public class Capture{
 			return null;
 		}
 	}
-	// Âîçâðàùàåò âñå õîäû ïîäïîäàþùèå ïîä ýòó ýâðèñòèêó
+	// Возвращает все ходы подподающие под эту эвристику
 	public ArrayList<Point> getAllMoves(final Board board, int ownStoneType){
 		int boardSize = board.getSize();
 		ArrayList<Point> points = new ArrayList<Point>();
@@ -84,7 +84,7 @@ public class Capture{
 			
 			if (groupDame.size() == 1){
 				atariGroupDame = groupDame.get(0);
-				// Åñëè  ýòî âðàæåñêàÿ ãðóïïà ñ 1-ì äàìý äîáàâëÿåì åå â ñïèñîê
+				// Если  это вражеская группа с 1-м дамэ добавляем ее в список
 				if (pointType == Board.getOppositeSide(ownStoneType) && board.checkRules(atariGroupDame, ownStoneType) == true){
 					//System.out.printf("Dames: %d, Dame(0): %d,%d\n",groupDame.size(), groupDame.get(0).i, groupDame.get(0).j );
 					 allCaptureMoves.add(atariGroupDame);
@@ -93,11 +93,11 @@ public class Capture{
 					 }
 					//return null;
 				}
-				// Åñëè æå ñ îäíèì äàìý îêàçàëàñü íàøà ãðóïïà, òî èùåì ñïîñîáû óáèòü ñîñåäíèå ãðóïïû
-				// èëè ïîïûòàòüñÿ óþåæàòü èç ïîä àòàðè èçáåãàÿ ëåñòíèöû è ñàìîàòàðè
+				// Если же с одним дамэ оказалась наша группа, то ищем способы убить соседние группы
+				// или попытаться уюежать из под атари избегая лестницы и самоатари
 				else if (pointType == ownStoneType){
 					
-					//Ïûòàåìñÿ óáèòü ñîñåäíèå âðàæåñêèå ãðóïïû
+					//Пытаемся убить соседние вражеские группы
 					for (i = 0; i < boardSize; i++)
 						for (j = 0; j < boardSize; j++)
 							visitedNeighbours[i][j] = 0;
@@ -126,7 +126,7 @@ public class Capture{
 						}
 					}
 					
-					//Ïðîáóåì óáåæàòü èçáåãàÿ ñàìîàòàðè è ëåñòíèöû
+					//Пробуем убежать избегая самоатари и лестницы
 					if (board.checkRules(atariGroupDame, ownStoneType) == true){
 						board.tryMove(atariGroupDame, ownStoneType);
 						
@@ -154,7 +154,7 @@ public class Capture{
 	return allCaptureMoves;
 	}
 
-	// Èùåì âñå ãðóïïû ñ 1-ì äàìý
+	// Ищем все группы с 1-м дамэ
 	public ArrayList<Point> getAtariPoints(final Board board, final int groupsType){
 		int boardSize = board.getSize();
 		boolean[][] visited = new boolean[boardSize][boardSize];

@@ -21,7 +21,7 @@ public  class Pattern33{
 	public Pattern33(){
 	}
 	public static void init(){
-		// Ïðè èíèöèàëèçàöèè ñ÷èòûâàåì âñå øàáëîíû èç ôàéëà
+		// При инициализации считываем все шаблоны из файла
 		patternsBase = readPatternsFile("patterns33.dat");
 	}
 	public static int[] readPatternsFile(String fileName){
@@ -33,7 +33,7 @@ public  class Pattern33{
 		try{
 			
 			in = classLoader.getResourceAsStream(fileName);
-			//TODO: Ïðîâåðèòü in íà null
+			//TODO: Проверить in на null
 			din = new DataInputStream(in);
 			patternsNumber = din.readInt();
 			patterns = new int[patternsNumber];
@@ -53,14 +53,14 @@ public  class Pattern33{
 		HashSet<String> permutations;
 		HashMap<String,String> wildchars = new HashMap<String,String>();
 
-		// Èíèöèàëèçàöèÿ øàáëîíîâ ñîñòîÿíèé
+		// Инициализация шаблонов состояний
 		wildchars.put("x","O.");
 		wildchars.put("X","X");
 		wildchars.put("O","O");
 		wildchars.put("o","X.");
 		wildchars.put("?","XO.");
 		wildchars.put(".",".");
-		// Ïîëó÷àåì âñå âàðèàöèè êàæäîãî øàáëîíà 
+		// Получаем все вариации каждого шаблона
 		permutations = getPermutations3x3(wildchars);
 		
 		LinkedList<Integer> digitalPermutations = new LinkedList<Integer>();
@@ -107,7 +107,7 @@ public  class Pattern33{
 		}
 
 	}
-	// Áûñòðàÿ âåðñèÿ àëãîðèòìà èùåò øàáëîíû òîëüêî â îêðóãå 3 íà 3
+	// Быстрая версия алгоритма ищет шаблоны только в округе 3 на 3
 	public Point getFirstMove(Board board, int stoneType){
 
 		ArrayList<Point> points = new ArrayList<Point>();
@@ -125,7 +125,7 @@ public  class Pattern33{
 		
 		return getPatternMove(board, points);
 	}
-	// Èùåò øàáëîíû ïî âñåé äîñêå
+	// Ищет шаблоны по всей доске
 	public ArrayList<Point> getAllMoves(Board board){
 		int boardSize = board.getSize();
 		int i,j;
@@ -158,7 +158,7 @@ public  class Pattern33{
 			
 	}
 
-	// Âîçâðàùàåò îáëàñòü 3 íà 3 äëÿ çàäàííîé òî÷êè
+	// Возвращает область 3 на 3 для заданной точки
 	private char[] get3x3Region(Board board, Point point){
 		int i,j,k;
 		int stoneType;
@@ -185,7 +185,7 @@ public  class Pattern33{
 		}
 		return square33;
 	}
-	// Îïðåäåëÿåò ïîäõîäèò ëè ïîëå ïîä øàáëîí
+	// Определяет подходит ли поле под шаблон
 	public  boolean isPattern3x3(Board board, Point point){
 		int i,j;
 		int boardPoints; 
@@ -203,7 +203,7 @@ public  class Pattern33{
 
 		return false;
 	}
-	// Ïîëó÷àåì âñå ïåðåâîðîòû è èçìåíåíèÿ öâåòà äëÿ êàæäîãî øàáëîíà
+	// Получаем все перевороты и изменения цвета для каждого шаблона
 	private HashSet<String> getPermutations3x3(HashMap<String,String> wildchars){
 		String currentVariation;
 		ArrayList<String> allVariations;
@@ -326,7 +326,7 @@ public  class Pattern33{
 		return false;
 		
 	}
-	// Ïåðåâîäèì øàáëîí â ÷èñëî òèïà int
+	// Переводим шаблон в число типа int
 	private int stringToNumber(String str){
 		char point;
 		int number = 0;
